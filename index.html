@@ -2,12 +2,57 @@
 <html>
 <head>
     <title>Brush</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="tools">
-        <h1>Hello</h1>
+
+    <div class="tools-container">
+        <!-- TOP Row -->
+        <div class="tools">
+            <div data-color="red" class="tool paint"></div>
+            <div data-color="orange" class="tool paint"></div>
+            <div data-color="yellow" class="tool paint"></div>
+            <div data-color="green" class="tool paint"></div>
+            <div data-color="blue" class="tool paint"></div>
+            <div data-color="purple" class="tool paint"></div>
+            <div data-color="bisque" class="tool paint"></div>
+            <div data-color="black" class="tool paint"></div>
+            <input class="custom-rgb" type="color">
+            
+            <div class="tool-slider">
+                <label for="Line-Width">Line-Width:</label>
+                <input id="line-width" type="range" name="line-width" min="1" max="128" value="10" data-sizing="px">
+            </div>
+
+            <div id="save">Save</div>
+            <div id="clear">Clear</div>
+        </div>
+        
+        <!-- BOTTOM ROW -->
+        <div class="tools">
+            <div data-color="crimson" class="tool paint"></div>
+            <div data-color="coral" class="tool paint"></div>
+            <div data-color="gold" class="tool paint"></div>
+            <div data-color="springgreen" class="tool paint"></div>
+            <div data-color="skyblue" class="tool paint"></div>
+            <div data-color="magenta" class="tool paint"></div>
+            <div data-color="gray" class="tool paint"></div>
+            <div data-color="white" class="tool paint"></div>
+            <input class="custom-rgb" type="color">
+
+            <div class="tool-slider">
+                <label for="blur">Blur:</label>
+                <input id="blur" type="range" name="blur" min="1" max="25" value="10" data-sizing="px">
+            </div>
+
+        </div>
     </div>
+
 
     <canvas></canvas>
 

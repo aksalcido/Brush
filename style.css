@@ -1,5 +1,42 @@
-canvas {
-    background: blue;
-    width: 1000px;
-    height: 600px;
+html {
+    font-family: 'Arimo', sans-serif;
+}
+
+.tools-container {
+    width: 100%;
+    border-left: 2px solid black;
+    border-bottom: 2px solid black;
+    border-right: 2px solid black;
+}
+
+.tools {
+    display: flex;
+}
+
+.paint {
+    width: 20px;
+    margin: 3px;
+    padding: 15px;
+    background: black;
+    outline: 1px solid black;
+}
+
+.paint:first-child {
+    margin-left: 20px;
+}
+
+.tool-slider {
+    margin: 10px;
+}
+
+#save {
+    padding: 10px;
+    margin: 2px;
+    outline: 1px solid black;
+}
+
+#clear {
+    padding: 10px;
+    margin: 2px;
+    outline: 1px solid black;
 }
