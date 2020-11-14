@@ -14,6 +14,7 @@
     <div class="tools-container">
         <!-- TOP Row -->
         <div class="tools">
+            <!-- Default Colors - Top Row -->
             <div data-color="red" class="tool paint"></div>
             <div data-color="orange" class="tool paint"></div>
             <div data-color="yellow" class="tool paint"></div>
@@ -24,17 +25,33 @@
             <div data-color="black" class="tool paint"></div>
             <input class="custom-rgb" type="color">
             
+            <!-- Allows the User to change the width of the Line -->
             <div class="tool-slider">
                 <label for="Line-Width">Line-Width:</label>
                 <input id="line-width" type="range" name="line-width" min="1" max="128" value="10" data-sizing="px">
             </div>
+            
+            <!-- Allows the User to Click a Box to change the Linecap -->
+            <label class="checkbox-container" data-linecap="round">Round
+                <input  type="checkbox" checked>
+                <span class="checkmark"></span>
+            </label>
+                
+            <label class="checkbox-container" data-linecap="butt">Butt
+                <input type="checkbox">
+                <span class="checkmark"></span>
+            </label>
+                
+            <label class="checkbox-container" data-linecap="square">Square
+                <input type="checkbox">
+                <span class="checkmark"></span>
+            </label>
 
-            <div id="save">Save</div>
-            <div id="clear">Clear</div>
         </div>
         
         <!-- BOTTOM ROW -->
         <div class="tools">
+            <!-- Default Bright Colors - Bottom Row -->
             <div data-color="crimson" class="tool paint"></div>
             <div data-color="coral" class="tool paint"></div>
             <div data-color="gold" class="tool paint"></div>
@@ -46,10 +63,13 @@
             <input class="custom-rgb" type="color">
 
             <div class="tool-slider">
-                <label for="blur">Blur:</label>
-                <input id="blur" type="range" name="blur" min="1" max="25" value="10" data-sizing="px">
+                <label for="Transparency">Transparency:</label>
+                <input id="transparency" type="range" name="transparency" min="1" max="10" value="10" data-sizing="px">
             </div>
 
+            <div id="undo">Undo</div>
+            <div id="save">Save</div>
+            <div id="clear">Clear</div>
         </div>
     </div>
 
