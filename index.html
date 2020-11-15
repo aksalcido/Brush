@@ -10,8 +10,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="tools-container">
+    <div class="tools-container slide-in">
         <!-- TOP Row -->
         <div class="tools">
             <!-- Default Colors - Top Row -->
@@ -67,14 +66,16 @@
                 <input id="transparency" type="range" name="transparency" min="1" max="10" value="10" data-sizing="px">
             </div>
 
-            <div id="undo">Undo</div>
-            <div id="save">Save</div>
-            <div id="clear">Clear</div>
+            <div class="canvas-button" id="undo">Undo</div>
+            <div class="canvas-button" id="save">Save</div>
+            <div class="canvas-button" id="clear">Clear</div>
+            <div class="canvas-button" id="hide">Hide</div>
+
         </div>
     </div>
 
-
     <canvas></canvas>
+
 
     <script src="script.js"></script>
 </body>

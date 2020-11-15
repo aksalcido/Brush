@@ -1,5 +1,10 @@
 html {
     font-family: 'Arimo', sans-serif;
+    margin: 0;
+}
+
+canvas {
+  border: 2px solid black;
 }
 
 /* ===== Tools Container Styling ===== */
@@ -13,6 +18,22 @@ html {
 .tools {
     display: flex;
 }
+
+/* ----- Tools-Container Slide in Animation ----- */
+.slide-in {
+  transition: all 1s;
+}
+
+.slide-in.inactive {
+  opacity: 0;
+  transform: translateY(-150px);
+}
+
+.slide-in.active {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
 
 /* ===== Color Styling ===== */
 .paint {
@@ -34,26 +55,14 @@ html {
 
 
 /* ===== Buttons Styling ===== */
+.canvas-button {
+  padding: 10px;
+  margin: 2px;
+  outline: 1px solid black; 
+}
+
 .disabled {
-    background: darkgray;
-}
-
-#undo {
-    padding: 10px;
-    margin: 2px;
-    outline: 1px solid black; 
-}
-
-#save {
-    padding: 10px;
-    margin: 2px;
-    outline: 1px solid black;
-}
-
-#clear {
-    padding: 10px;
-    margin: 2px;
-    outline: 1px solid black;
+  background: darkgray;
 }
 
 /* ===== Check Boxes Styling ===== */

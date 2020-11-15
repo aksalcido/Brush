@@ -1,6 +1,7 @@
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const colors = document.querySelectorAll(".paint");
+const toolContainer = document.querySelector(".tools-container");
 
 // Input Sliders
 const toolSliders = document.querySelectorAll(".tool-slider");
@@ -12,8 +13,10 @@ const customRGBSliders = document.querySelectorAll(".custom-rgb");
 const lineCheckboxes = document.querySelectorAll(".checkbox-container");
 
 // Buttons 
-const saveButton = document.querySelector('#save');
+const saveButton  = document.querySelector('#save');
+const undoButton  = document.querySelector("#undo");
 const clearButton = document.querySelector('#clear');
+const hideButton  = document.querySelector("#hide");
 
 // GLOBAL Drawing Variables
 let lastX     = 0;
@@ -96,6 +99,8 @@ function initColors() {
 }
 
 function init() {
+    //canvas.style.cursor = "circle";
+
     // Initialize Colors
     initColors();
 
@@ -165,8 +170,10 @@ function init() {
     });
 
     // Undobutton to undo the last thing drawn on the Canvas
-    undoButton = document.querySelector("#undo");
     undoButton.addEventListener('click', undo); 
+
+    // Hides the ToolContainer
+    hideButton.addEventListener("click", () => toolContainer.classList.add("inactive"));
 
     // Loads the Canvas from Local Storage
     loadCanvas(localStorage.getItem(canvasName));
