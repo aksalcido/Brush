@@ -18,10 +18,19 @@ const undoButton  = document.querySelector("#undo");
 const clearButton = document.querySelector('#clear');
 const hideButton  = document.querySelector("#hide");
 
+// Tools
+const paintBrushButton  = document.querySelector("#paint-brush");
+const fillBucketButton  = document.querySelector("#fill-bucket");
+const colorPickerButton = document.querySelector("#color-picker");
+
+// Repreents the current color the brush has equipped
+const colorDisplay = document.querySelector("#current-color");
+
 // GLOBAL Drawing Variables
 let lastX     = 0;
 let lastY     = 0;
 let isDrawing = false;
+let currentTool = paintBrushButton; // by default our currentTool is equal to our paint brush
 
 const canvasName = "brushCanvas";
 const previousName = "previousCanvas";
@@ -31,19 +40,7 @@ var previousCanvas = localStorage.getItem(previousName) || null;
 // Initialize the Program
 init();
 
-function draw(event) {
-    //console.log(isDrawing);
-    if (!isDrawing) 
-        return;
-
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(event.offsetX, event.offsetY);
-    ctx.stroke();
-
-    [lastX, lastY] = [event.offsetX, event.offsetY];
-}
-
+/* ===== Canvas Methods ===== */
 function undo(event) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     loadCanvas(previousCanvas);
@@ -78,29 +75,34 @@ function savePreviousCanvas() {
     previousCanvas = canvas.toDataURL();
 }
 
+// Changes the ColorDisplay which shows the current color of the User
+function changeColor(color) {
+    ctx.strokeStyle = color;
+    colorDisplay.style.background = ctx.strokeStyle;
+}
+
+// Initializes the color buttons so that they are able to be clicked to change the color of the User
 function initColors() {
     // Initialize Default Colors
     colors.forEach(color => {
         color.style.background = color.dataset.color;
         
         // Allows User to click to change color of the Brush
-        color.addEventListener('click', function(event) {
-            ctx.strokeStyle = this.dataset.color;
-        });
+        color.addEventListener('click', (event) => changeColor(color.dataset.color));
     });
 
     // Initialize Custom RGB Picker Colors (User has 2)
     customRGBSliders.forEach(rgbSlider => {
         // Clicking on the RGBSlider will change the current brush color to match it (Essentially storing a custom color)
-        rgbSlider.addEventListener('click',  () => ctx.strokeStyle = rgbSlider.value);
+        rgbSlider.addEventListener('click',  (event) => changeColor(rgbSlider.value));
+
         // Changing the RGBSlider will change the current brush color to match the change
-        rgbSlider.addEventListener('change', () => ctx.strokeStyle = rgbSlider.value);
+        rgbSlider.addEventListener('change', (event) => changeColor(rgbSlider.value));
     });
 }
 
+// Program Init() Method that sets up and begins the program
 function init() {
-    //canvas.style.cursor = "circle";
-
     // Initialize Colors
     initColors();
 
@@ -108,7 +110,7 @@ function init() {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    ctx.strokeStyle = '#BADA55';
+    ctx.strokeStyle = 'black';
     ctx.lineJoin    = 'round';
     ctx.lineCap     =  'round';
     ctx.lineWidth = 2;
@@ -118,12 +120,24 @@ function init() {
     canvas.addEventListener('mousemove', draw);
 
     canvas.addEventListener('mousedown', (event) => {
-        isDrawing = true;
-        [lastX, lastY] = [event.offsetX, event.offsetY];
+        if (currentTool.dataset.tool === 'paint') {
+            isDrawing = true;
+            [lastX, lastY] = [event.offsetX, event.offsetY];
+    
+            // Store the Previous Canvas -- Allows Undo Functionality 
+            savePreviousCanvas();
+            localStorage.setItem(previousName, previousCanvas);
+        }
+        else if (currentTool.dataset.tool === 'fill') {
+            fill();
+        }
 
-        // Store the Previous Canvas -- Allows Undo Functionality 
-        savePreviousCanvas();
-        localStorage.setItem(previousName, previousCanvas);
+        else if (currentTool.dataset.tool === 'pick') {
+            var x = event.offsetX;
+            var y = event.offsetY;
+            pick(x, y);
+        }
+
     });
     
     // When the mouse is released up, we want to stop drawing and save the canvas to localStorage
@@ -175,6 +189,57 @@ function init() {
     // Hides the ToolContainer
     hideButton.addEventListener("click", () => toolContainer.classList.add("inactive"));
 
+    // User Tools -- Paint Brush, Fill-Bucket, and ColorPicker 
+    paintBrushButton.addEventListener("click", () => currentTool = paintBrushButton);
+    fillBucketButton.addEventListener("click", () => currentTool = fillBucketButton);
+    colorPickerButton.addEventListener("click", () => currentTool = colorPickerButton);
+
     // Loads the Canvas from Local Storage
     loadCanvas(localStorage.getItem(canvasName));
+}
+
+/* ===== User Tool Methods ===== */
+function draw(event) {
+    //console.log(isDrawing);
+    if (!isDrawing) 
+        return;
+
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(event.offsetX, event.offsetY);
+    ctx.stroke();
+
+    [lastX, lastY] = [event.offsetX, event.offsetY];
+}
+
+function fill() {
+    console.log('Filled called');
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    console.log(data[500], data[500+1], data[500+2], data[500+3]);
+
+    /*
+    for(var i = 0; i < data.length; i += 4) {
+        data[i] = 130;
+        data[i + 1] = 40;
+       data[i + 2] = 40;
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+    console.log("done?");
+    //fillPixel(canvasData, 700, 700, ctx.strokeStyle, ctx.strokeStyle );
+    */
+}
+
+function fillPixel(canvasData, r, c, ocolor, ncolor) {
+
+}
+
+// Pick Color based off Clicked Pixel on Canvas //
+function pick(x, y) {
+    var pixel = ctx.getImageData(x, y, 1, 1);
+    var data = pixel.data; // represents the rgba
+    var rgba = `rgba(${data[0]}, ${data[1]}, ${data[2]}, ${data[3]})`;
+    changeColor(rgba);
 }

@@ -11,8 +11,14 @@
 </head>
 <body>
     <div class="tools-container slide-in">
+        
+        <div id="current-color" style="background: black;">
+            <h1>color</h1>
+        </div>
+
         <!-- TOP Row -->
         <div class="tools">
+    
             <!-- Default Colors - Top Row -->
             <div data-color="red" class="tool paint"></div>
             <div data-color="orange" class="tool paint"></div>
@@ -45,6 +51,13 @@
                 <input type="checkbox">
                 <span class="checkmark"></span>
             </label>
+            
+
+            <div class="cursor-options" style="display: flex; padding-left: 50px;">
+                <div class="canvas-button" data-tool="paint" id="paint-brush">Brush</div>
+                <div class="canvas-button" data-tool="fill" id="fill-bucket">Fill</div>
+                <div class="canvas-button" data-tool="pick" id="color-picker">Color Picker</div>
+            </div>
 
         </div>
         
@@ -66,10 +79,13 @@
                 <input id="transparency" type="range" name="transparency" min="1" max="10" value="10" data-sizing="px">
             </div>
 
-            <div class="canvas-button" id="undo">Undo</div>
-            <div class="canvas-button" id="save">Save</div>
-            <div class="canvas-button" id="clear">Clear</div>
-            <div class="canvas-button" id="hide">Hide</div>
+            <div class="bts-options" style="display: flex;">
+                <div class="canvas-button" id="undo">Undo</div>
+                <div class="canvas-button" id="save">Save</div>
+                <div class="canvas-button" id="clear">Clear</div>
+                <div class="canvas-button" id="hide">Hide</div>
+            </div>
+
 
         </div>
     </div>
