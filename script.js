@@ -3,6 +3,9 @@ const ctx = canvas.getContext("2d");
 const colors = document.querySelectorAll(".paint");
 const toolContainer = document.querySelector(".tools-container");
 
+// Represents the current color the brush has equipped
+const colorDisplay = document.querySelector("#current-color");
+
 // Input Sliders
 const toolSliders = document.querySelectorAll(".tool-slider");
 const widthSlider = document.querySelector("#line-width");
@@ -23,8 +26,9 @@ const paintBrushButton  = document.querySelector("#paint-brush");
 const fillBucketButton  = document.querySelector("#fill-bucket");
 const colorPickerButton = document.querySelector("#color-picker");
 
-// Repreents the current color the brush has equipped
-const colorDisplay = document.querySelector("#current-color");
+// Dropdown and Content
+const effectsDropdownButton = document.querySelector(".dropbtn");
+const effectsOptions = document.querySelectorAll("#effects-dropdown a");
 
 // GLOBAL Drawing Variables
 let lastX     = 0;
@@ -40,19 +44,69 @@ var previousCanvas = localStorage.getItem(previousName) || null;
 // Initialize the Program
 init();
 
-/* ===== Canvas Methods ===== */
-function undo(event) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    loadCanvas(previousCanvas);
+/* ========== User Tool Methods ========== */
+function draw(event) {
+    //console.log(isDrawing);
+    if (!isDrawing) 
+        return;
 
-    // If there is a previousCanvas we can revert to, then we remove the 'disabled' functionality from the clearButton
-    if (previousCanvas) {
-        clearButton.classList.remove('disabled');
-    }
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(event.offsetX, event.offsetY);
+    ctx.stroke();
 
-    //localStorage.setItem(canvasName, previousCanvas.toDataURL());
+    [lastX, lastY] = [event.offsetX, event.offsetY];
 }
 
+function fill(c, r) {
+    console.log('Filled called');
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    var pixel = ctx.getImageData(c, r, 1, 1);
+    var pixelData = pixel.data;
+    console.log(pixelData);
+    const ocolor = `rgba(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]}, ${pixelData[3]})`;
+
+
+    ctx.putImageData(imageData, 0, 0);
+    console.log("done?");
+
+
+    fillPixel(data, c, r, ocolor, ctx.strokeStyle);
+}
+
+function fillPixel(data, c, r, ocolor, ncolor) {
+    console.log("ocolor: " + ocolor);
+    console.log("ncolor: " + ncolor);
+
+    /*
+    for(var i = 0; i < canvas.height; i += 4) {
+       data[i] = 130;
+        data[i + 1] = 40;
+        data[i + 2] = 40;
+    }
+    */
+}
+
+// Pick Color based off Clicked Pixel on Canvas //
+function pick(c, r) {
+    var pixel = ctx.getImageData(c, r, 1, 1);
+    var data = pixel.data; // represents the rgba
+    var rgba = `rgba(${data[0]}, ${data[1]}, ${data[2]}, ${data[3]})`;
+    changeColor(rgba);
+}
+
+/* ========== Custom Effects Methods ========== */
+
+
+
+
+
+
+
+
+/* ========== Canvas Methods ========== */
 // Loads the Canvas from the content of the the 'dataURL'
 function loadCanvas(dataURL) {
     var img = new Image;
@@ -75,10 +129,67 @@ function savePreviousCanvas() {
     previousCanvas = canvas.toDataURL();
 }
 
+function undo(event) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    loadCanvas(previousCanvas);
+
+    // If there is a previousCanvas we can revert to, then we remove the 'disabled' functionality from the clearButton
+    if (previousCanvas) {
+        clearButton.classList.remove('disabled');
+    }
+
+    //localStorage.setItem(canvasName, previousCanvas.toDataURL());
+}
+
 // Changes the ColorDisplay which shows the current color of the User
 function changeColor(color) {
     ctx.strokeStyle = color;
     colorDisplay.style.background = ctx.strokeStyle;
+}
+
+
+
+/* ========== Initialization Functions ========== */
+function initCanvas() {
+    // Default Settings
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    ctx.strokeStyle = 'black';
+    ctx.lineJoin    = 'round';
+    ctx.lineCap     =  'round';
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 1.0;
+    //ctx.globalCompositeOperation = 'xor'; // Adds stacking effect if draw on top of color
+
+    // Canvas Event Listeners
+    canvas.addEventListener('mousemove', draw);
+
+    canvas.addEventListener('mousedown', (event) => {
+        var c = event.offsetX;
+        var r = event.offsetY;
+
+        if (currentTool.dataset.tool === 'paint') {
+            isDrawing = true;
+            [lastX, lastY] = [c, r];
+    
+            // Store the Previous Canvas -- Allows Undo Functionality 
+            savePreviousCanvas();
+            localStorage.setItem(previousName, previousCanvas);
+        }
+        else if (currentTool.dataset.tool === 'fill') {
+            fill(c, r);
+        }
+        else if (currentTool.dataset.tool === 'pick') {
+            pick(c, r);
+        }
+    });
+    
+    // When the mouse is released up, we want to stop drawing and save the canvas to localStorage
+    canvas.addEventListener('mouseup', saveCanvas);
+    
+    // Handles if the mouse leaves the canvas/window, then we disable drawing and save the canvas to localStorage
+    canvas.addEventListener('mouseout', saveCanvas);
 }
 
 // Initializes the color buttons so that they are able to be clicked to change the color of the User
@@ -101,57 +212,15 @@ function initColors() {
     });
 }
 
-// Program Init() Method that sets up and begins the program
-function init() {
-    // Initialize Colors
-    initColors();
-
-    // Default Settings
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    ctx.strokeStyle = 'black';
-    ctx.lineJoin    = 'round';
-    ctx.lineCap     =  'round';
-    ctx.lineWidth = 2;
-    ctx.globalAlpha = 1.0;
-
-    // Canvas Event Listeners
-    canvas.addEventListener('mousemove', draw);
-
-    canvas.addEventListener('mousedown', (event) => {
-        if (currentTool.dataset.tool === 'paint') {
-            isDrawing = true;
-            [lastX, lastY] = [event.offsetX, event.offsetY];
-    
-            // Store the Previous Canvas -- Allows Undo Functionality 
-            savePreviousCanvas();
-            localStorage.setItem(previousName, previousCanvas);
-        }
-        else if (currentTool.dataset.tool === 'fill') {
-            fill();
-        }
-
-        else if (currentTool.dataset.tool === 'pick') {
-            var x = event.offsetX;
-            var y = event.offsetY;
-            pick(x, y);
-        }
-
-    });
-    
-    // When the mouse is released up, we want to stop drawing and save the canvas to localStorage
-    canvas.addEventListener('mouseup', saveCanvas);
-    
-    // Handles if the mouse leaves the canvas/window, then we disable drawing and save the canvas to localStorage
-    canvas.addEventListener('mouseout', saveCanvas);
-
+function initSliders() {
     // Width Event Listener
     widthSlider.addEventListener('change', () => ctx.lineWidth = widthSlider.value);
 
     // Transparency Event Listener
     transparencySlider.addEventListener('change', () => ctx.globalAlpha = transparencySlider.value / 10);
+}
 
+function initCheckBoxes() {
     // Checkboxes for LineCap
     lineCheckboxes.forEach(checkboxContainer => {
         checkboxContainer.addEventListener('change', () => {
@@ -166,7 +235,9 @@ function init() {
             });
         });
     });
+}
 
+function initButtons() {
     // Save Button to save the drawn image
     saveButton.addEventListener('click', () => {
         var img    = canvas.toDataURL("image/png");
@@ -193,53 +264,56 @@ function init() {
     paintBrushButton.addEventListener("click", () => currentTool = paintBrushButton);
     fillBucketButton.addEventListener("click", () => currentTool = fillBucketButton);
     colorPickerButton.addEventListener("click", () => currentTool = colorPickerButton);
+}
+
+function initDropdowns() {
+    /* Brush Effects Dropdown */
+    effectsDropdownButton.addEventListener('click', (event) => {
+        document.getElementById("effects-dropdown").classList.toggle("show");
+    });
+
+    effectsOptions.forEach(effect => {
+        effect.addEventListener('click', () => ctx.globalCompositeOperation = effect.dataset.effect);
+    });
+    
+
+
+    // Closes the dropdown if any event outside of it occurs
+    window.onclick = function(event) {
+        if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+}
+
+// Program Init() Method that sets up and begins the program
+function init() {
+    // Initialize the default settings and event listeners for the Canvas
+    initCanvas();
+
+    // Initialize Colors
+    initColors();
+
+    // Initializes the Sliders
+    initSliders();
+
+    // Initializes the Checkboxes
+    initCheckBoxes();
+
+    // Initialize the Buttons event listeners
+    initButtons();
+
+    // Initialize the Dropdowns
+    initDropdowns();
 
     // Loads the Canvas from Local Storage
     loadCanvas(localStorage.getItem(canvasName));
 }
 
-/* ===== User Tool Methods ===== */
-function draw(event) {
-    //console.log(isDrawing);
-    if (!isDrawing) 
-        return;
-
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(event.offsetX, event.offsetY);
-    ctx.stroke();
-
-    [lastX, lastY] = [event.offsetX, event.offsetY];
-}
-
-function fill() {
-    console.log('Filled called');
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-
-    console.log(data[500], data[500+1], data[500+2], data[500+3]);
-
-    /*
-    for(var i = 0; i < data.length; i += 4) {
-        data[i] = 130;
-        data[i + 1] = 40;
-       data[i + 2] = 40;
-    }
-
-    ctx.putImageData(imageData, 0, 0);
-    console.log("done?");
-    //fillPixel(canvasData, 700, 700, ctx.strokeStyle, ctx.strokeStyle );
-    */
-}
-
-function fillPixel(canvasData, r, c, ocolor, ncolor) {
-
-}
-
-// Pick Color based off Clicked Pixel on Canvas //
-function pick(x, y) {
-    var pixel = ctx.getImageData(x, y, 1, 1);
-    var data = pixel.data; // represents the rgba
-    var rgba = `rgba(${data[0]}, ${data[1]}, ${data[2]}, ${data[3]})`;
-    changeColor(rgba);
-}
