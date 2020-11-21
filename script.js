@@ -30,14 +30,25 @@ const colorPickerButton = document.querySelector("#color-picker");
 const effectsDropdownButton = document.querySelector(".dropbtn");
 const effectsOptions = document.querySelectorAll("#effects-dropdown a");
 
+// Custom Effects
+const rainbowButton = document.querySelector("#rainbow");
+const directionalButton = document.querySelector("#directional");
+
 // GLOBAL Drawing Variables
 let lastX     = 0;
 let lastY     = 0;
 let isDrawing = false;
 let currentTool = paintBrushButton; // by default our currentTool is equal to our paint brush
 
+// Custom Effects
+let customEffects = [];
+let hue = 0;
+let direction = true;
+
+// Local Storage Keys
 const canvasName = "brushCanvas";
 const previousName = "previousCanvas";
+const lastUsedColor = "lastUsedColor";
 
 var previousCanvas = localStorage.getItem(previousName) || null;
 
@@ -49,6 +60,9 @@ function draw(event) {
     //console.log(isDrawing);
     if (!isDrawing) 
         return;
+    
+    // Custom Effects are ran here if Any
+    handleCustomEffects();
 
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -98,11 +112,76 @@ function pick(c, r) {
 }
 
 /* ========== Custom Effects Methods ========== */
+function handleCustomEffects() {
+    customEffects.forEach(effect => {
+        if (effect == directionalButton.dataset.effect) {
+            dynamicWidth();
+        }
+        else if (effect == rainbowButton.dataset.effect) {
+            rainbow();
+        }
+        else {
+            
+        }
+    });
+}
 
+function dynamicWidth() {
+    if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+        direction = !direction;
+    }
+    
+    if (direction) {
+        ctx.lineWidth++;
+    } else {
+        ctx.lineWidth--;
+    }
+}
 
+function rainbow() {
+    colorDisplay.style.background = `hsl(${hue}, 100%, 50%)`;
+    ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+    hue++;
 
+    if (hue >= 360)
+        hue = 0;
+}
 
+rainbowButton.addEventListener("click", () => {
+    const index = customEffects.indexOf(rainbowButton.dataset.effect);
 
+    if (index > -1) {
+        customEffects.splice(index, 1);
+        colorDisplay.style.transition = "0.5s";
+    }
+    else {
+        customEffects.push("rainbow");
+        colorDisplay.style.transition = "0s";
+    }
+});
+
+directionalButton.addEventListener("click", () => {
+    const index = customEffects.indexOf(directionalButton.dataset.effect);
+
+    if (index > -1) {
+        customEffects.splice(index, 1);
+        ctx.lineWidth = widthSlider.value;
+    }
+    else {
+        customEffects.push("directional");
+    }
+});
+
+// When we pick a color, we remove any custom color effects.
+function removeCustomColorEffects() {
+    // ATM we only have rainbowButton effect
+    const index = customEffects.indexOf(rainbowButton.dataset.effect);
+
+    if (index > -1) {
+        customEffects.splice(index, 1);
+        colorDisplay.style.transition = "0.5s";
+    }
+}
 
 
 
@@ -145,6 +224,11 @@ function undo(event) {
 function changeColor(color) {
     ctx.strokeStyle = color;
     colorDisplay.style.background = ctx.strokeStyle;
+
+    // Store the Last Used Color
+    localStorage.setItem(lastUsedColor, ctx.strokeStyle);
+
+    removeCustomColorEffects();
 }
 
 
@@ -155,12 +239,12 @@ function initCanvas() {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    ctx.strokeStyle = 'black';
     ctx.lineJoin    = 'round';
     ctx.lineCap     =  'round';
     ctx.lineWidth = 2;
     ctx.globalAlpha = 1.0;
-    //ctx.globalCompositeOperation = 'xor'; // Adds stacking effect if draw on top of color
+    ctx.strokeStyle = localStorage.getItem(lastUsedColor) || 'black';
+    colorDisplay.style.background = ctx.strokeStyle;
 
     // Canvas Event Listeners
     canvas.addEventListener('mousemove', draw);
