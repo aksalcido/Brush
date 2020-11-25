@@ -18,6 +18,7 @@ const lineCheckboxes = document.querySelectorAll(".checkbox-container");
 // Buttons 
 const saveButton  = document.querySelector('#save');
 const undoButton  = document.querySelector("#undo");
+const redoButton  = document.querySelector("#redo");
 const clearButton = document.querySelector('#clear');
 const hideButton  = document.querySelector("#hide");
 
@@ -33,12 +34,14 @@ const effectsOptions = document.querySelectorAll("#effects-dropdown a");
 // Custom Effects
 const rainbowButton = document.querySelector("#rainbow");
 const directionalButton = document.querySelector("#directional");
+const invertButton = document.querySelector("#invert");
 
 // GLOBAL Drawing Variables
 let lastX     = 0;
 let lastY     = 0;
 let isDrawing = false;
 let currentTool = paintBrushButton; // by default our currentTool is equal to our paint brush
+var canvasHeight;
 
 // Custom Effects
 let customEffects = [];
@@ -51,6 +54,13 @@ const previousName = "previousCanvas";
 const lastUsedColor = "lastUsedColor";
 
 var previousCanvas = localStorage.getItem(previousName) || null;
+
+// Represents the State of the Program and allows the User to undo/redo up to 'max' amount of turns
+const State = {
+    states: [previousCanvas],
+    index: 0,
+    max: 5
+};
 
 // Initialize the Program
 init();
@@ -83,24 +93,26 @@ function fill(c, r) {
     const ocolor = `rgba(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]}, ${pixelData[3]})`;
 
 
-    ctx.putImageData(imageData, 0, 0);
-    console.log("done?");
+    for(var i = 0; i < 2000; i += 4) {
+        data[i] = 130;
+        data[i + 1] = 40;
+        data[i + 2] = 40;
+    }
 
+    ctx.putImageData(imageData, 0, 0, dirtyWidth=500, dirtyHeight=1000);
 
-    fillPixel(data, c, r, ocolor, ctx.strokeStyle);
+    //fillPixel(data, c, r, ocolor, ctx.strokeStyle);
 }
 
 function fillPixel(data, c, r, ocolor, ncolor) {
     console.log("ocolor: " + ocolor);
     console.log("ncolor: " + ncolor);
 
-    /*
     for(var i = 0; i < canvas.height; i += 4) {
-       data[i] = 130;
+        data[i] = 130;
         data[i + 1] = 40;
         data[i + 2] = 40;
     }
-    */
 }
 
 // Pick Color based off Clicked Pixel on Canvas //
@@ -126,6 +138,7 @@ function handleCustomEffects() {
     });
 }
 
+// Functionality for the Dynamic Width Brush option, is called when User is drawing, and increments/decrements when the a width of 1 or 100 has been reached
 function dynamicWidth() {
     if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
         direction = !direction;
@@ -138,6 +151,7 @@ function dynamicWidth() {
     }
 }
 
+// Functionality for the Rainbow Brush Option, is called when User is drawing, which uses hsl to change the color of the brush as the hue increments up to 360 and cycles again starting from 0.
 function rainbow() {
     colorDisplay.style.background = `hsl(${hue}, 100%, 50%)`;
     ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
@@ -145,6 +159,24 @@ function rainbow() {
 
     if (hue >= 360)
         hue = 0;
+}
+
+// Functionality for the Invert button, uses the 'difference' globalCOmpositeOperation and redraws whats on the canvas with it, then reverts back to the previous Brush Style of the User.
+function invert() {
+    var img = new Image;
+    img.src = canvas.toDataURL();
+    ctx.drawImage(img,0,0);
+
+    // Store the current Brush
+    const currentCompositeOperation = ctx.globalCompositeOperation;
+
+    // Used to redraw everything that is displayed inverted
+    ctx.globalCompositeOperation='difference';
+    ctx.fillStyle='white';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // Revert Brush back to Previous State
+    ctx.globalCompositeOperation = currentCompositeOperation;
 }
 
 rainbowButton.addEventListener("click", () => {
@@ -172,7 +204,10 @@ directionalButton.addEventListener("click", () => {
     }
 });
 
-// When we pick a color, we remove any custom color effects.
+invertButton.addEventListener("click", invert);
+
+
+// When we pick a normal color normally, we remove any custom color effects for better functionality of the program
 function removeCustomColorEffects() {
     // ATM we only have rainbowButton effect
     const index = customEffects.indexOf(rainbowButton.dataset.effect);
@@ -206,18 +241,53 @@ function saveCanvas() {
 // Stores the previousCanvas to equal the current Canvas dataURL before we draw again
 function savePreviousCanvas() {
     previousCanvas = canvas.toDataURL();
+
+    // Max previous states we are storing reached -- must starting shifting elements to the left -- eleminating the oldest stored canvas from memory
+    if (State.index == State.max - 1) {
+        console.log("Max Moves Ahead we are storing reached -- must starting shifting elements to the left");
+        State.states.push(previousCanvas);
+
+        State.states.splice(-State.max - 1, State.states.length - State.max);
+    }
+    // Our Index is not at the end of the array meaning the User hit Undo AND the user then proceeded to draw, which eliminates the stored canvas to the right side (newest ones prior to undo)
+    else if (State.index < State.states.length - 1) {
+        console.log("INDEX NOT AT END! State.index: " + State.index);
+        State.states[State.index++] = previousCanvas;
+        State.states.splice(State.index + 1, State.states.length);
+
+    // First few drawn brushes
+    } else {
+        console.log("Storing normally");
+        State.states[++State.index] = previousCanvas;
+    }
+
+    console.log(State.states);
 }
 
 function undo(event) {
+    if (State.index <= 0) {
+        console.log("No more previous states");
+        return;
+    }
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    loadCanvas(previousCanvas);
+
+    loadCanvas(State.states[State.index--]);
 
     // If there is a previousCanvas we can revert to, then we remove the 'disabled' functionality from the clearButton
     if (previousCanvas) {
         clearButton.classList.remove('disabled');
     }
+}
 
-    //localStorage.setItem(canvasName, previousCanvas.toDataURL());
+function redo(event) {
+    if (State.index == State.states.length - 1) {
+        console.log("Can not redo anything");
+    } else {
+        console.log("WE have states to go to!");
+        console.log("State.index: " + State.index);
+        loadCanvas(State.states[++State.index]);
+    }
 }
 
 // Changes the ColorDisplay which shows the current color of the User
@@ -239,6 +309,13 @@ function initCanvas() {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    //canvasHeight = canvas.height;
+
+    // Removes the transparency of the Canvas and adds a White background
+    ctx.fillStyle='white';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // Default Brush Settings
     ctx.lineJoin    = 'round';
     ctx.lineCap     =  'round';
     ctx.lineWidth = 2;
@@ -269,6 +346,17 @@ function initCanvas() {
         }
     });
     
+    // This handles the case where the User simply clicks to add small dots
+    canvas.addEventListener('click', (event) => {
+        if (currentTool != paintBrushButton)
+            return;
+
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(event.offsetX, event.offsetY);
+        ctx.stroke();
+    });
+
     // When the mouse is released up, we want to stop drawing and save the canvas to localStorage
     canvas.addEventListener('mouseup', saveCanvas);
     
@@ -340,6 +428,8 @@ function initButtons() {
 
     // Undobutton to undo the last thing drawn on the Canvas
     undoButton.addEventListener('click', undo); 
+
+    redoButton.addEventListener('click', redo);
 
     // Hides the ToolContainer
     hideButton.addEventListener("click", () => toolContainer.classList.add("inactive"));
