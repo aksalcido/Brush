@@ -27,6 +27,13 @@ const paintBrushButton  = document.querySelector("#paint-brush");
 const fillBucketButton  = document.querySelector("#fill-bucket");
 const colorPickerButton = document.querySelector("#color-picker");
 
+const shapePickerButton = document.querySelector("#shape-picker");
+const horizontalDisplay = document.querySelector(".horizontal-display");
+
+const fRectangleButton  = document.querySelector("#filledRectangle");
+const sRectangleButton  = document.querySelector("#strokedRectangle");
+
+
 // Dropdown and Content
 const effectsDropdownButton = document.querySelector(".dropbtn");
 const effectsOptions = document.querySelectorAll("#effects-dropdown a");
@@ -65,7 +72,7 @@ const State = {
 // Initialize the Program
 init();
 
-/* ========== User Tool Methods ========== */
+/* ============================== User Tool Methods ============================== */
 function draw(event) {
     //console.log(isDrawing);
     if (!isDrawing) 
@@ -123,7 +130,32 @@ function pick(c, r) {
     changeColor(rgba);
 }
 
-/* ========== Custom Effects Methods ========== */
+
+function drawShape(c, r) {    
+    if (lastX === 0 && lastY === 0) {
+        [lastX, lastY] = [c, r];
+    } 
+    else {
+        // Saves the Canvas before the Rectangle is drawn for our Undo functionality -- Allows User to revert from drawn shape
+        savePreviousCanvas();
+        localStorage.setItem(previousName, previousCanvas);
+
+        if (currentTool.dataset.tool === 'filledRectangle') {
+            ctx.beginPath();
+            ctx.rect(lastX, lastY, c - lastX, r - lastY);
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.fill();
+        }
+        else if (currentTool.dataset.tool === 'strokedRectangle') {
+            ctx.strokeRect(lastX, lastY, c - lastX, r - lastY);
+        }
+
+        // Sets the Coordinates for initial point back to default: [0, 0]
+        [lastX, lastY] = [0, 0];
+    }
+}
+
+/* ============================== Custom Effects Methods ============================== */
 function handleCustomEffects() {
     customEffects.forEach(effect => {
         if (effect == directionalButton.dataset.effect) {
@@ -178,34 +210,36 @@ function invert() {
     // Revert Brush back to Previous State
     ctx.globalCompositeOperation = currentCompositeOperation;
 }
+function initCustoms() {
+    // Event Listener for the Custom Rainbow StrokeStyle
+    rainbowButton.addEventListener("click", () => {
+        const index = customEffects.indexOf(rainbowButton.dataset.effect);
 
-rainbowButton.addEventListener("click", () => {
-    const index = customEffects.indexOf(rainbowButton.dataset.effect);
+        if (index > -1) {
+            customEffects.splice(index, 1);
+            colorDisplay.style.transition = "0.5s";
+        }
+        else {
+            customEffects.push("rainbow");
+            colorDisplay.style.transition = "0s";
+        }
+    });
+    // Event Listener for the Dynamic Width when drawing
+    directionalButton.addEventListener("click", () => {
+        const index = customEffects.indexOf(directionalButton.dataset.effect);
 
-    if (index > -1) {
-        customEffects.splice(index, 1);
-        colorDisplay.style.transition = "0.5s";
-    }
-    else {
-        customEffects.push("rainbow");
-        colorDisplay.style.transition = "0s";
-    }
-});
+        if (index > -1) {
+            customEffects.splice(index, 1);
+            ctx.lineWidth = widthSlider.value;
+        }
+        else {
+            customEffects.push("directional");
+        }
+    });
 
-directionalButton.addEventListener("click", () => {
-    const index = customEffects.indexOf(directionalButton.dataset.effect);
-
-    if (index > -1) {
-        customEffects.splice(index, 1);
-        ctx.lineWidth = widthSlider.value;
-    }
-    else {
-        customEffects.push("directional");
-    }
-});
-
-invertButton.addEventListener("click", invert);
-
+    // Event Listener for Inverting the Canvas
+    invertButton.addEventListener("click", invert);
+}
 
 // When we pick a normal color normally, we remove any custom color effects for better functionality of the program
 function removeCustomColorEffects() {
@@ -220,7 +254,7 @@ function removeCustomColorEffects() {
 
 
 
-/* ========== Canvas Methods ========== */
+/* ============================== Canvas Methods ============================== */
 // Loads the Canvas from the content of the the 'dataURL'
 function loadCanvas(dataURL) {
     var img = new Image;
@@ -244,20 +278,16 @@ function savePreviousCanvas() {
 
     // Max previous states we are storing reached -- must starting shifting elements to the left -- eleminating the oldest stored canvas from memory
     if (State.index == State.max - 1) {
-        console.log("Max Moves Ahead we are storing reached -- must starting shifting elements to the left");
         State.states.push(previousCanvas);
-
         State.states.splice(-State.max - 1, State.states.length - State.max);
     }
     // Our Index is not at the end of the array meaning the User hit Undo AND the user then proceeded to draw, which eliminates the stored canvas to the right side (newest ones prior to undo)
     else if (State.index < State.states.length - 1) {
-        console.log("INDEX NOT AT END! State.index: " + State.index);
         State.states[State.index++] = previousCanvas;
         State.states.splice(State.index + 1, State.states.length);
 
-    // First few drawn brushes
+    // First few drawn brushes for the Session
     } else {
-        console.log("Storing normally");
         State.states[++State.index] = previousCanvas;
     }
 
@@ -266,7 +296,6 @@ function savePreviousCanvas() {
 
 function undo(event) {
     if (State.index <= 0) {
-        console.log("No more previous states");
         return;
     }
     
@@ -303,7 +332,7 @@ function changeColor(color) {
 
 
 
-/* ========== Initialization Functions ========== */
+/* ============================== Initialization Functions ============================== */
 function initCanvas() {
     // Default Settings
     canvas.width  = window.innerWidth;
@@ -343,6 +372,9 @@ function initCanvas() {
         }
         else if (currentTool.dataset.tool === 'pick') {
             pick(c, r);
+        }
+        else {
+            drawShape(c, r);
         }
     });
     
@@ -438,6 +470,19 @@ function initButtons() {
     paintBrushButton.addEventListener("click", () => currentTool = paintBrushButton);
     fillBucketButton.addEventListener("click", () => currentTool = fillBucketButton);
     colorPickerButton.addEventListener("click", () => currentTool = colorPickerButton);
+
+    document.querySelector("filledRectangle");
+    document.querySelector("strokedRectangle");
+
+    fRectangleButton.addEventListener("click", () => shapePickerButton.dataset.tool = fRectangleButton.dataset.tool);
+    sRectangleButton.addEventListener("click", () => shapePickerButton.dataset.tool = sRectangleButton.dataset.tool);
+
+    shapePickerButton.addEventListener("click", () => {
+        currentTool = shapePickerButton;
+
+        const horizontalDisplay = document.querySelector(".horizontal-display");
+        horizontalDisplay.classList.toggle("hidden");
+    });
 }
 
 function initDropdowns() {
@@ -449,8 +494,6 @@ function initDropdowns() {
     effectsOptions.forEach(effect => {
         effect.addEventListener('click', () => ctx.globalCompositeOperation = effect.dataset.effect);
     });
-    
-
 
     // Closes the dropdown if any event outside of it occurs
     window.onclick = function(event) {
@@ -486,6 +529,9 @@ function init() {
 
     // Initialize the Dropdowns
     initDropdowns();
+
+    // Initializes the Event Listeners for the Custom Effects
+    initCustoms();
 
     // Loads the Canvas from Local Storage
     loadCanvas(localStorage.getItem(canvasName));

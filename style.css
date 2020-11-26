@@ -14,6 +14,11 @@ canvas {
   display: block;
 }
 
+.hidden {
+  opacity: 0;
+}
+
+
 /* ===== Tools Container Styling ===== */
 .tools-container {
     display: inline-block;
@@ -26,6 +31,15 @@ canvas {
 
 .tools {
     display: flex;
+}
+
+.shapes-horizontal-container {
+  display: flex;
+}
+
+
+.hidden {
+  opacity: 0;
 }
 
 /* ----- Tools-Container Slide in Animation ----- */
@@ -64,10 +78,20 @@ canvas {
 
 
 /* ===== Buttons Styling ===== */
+.tool-button {
+  padding: 10px;
+  margin: 2px;
+  outline: 1px solid black; 
+}
+
 .canvas-button {
   padding: 10px;
   margin: 2px;
   outline: 1px solid black; 
+}
+
+.hidden {
+  opacity: 0;
 }
 
 .disabled {
