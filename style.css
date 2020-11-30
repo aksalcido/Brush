@@ -59,6 +59,10 @@ canvas {
 
 
 /* ===== Color Styling ===== */
+.current-color {
+  border: 2px solid yellow;
+}
+
 .paint {
     width: 20px;
     margin: 3px;
@@ -71,7 +75,19 @@ canvas {
     margin-left: 20px;
 }
 
+#color-display {
+  transition: all 0.5s;
+}
+
 /* ===== Sliders Styling ===== */
+.active-custom {
+  background: lightpink;
+}
+
+.current-tool {
+  background: lightblue;
+}
+
 .tool-slider {
     margin: 10px;
 }
@@ -90,12 +106,17 @@ canvas {
   outline: 1px solid black; 
 }
 
-.hidden {
-  opacity: 0;
-}
-
 .disabled {
   background: darkgray;
+}
+
+
+/* Represents the Clicked starting Location when drawing a Shape */
+.shapeClick {
+  background: black; 
+  width: 10px; 
+  height: 10px; 
+  position: fixed;
 }
 
 /* ===== Check Boxes Styling ===== */
@@ -164,21 +185,7 @@ canvas {
   }
 
 
-#current-color {
-  transition: all 0.5s;
-}
-
-
-
-
-
-
-
-
-
-
-
-/* Dropdown Button */
+/* ===== Dropdown Button ===== */
 .dropbtn {
   background-color: #3498DB;
   color: white;
@@ -212,13 +219,22 @@ canvas {
 /* Links inside the dropdown */
 .dropdown-content a {
   color: black;
-  padding: 12px 16px;
+  padding: 12px 12px;
   text-decoration: none;
   display: block;
 }
 
+.dropdown-content a:nth-child(even) {
+  background: #DBDBDB;
+}
+
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd}
+.dropdown-content a:hover {
+  background-color: white;
+}
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {display:block;}
+.show {  
+  display:block;
+  opacity: 1;
+}

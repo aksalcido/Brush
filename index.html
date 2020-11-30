@@ -12,7 +12,7 @@
 <body>
     <div class="tools-container slide-in">
         
-        <div id="current-color" style="height: 35px; margin-bottom: 10px; background: black;">
+        <div id="color-display" style="height: 35px; margin-bottom: 10px; background: black;">
             
         </div>
 
@@ -27,7 +27,7 @@
             <div data-color="blue" class="tool paint"></div>
             <div data-color="purple" class="tool paint"></div>
             <div data-color="bisque" class="tool paint"></div>
-            <div data-color="black" class="tool paint"></div>
+            <div data-color="black" class="tool paint "></div>
             <input class="custom-rgb" type="color">
             
             <!-- Allows the User to change the width of the Line -->
@@ -54,7 +54,7 @@
             
 
             <div class="cursor-options" style="display: flex; padding-left: 50px;">
-                <div class="canvas-button" data-tool="paint" id="paint-brush">Brush</div>
+                <div class="canvas-button current-tool" data-tool="paint" id="paint-brush">Brush</div>
                 <div class="canvas-button" data-tool="fill" id="fill-bucket">Fill</div>
                 <div class="canvas-button" data-tool="pick" id="color-picker">Color Picker</div>
                 
@@ -90,7 +90,7 @@
             </div>
 
             <div class="bts-options" style="display: flex;">
-                <div class="canvas-button" id="undo">Undo</div>
+                <div class="canvas-button disabled" id="undo">Undo</div>
                 <div class="canvas-button" id="redo">Redo</div>
                 <div class="canvas-button" id="save">Save</div>
                 <div class="canvas-button" id="clear">Clear</div>
@@ -125,6 +125,9 @@
             </div>
 
         </div>
+    </div>
+
+    <div class="shapeClick hidden">
     </div>
 
     <canvas></canvas>
