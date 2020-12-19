@@ -11,7 +11,11 @@
     <!-- Toolbar on Top of Page -->
     <div class="tools-container slide-in">
         <!-- Color Display for the current color -->
-        <div id="color-display" style="height: 35px; margin-bottom: 10px; background: black;">
+        <div id="color-display">
+        </div>
+
+        <div class="dropdown-background">
+            <span class="arrow"></span>
         </div>
 
         <div class="tools">
@@ -60,31 +64,52 @@
                 </div>
             </div>
 
+            <div class="tool-options-container">
+                <!-- Brush has multiple brush options to choose for so it is a dropdown s -->
+                <div class="canvas-button current-tool" data-tool="paint" id="paint-brush">
+                    <a>🖌️Brush</a>
 
-            <div class="checkbox-container">
-                <!-- Allows the User to Click a Box to change the Linecap -->
-                <label class="brush-checkbox" data-linecap="round">Round
-                    <input  type="checkbox" checked>
-                    <span class="checkmark"></span>
-                </label>
-                    
-                <label class="brush-checkbox" data-linecap="butt">Butt
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                </label>
-                    
-                <label class="brush-checkbox" data-linecap="square">Square
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                </label>
-            </div>
+                    <ul class="dropdown brush-dropdown">
+                        <li class="trigger-enter trigger-enter-active">
+                            <label class="brush-checkbox" data-linecap="round">Round
+                                <input  type="checkbox" checked>
+                                <span class="checkmark"></span>
+                            </label>
+                        </li>
 
-            
-            <div class="tool-options-container" style="display: flex; padding-left: 50px;">
-                <div class="canvas-button current-tool" data-tool="paint" id="paint-brush">🖌️Brush</div>
+                        <li>
+                            <label class="brush-checkbox" data-linecap="butt">Butt
+                                <input type="checkbox">
+                                <span class="checkmark"></span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label class="brush-checkbox" data-linecap="square">Square
+                                <input type="checkbox">
+                                <span class="checkmark"></span>
+                            </label>
+                        </li>
+                    </ul>>
+                </div>
+                <!-- Fill Tool -->
                 <div class="canvas-button" data-tool="fill" id="fill-bucket">🥛Fill</div>
+                <!-- Color Picker Tool -->
                 <div class="canvas-button" data-tool="pick" id="color-picker">💧Color Picker</div>
-                <div class="canvas-button" data-tool="filledRectangle" id="shape-picker">💠Shape Picker</div>
+                <!-- Shape Picker has multiple options to choose for so it is a dropdown -->
+                <div class="canvas-button" data-tool="filledRectangle" id="shape-picker">
+                    <a>💠Shape Picker</a>
+
+                    <ul class="dropdown shape-dropdown">
+                        <li>
+                            <div class="canvas-button" data-tool="filledRectangle" id="filledRectangle">Filled Rectangle</div>
+                        </li>
+
+                        <li>
+                            <div class="canvas-button" data-tool="strokedRectangle" id="strokedRectangle">Stroke Rectangle</div>
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             <div class="effects-dropdown-container">
@@ -107,14 +132,14 @@
             </div>
 
 
-            <div class="custom-effects-container" style="padding-left: 20px;">
+            <div class="custom-effects-container">
                 <div class="row" style="display: flex;">
                     <div data-effect="rainbow" class="canvas-button" id="rainbow">RAINBOW</div>
                     <div data-effect="directional" class="canvas-button" id="directional">DIRECTIONAL</div>
                     <div data-effect="invert" class="canvas-button" id="invert">invert</div>
                 </div>
                 <div class="row" style="display: flex;">
-                    <div data-effect="rainbow" class="canvas-button" id="rainbow">RAINBOW</div>
+                    <div data-effect="cust" class="canvas-button" id="cust">CUST</div>
                     <div data-effect="directional" class="canvas-button" id="directional">DIRECTIONAL</div>
                     <div data-effect="invert" class="canvas-button" id="invert">invert</div>
                 </div>

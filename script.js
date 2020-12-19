@@ -30,8 +30,8 @@ const colorPickerButton = document.querySelector("#color-picker");
 const shapePickerButton = document.querySelector("#shape-picker");
 
 //const horizontalDisplay = document.querySelector(".horizontal-display");
-//const fRectangleButton  = document.querySelector("#filledRectangle");
-//const sRectangleButton  = document.querySelector("#strokedRectangle");
+const fRectangleButton  = document.querySelector("#filledRectangle");
+const sRectangleButton  = document.querySelector("#strokedRectangle");
 
 const clickPoint = document.querySelector(".shape-click");
 
@@ -174,6 +174,9 @@ function handleCustomEffects() {
         else if (effect === rainbowButton.dataset.effect) {
             rainbow();
         }
+        else if (effect === "cust") {
+            testCustom();
+        }
         else {
             
         }
@@ -217,6 +220,51 @@ function invert() {
 
     // Revert Brush back to Previous State
     ctx.globalCompositeOperation = currentCompositeOperation;
+}
+
+function grayscale() {
+
+}
+
+let dotted = 0;
+let customStored;
+
+function testCustom() {
+
+    /* Dynamic LineCap
+    console.log("dotted: ", dotted, " lineJoin: ", ctx.lineCap);
+
+    if (dotted <= 150) {
+        ctx.lineCap = 'round';
+    }
+
+    else if (dotted <= 300) {
+        ctx.lineCap = 'butt';
+    }
+
+    else if (dotted <= 450) {
+        ctx.lineCap = 'square';
+    }
+
+    else {
+        dotted = 0;
+    }
+
+    dotted++;
+    */
+ 
+    /* Skip in between
+    if (ctx.strokeStyle !== '#ffffff')
+        customStored = ctx.strokeStyle;
+
+    if (dotted % 2 != 0) {
+        ctx.strokeStyle = "white";
+    } else {
+        ctx.strokeStyle = customStored;
+    }
+
+    dotted++;
+    */
 }
 
 /* When we pick a normal color normally, we remove any custom color effects for better functionality of the program */
@@ -453,6 +501,10 @@ function initCheckBoxes() {
     });
 }
 
+
+
+const background = document.querySelector('.dropdown-background');
+
 /* Initializes the Event Listeners functionality for the buttons in the Tool Container */
 function initButtons() {
     // Save Button to save the drawn image
@@ -468,16 +520,61 @@ function initButtons() {
     // Hides the ToolContainer
     hideButton.addEventListener("click", () => toolContainer.classList.add("inactive"));
 
-    // User Tools -- Paint Brush, Fill-Bucket, and ColorPicker 
+    // User Tools -- Paint Brush, Fill-Bucket, ColorPicker, and Shape Picker 
     paintBrushButton.addEventListener("click", () => toolTransition(paintBrushButton));
+    paintBrushButton.addEventListener("mouseenter", () => handleDropdownEnter(paintBrushButton));
+    paintBrushButton.addEventListener("mouseleave", () => handleDropdownLeave(paintBrushButton));
+
     fillBucketButton.addEventListener("click", () => toolTransition(fillBucketButton));
+
     colorPickerButton.addEventListener("click", () => toolTransition(colorPickerButton));
+
     shapePickerButton.addEventListener("click", () => toolTransition(shapePickerButton));
+    shapePickerButton.addEventListener("mouseenter", () => handleDropdownEnter(shapePickerButton));
+    shapePickerButton.addEventListener("mouseleave", () => handleDropdownLeave(shapePickerButton));
 
     // Shape Button Event Listeners
-    //fRectangleButton.addEventListener("click", () => shapePickerButton.dataset.tool = fRectangleButton.dataset.tool);
-    //sRectangleButton.addEventListener("click", () => shapePickerButton.dataset.tool = sRectangleButton.dataset.tool);
+    fRectangleButton.addEventListener("click", () => shapePickerButton.dataset.tool = fRectangleButton.dataset.tool);
+    sRectangleButton.addEventListener("click", () => shapePickerButton.dataset.tool = sRectangleButton.dataset.tool);
 }
+
+function handleDropdownEnter(button) {
+    button.classList.add('trigger-enter');
+    // Arrow Function -- value of this is inherited from parent
+    setTimeout(() => button.classList.contains('trigger-enter') &&
+    button.classList.add('trigger-enter-active'), 150);
+    background.classList.add('open');
+
+    // Acquire the dropdown for the current tool
+    const dropdown = button.querySelector(".dropdown");
+    const dropdownCoords = dropdown.getBoundingClientRect();
+    
+    var leftHARD = 30;
+    var offsetHARD = 30;
+
+    // Adjusts the dropdown background to move to the current tool dropdown
+    background.style.setProperty('width', `${dropdownCoords.width}px`);
+    background.style.setProperty('height', `${dropdownCoords.height}px`);
+    background.style.setProperty('transform', `translate(${dropdownCoords.left - leftHARD}px, ${dropdownCoords.top - offsetHARD}px)`);
+}
+
+function handleDropdownLeave(button) {
+    // Hide dropdown and background
+    button.classList.remove('trigger-enter', 'trigger-enter-active');
+    background.classList.remove('open');
+
+    const dropdown = button.querySelector(".dropdown");
+    const dropdownCoords = dropdown.getBoundingClientRect();
+
+    // Removes the background from the scene and prevents it from getting in the way of the Canvas
+    background.style.setProperty('width', '0px');
+    background.style.setProperty('height', '0px');
+    background.style.setProperty('transform', `translate(${-dropdownCoords.left}px, ${-dropdownCoords.top}px)`);
+}
+
+
+
+
 
 /* Handles the transition between new Tools clicked by the User */
 function toolTransition(newTool) {
@@ -566,6 +663,11 @@ function initCustoms() {
 
     // Event Listener for Inverting the Canvas
     invertButton.addEventListener("click", invert);
+
+    const custButton = document.querySelector("#cust");
+    custButton.addEventListener("click", () => {
+        customEffects.push("cust");
+    });
 }
 
 /* Program Init() Method that sets up and begins the program */
