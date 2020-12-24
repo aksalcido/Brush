@@ -131,13 +131,13 @@ app.post("/register", function(req, res) {
 });
 
 
-// Images Page
-app.get("/images", function(req, res) {
-    res.send("Images Page");
+// Drawings Page
+app.get("/drawings", function(req, res) {
+    res.render("drawing/index");
 });
 
-app.get("/images/:id", function(req, res) {
-    res.send("Image : " + req.params.id);
+app.get("/drawings/:id", function(req, res) {
+    res.render("drawing/show");
 });
 
 
