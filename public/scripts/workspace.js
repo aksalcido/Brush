@@ -26,7 +26,6 @@ const hideButton  = document.querySelector("#hide");
 const paintBrushButton  = document.querySelector("#paint-brush");
 const fillBucketButton  = document.querySelector("#fill-bucket");
 const colorPickerButton = document.querySelector("#color-picker");
-
 const shapePickerButton = document.querySelector("#shape-picker");
 
 //const horizontalDisplay = document.querySelector(".horizontal-display");
@@ -321,8 +320,25 @@ function savePreviousCanvas() {
 }
 
 function save() {
+    // Save contents of the Canvas
     var img    = canvas.toDataURL("image/png");
-    document.write('<img src="'+img+'"/>');
+
+    // XMLRequest to make a POST Request to Express
+    var xhr = new XMLHttpRequest();
+
+    // Used as an object that will be used as a JSON string object
+    var data = {"image": img};
+
+    // JSON String that is sent as a POST Request
+    var string = JSON.stringify(data);
+
+    // Send a POST Request to create to upload to server
+    xhr.open('POST', "/create", true);
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+    xhr.send(string);
+
+    // Exit Create Mode
+    window.location.replace("/save");
 }
 
 function clear() {
@@ -358,9 +374,9 @@ function undo(event) {
 /* Redo functionality by loading the Canvas forward as long as we are not at the most current state. */
 function redo(event) {
     if (State.index == State.states.length - 1) {
-        return; // console.log("Can not redo anything");
+        return;
     } else {
-        loadCanvas(State.states[++State.index]); //         console.log("WE have states to go to!"); console.log("State.index: " + State.index);
+        loadCanvas(State.states[++State.index]);
     }
 }
 

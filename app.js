@@ -6,13 +6,15 @@ var express = require("express"),
     passport = require("passport");
     LocalStrategy = require("passport-local");
 
+// Allows us to parse JSON in POST Requests of limit 50mb
+app.use(bodyParser.json( {limit: '50mb'} ));
+
 // Imported Models
 var User = require("./models/user.js");
-
+var Artwork = require("./models/artwork.js");
 
 // Global Variables
 var BASE_PORT = 3000;
-
 
 
 // Setup (if not created already) and Connect the Mongoose Database 
@@ -58,10 +60,6 @@ app.use(function(req, res, next) {
     next();
 });
 
-
-
-
-
 // Landing Page
 app.get('/', function(req, res) {
     res.render("landing.ejs");
@@ -77,9 +75,27 @@ app.get("/create", function(req, res) {
     res.sendFile('workspace.html', {root : __dirname + '/public/html'});
 });
 
+app.post("/create", function(req, res) {
+    var newArtwork = {name: "", image: req.body.image, description: "", author: {}};
+    
+    Artwork.create(newArtwork, function(err, newlyCreated) {
+        if (err) {
+            console.log("Error Creating Artwork");
+        } else {
+            console.log("Artwork Successfully Created");
+            console.log(newlyCreated);
+        }
+    });
+})
+
 
 app.get("/learn", function(req, res) {
     res.render("learn");
+});
+
+// Save Page
+app.get("/save", function(req, res) {
+    res.send("Save Page");
 });
 
 
@@ -138,15 +154,6 @@ app.get("/drawings", function(req, res) {
 
 app.get("/drawings/:id", function(req, res) {
     res.render("drawing/show");
-});
-
-
-
-
-
-// Save Page
-app.get("/save", function(req, res) {
-    res.send("Save Page");
 });
 
 app.listen(BASE_PORT, '127.0.0.1', function() {
