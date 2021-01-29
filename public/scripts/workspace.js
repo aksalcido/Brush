@@ -322,7 +322,22 @@ function savePreviousCanvas() {
 function save() {
     // Save contents of the Canvas
     var img    = canvas.toDataURL("image/png");
+    var data   = JSON.stringify({image: img});
 
+    fetch('/create',
+        { method: "POST", body: data, redirect: "follow", headers: {'Content-Type': 'application/json'}})
+        .then(response => { 
+            window.location.replace(response.url);
+        })
+        .then(function(myJson) { 
+            console.log(myJson); 
+        })
+        .catch(error => {
+            console.log(error);
+    });
+    
+
+    /* XMLRequest
     // XMLRequest to make a POST Request to Express
     var xhr = new XMLHttpRequest();
 
@@ -339,7 +354,9 @@ function save() {
 
     // Exit Create Mode
     window.location.replace("/save");
+    */
 }
+
 
 function clear() {
     if (!clearButton.classList.contains('disabled')) {

@@ -6,9 +6,6 @@ var express = require("express"),
     passport = require("passport");
     LocalStrategy = require("passport-local");
 
-// Allows us to parse JSON in POST Requests of limit 50mb
-app.use(bodyParser.json( {limit: '50mb'} ));
-
 // Imported Models
 var User = require("./models/user.js");
 var Artwork = require("./models/artwork.js");
@@ -28,6 +25,10 @@ mongoose.connect("mongodb://localhost:27017/brush_database", {
 
 // Set up BodyParser to handle HTTP POST reqs
 app.use(bodyParser.urlencoded({extended: true}));
+
+// Allows us to parse JSON in POST Requests of limit 50mb
+app.use(bodyParser.json( {limit: '50mb'} ));
+
 
 // App checks for "ejs" files in the view so we don't have to manually type '.ejs'
 app.set("view engine", "ejs");
@@ -77,17 +78,20 @@ app.get("/create", function(req, res) {
 
 app.post("/create", function(req, res) {
     var newArtwork = {name: "", image: req.body.image, description: "", author: {}};
-    
+
     Artwork.create(newArtwork, function(err, newlyCreated) {
         if (err) {
             console.log("Error Creating Artwork");
         } else {
             console.log("Artwork Successfully Created");
             console.log(newlyCreated);
+
+            // ID Will be replaced with artwork id  http://localhost:3000/artwork/6012715edac7df16fc37facc
+            res.redirect("/artwork/" + newlyCreated._id);
         }
     });
-})
 
+})
 
 app.get("/learn", function(req, res) {
     res.render("learn");
@@ -146,15 +150,29 @@ app.post("/register", function(req, res) {
     })
 });
 
-
-// Drawings Page
-app.get("/drawings", function(req, res) {
-    res.render("drawing/index");
+// Artwork Pages
+app.get("/artwork", function(req, res) {
+    res.render("artwork/index");
 });
 
-app.get("/drawings/:id", function(req, res) {
-    res.render("drawing/show");
+app.get("/artwork/:id", function(req, res) {
+    Artwork.findById(req.params.id).populate("comments").exec(function(err, foundArtwork) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(foundArtwork.image);
+            res.render("artwork/show", {artwork: foundArtwork});
+        }
+    });
 });
+
+app.post("/artwork/:id/comment", function(req, res) {
+    console.log(res.body);
+    res.send("Comment?");
+});
+
+
+
 
 app.listen(BASE_PORT, '127.0.0.1', function() {
     console.log("Brush Server started");
