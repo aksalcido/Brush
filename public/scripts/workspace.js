@@ -335,26 +335,6 @@ function save() {
         .catch(error => {
             console.log(error);
     });
-    
-
-    /* XMLRequest
-    // XMLRequest to make a POST Request to Express
-    var xhr = new XMLHttpRequest();
-
-    // Used as an object that will be used as a JSON string object
-    var data = {"image": img};
-
-    // JSON String that is sent as a POST Request
-    var string = JSON.stringify(data);
-
-    // Send a POST Request to create to upload to server
-    xhr.open('POST', "/create", true);
-    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
-    xhr.send(string);
-
-    // Exit Create Mode
-    window.location.replace("/save");
-    */
 }
 
 

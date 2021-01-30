@@ -2,7 +2,7 @@
 
 <div class="container">
     <div class="row" style="background: #E2E2E2;">
-        <h1><%= currentUser.username %>'s Profile!</h1>
+        <h1><%= user.username %>'s Profile!</h1>
     </div>
     <div class="row">
         <div class="col-4" style="background: rgb(247, 247, 247);">
@@ -27,6 +27,16 @@
             <p> Location: <span style="float: right;">???</span></p>
             <p> Location: <span style="float: right;">???</span></p>
 
+        </div>
+
+        <div class="col-8" style="border: 1px solid black; background: rgb(247, 247, 247);">
+            <div class="row" style="padding: 5px;">
+                <% user.artworks.forEach(function(artwork) { %>
+                    <div class="col">
+                        <a href="/artwork/<%= artwork._id %>"><img class="img-thumbnail" src="<%=artwork.img.data%>"></a>
+                     </div>
+                <% }) %>
+            </div>
         </div>
 
         <div class="col-8" style="border: 1px solid black; background: rgb(247, 247, 247);">

@@ -3,7 +3,7 @@ var mongoose = require("mongoose");
 var ArtworkSchema = new mongoose.Schema({
     name: String,
     img: {
-        data: Buffer,
+        data: String,
         contentType: String
     },
     description: String,
@@ -11,10 +11,17 @@ var ArtworkSchema = new mongoose.Schema({
         type: Date, default: Date.now
     },
     author: {
-        name: String
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
+        username: String
     },
     comments: [
-
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Comment"
+        }
     ]
 });
 

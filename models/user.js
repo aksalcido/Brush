@@ -6,7 +6,13 @@ var UserSchema = new mongoose.Schema({
     password: String,
     createdAt: {
         type: Date, default: Date.now
-    }
+    },
+    artworks: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Artwork"
+        }
+    ]
 });
 
 UserSchema.plugin(passportLocalMongoose);
