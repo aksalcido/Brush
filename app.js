@@ -43,6 +43,8 @@ app.use(methodOverride("_method"));
 
 // Set up Session and Passport Authentication with Users
 var session = require("express-session");
+const artwork = require("./models/artwork.js");
+const e = require("express");
 
 app.use(session({
     secret: "Once again another passowrd",
@@ -120,11 +122,13 @@ app.post("/create", function(req, res) {
 })
 
 
+
 // ===== Profile Page =====
 app.get("/profile", function(req, res) {
     console.log(res.locals.currentUser);
     if (res.locals.currentUser) {
-        res.render("profile");
+        res.redirect("/profile/" + res.locals.currentUser.username);
+        //res.render("profile");
     } else {
         res.redirect("/login");
     }   
@@ -135,10 +139,15 @@ app.get("/profile/:username", function(req, res) {
         if (err) {
             console.log("Couldn't find user");
         } else {
-            res.render("profile", {user: foundUser});
+            res.render("user/profile", {user: foundUser});
         }
     });
 });
+
+app.get("/profile/:id/edit", function(req, res) {
+    res.render("user/edit");
+});
+
 
 // ===== Artwork =====
 app.get("/artwork", function(req, res) {
@@ -157,6 +166,40 @@ app.get("/artwork/:id", function(req, res) {
     });
 });
 
+// NEED TO CHECK ARTWORK OWNERSHIP MIDDLEWARE TO PREVENT JUST EDITING 
+app.get("/artwork/:id/edit", function(req, res) {
+    Artwork.findById(req.params.id, function(err, foundArtwork) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("artwork/edit", {artwork: foundArtwork});
+        }
+    });
+});
+
+app.put("/artwork/:id", function(req, res) {
+    Artwork.findByIdAndUpdate(req.params.id, req.body.artwork, function(err, updatedArtwork) {
+        if (err) {
+            console.log(err);
+            res.redirect("/profile");
+        } else {
+            res.redirect("/artwork/" + req.params.id);
+        }
+    });
+});
+
+app.delete("/artwork/:id", function(req, res) {
+    Artwork.findByIdAndDelete(req.params.id, function(err) {
+        if (err) {
+            res.redirect("/artwork/:id");
+        } else {
+            res.redirect("/profile");
+        }
+    });
+});
+
+
+// Comment Stuff
 app.post("/artwork/:id/comment", isLoggedIn, function(req, res) {
     // Lookup Artwork by ID
     Artwork.findById(req.params.id, function(err, artwork) {
@@ -182,6 +225,18 @@ app.post("/artwork/:id/comment", isLoggedIn, function(req, res) {
                     res.redirect("/artwork/" + artwork._id);    
                 }
             });
+        }
+    });
+});
+
+app.delete("/artwork/:id/comment/:comment_id", function(req, res) {
+    Comment.findByIdAndDelete(req.params.comment_id, function(err) {
+        if (err) {
+            // Flash
+            res.redirect("/artwork/" + req.params.id);
+        } else {
+            // Flash
+            res.redirect("/artwork/" + req.params.id);
         }
     });
 });

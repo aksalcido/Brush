@@ -1,8 +1,9 @@
-<%- include("./partials/header") %>
+<%- include("../partials/header") %>
 
 <div class="container">
     <div class="row" style="background: #E2E2E2;">
         <h1><%= user.username %>'s Profile!</h1>
+        <a class="btn btn-warning" href="<%= user._id %>/edit">Edit</a>
     </div>
     <div class="row">
         <div class="col-4" style="background: rgb(247, 247, 247);">
@@ -12,6 +13,7 @@
             max-height: 300px;
             "></img>
         </div>
+        <!-- Bio -->
         <div class="col-8" style="border: 1px solid black; background: lightpink;">
             <p>
                 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
@@ -19,6 +21,7 @@
         </div>
     </div>
     <div class="row" style="height: 800px;">
+        <!-- -->
         <div class="col-4" style="background: lightblue;">
             <h>
                 Container Start
@@ -28,7 +31,7 @@
             <p> Location: <span style="float: right;">???</span></p>
 
         </div>
-
+        <!-- Display Each Artwork by the User -->
         <div class="col-8" style="border: 1px solid black; background: rgb(247, 247, 247);">
             <div class="row" style="padding: 5px;">
                 <% user.artworks.forEach(function(artwork) { %>
@@ -38,36 +41,8 @@
                 <% }) %>
             </div>
         </div>
-
-        <div class="col-8" style="border: 1px solid black; background: rgb(247, 247, 247);">
-            <div class="row" style="padding: 5px;">
-                <div class="col">
-                    <a href="/artwork/id6"><img class="img-thumbnail" src="https://source.unsplash.com/xX6BOQ0fJvk"></a>
-                 </div>
-                <div class="col">
-                    <a href="/artwork/id6"><img class="img-thumbnail" src="https://source.unsplash.com/xX6BOQ0fJvk"></a>
-                </div>
-
-                <div class="col">
-                    <a href="/artwork/id6"><img class="img-thumbnail" src="https://source.unsplash.com/xX6BOQ0fJvk"></a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <img class="img-thumbnail" src="https://images.unsplash.com/photo-1570393080660-de4e4a15a247?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NXx8YXJ0fGVufDB8MHwwfA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-                </div>
-
-                <div class="col">
-                    <img class="img-thumbnail" src="https://images.unsplash.com/photo-1541367777708-7905fe3296c0?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTJ8fGFydHxlbnwwfDB8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-                </div>
-
-                <div class="col">
-                    <img class="img-thumbnail" src="https://images.unsplash.com/photo-1545144760-f44b51664396?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTd8fGFydHxlbnwwfDB8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-                </div>
-            </div>
-        </div>
     </div>
 </div>>
 
 
-<%- include("./partials/footer") %>
+<%- include("../partials/footer") %>

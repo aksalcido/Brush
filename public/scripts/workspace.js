@@ -301,7 +301,7 @@ function savePreviousCanvas() {
     previousCanvas = canvas.toDataURL();
 
     // Max previous states we are storing reached -- must starting shifting elements to the left -- eleminating the oldest stored canvas from memory
-    if (State.index == State.max - 1) {
+    if (State.index === State.max - 1) {
         State.states.push(previousCanvas);
         State.states.splice(-State.max - 1, State.states.length - State.max);
     }
@@ -358,7 +358,7 @@ function undo(event) {
 
     loadCanvas(State.states[State.index--]);
 
-    if (State.index == 0) {
+    if (State.index === 0) {
         undoButton.classList.add("disabled");
     }
     
@@ -370,7 +370,7 @@ function undo(event) {
 
 /* Redo functionality by loading the Canvas forward as long as we are not at the most current state. */
 function redo(event) {
-    if (State.index == State.states.length - 1) {
+    if (State.index === State.states.length - 1) {
         return;
     } else {
         loadCanvas(State.states[++State.index]);

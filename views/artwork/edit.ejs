@@ -1,0 +1,32 @@
+<%- include('../partials/header') %>
+
+<div class="container">
+    <h1 style="text-align: center;">
+        Edit '<%= artwork.name %>'
+    </h1>
+
+    <div style="width: 80%; margin: 25px auto;">
+        <form action="/artwork/<%= artwork._id %>?_method=PUT" method="POST">
+            <!-- Name -->
+            <div class="form-group">
+                <input class="form-control" type="text" name="artwork[name]" placeholder="name" value="<%= artwork.name %>">
+            </div>
+            <!-- Description -->
+            <div class="form-group">
+                <textarea class="form-control" name="artwork[description]" placeholder="description" rows="5" value="<%= artwork.description %>"></textarea>
+            </div>
+
+            <!-- Submit -->
+            <div class="form-group">
+                <button class="btn btn-lg btn-primary btn-block">
+                    Submit
+                </button>
+            </div>
+        </form>
+    
+        <a href="/artwork/<%=artwork._id%>">Back</a>
+    </div>
+
+</div>>
+
+<%- include('../partials/footer') %>

@@ -29,9 +29,14 @@
 
                     <h4>Created by <a href="/profile"><%= artwork.author.username %></a> on <%= artwork.createdAt %></h4>
                     
+                    <!-- Edit/Delete Button for Artwork -->
                     <% if (currentUser && artwork.author.id == currentUser.id) { %> 
-                        <input type="submit" class="btn btn-xs btn-danger" value="Edit">
+                        <a class="btn btn-warning" href="<%= artwork._id %>/edit">Edit</a>
+                        <form action="/artwork/<%= artwork._id %>?_method=DELETE"  method="POST" class="delete-form" style="float: right;">
+                            <input type="submit" class="btn btn-xs btn-danger" value="Delete">
+                        </form>
                     <% } %>
+
                 </div>
                 
                 <!-- Comment Section -->
@@ -61,7 +66,7 @@
                             <span class="pull-right"><%= comment.createdAt %></span>
                             <!-- Delete Button -->
                             <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
-                                <form class="delete-form" style="float: right;">
+                                <form class="delete-form" action="/artwork/<%= artwork._id %>/comment/<%= comment._id %>?_method=DELETE" method="POST" style="float: right;">
                                     <input type="submit" class="btn btn-xs btn-danger" value="Delete">
                                 </form>
                             <% } %>
