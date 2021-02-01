@@ -3,7 +3,10 @@
 <div class="container">
     <div class="row" style="background: #E2E2E2;">
         <h1><%= user.username %>'s Profile!</h1>
-        <a class="btn btn-warning" href="<%= user._id %>/edit">Edit</a>
+        <!-- Profile Edit Button -->
+        <% if (currentUser && currentUser.username === user.username) { %>
+            <a class="btn btn-warning" href="<%= user._id %>/edit">Edit</a>
+        <% } %>
     </div>
     <div class="row">
         <div class="col-4" style="background: rgb(247, 247, 247);">
@@ -16,7 +19,11 @@
         <!-- Bio -->
         <div class="col-8" style="border: 1px solid black; background: lightpink;">
             <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                <% if (!user.description || user.description.length === 0) { %>
+                    No Description
+                <% } else { %>
+                    <%= user.description %>
+                <% } %>
             </p>
         </div>
     </div>
