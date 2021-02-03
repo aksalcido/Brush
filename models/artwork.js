@@ -22,6 +22,18 @@ var ArtworkSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Comment"
         }
+    ],
+    likes: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User"
+            }
+    ],
+    dislikes: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User"
+            }
     ]
 });
 

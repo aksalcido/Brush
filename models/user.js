@@ -12,10 +12,16 @@ var UserSchema = new mongoose.Schema({
     createdAt: {
         type: Date, default: Date.now
     },
-    artworks: [
+    artworks: [ 
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Artwork"
+        }
+    ],
+    ratings: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Rating"
         }
     ]
 });

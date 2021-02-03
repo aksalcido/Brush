@@ -9,17 +9,26 @@
                 
                 <div class="caption-full" style="border: 1px solid black; padding: 5px; margin-top: 10px;">
                     <!-- Name of the Artwork -->
-                    <h4>
-                        <a>
+                    <div style="display: inline-block; width: 100%;">
+                        <h4 style="display: inherit; margin-right: 85%;">
                             <% if (artwork.name.length == 0) { %>
                                 <i>No Name..</i>
                             <% } else { %>
                                 <%= artwork.name %>
                             <% } %>
-                        </a>
-                    </h4>
+                        </h4>
+
+                        <form action="/artwork/<%= artwork._id%>/like?_method=PUT" method="POST" style="display: inherit;">
+                            <button type="submit">Like</button>
+                        </form>
+                    
+                        <form action="/artwork/<%= artwork._id%>/dislike?_method=PUT" method="POST" style="display: inherit;">
+                            <button type="submit">Dislike</button>
+                        </form>
+                    </div>
+
                     <!-- Description of the Artwork -->
-                    <p>
+                    <p style="">
                         <% if (artwork.description.length == 0) { %>
                             <i>No Description</i>
                         <% } else { %>

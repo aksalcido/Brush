@@ -45,8 +45,7 @@ router.get("/:id/edit", function(req, res) {
 
 // PUT - Edits the User Profile Information
 router.put("/:id", function(req, res) {
-    console.log(req.params.user);
-    User.findByIdAndUpdate(req.params.id, req.params.user, function(err, updatedUser) {
+    User.findByIdAndUpdate(req.params.id, req.body.user, function(err, updatedUser) {
         if (err) {
             console.log(err);
             res.redirect("/home");

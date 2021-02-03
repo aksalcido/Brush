@@ -2,6 +2,7 @@ var express = require("express");
 
 // Models
 var Artwork = require("../models/artwork.js");
+var User    = require("../models/user.js");
 var Comment = require("../models/comment.js");
 
 // Router
@@ -51,12 +52,59 @@ router.put("/:id", function(req, res) {
 router.delete("/:id", function(req, res) {
     Artwork.findByIdAndDelete(req.params.id, function(err) {
         if (err) {
-            res.redirect("/artwork/:id");
+            res.redirect("/artwork/" + req.params.id);
         } else {
             res.redirect("/profile");
         }
     });
 });
+
+
+// Likes and Dislikes
+router.put("/:id/like", middlewareObj.isLoggedIn, function(req, res) {
+        Artwork.findOne({id: req.params.id, likes: res.locals.currentUser._id}, function(err, foundArtwork) {
+            if(err) {
+                console.log(err);
+            } else if (!foundArtwork) {
+                console.log("Nobody founded");
+            } else {
+                console.log("Found");
+            }
+        });
+        
+        res.redirect("/artwork/" + req.params.id);
+});
+
+/*
+Comment.create(req.body.comment, function(err, comment) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log("Creating Comment...");
+        // Update info concerning the new comment
+        comment.author.id = req.user._id;
+        comment.author.username = req.user.username;
+        comment.save();
+
+        // Store comment onto artwork
+        artwork.comments.push(comment);
+        artwork.save();
+    
+        res.redirect("/artwork/" + artwork._id);    
+    }
+});
+*/
+
+router.put("/:id/dislike", middlewareObj.isLoggedIn,function(req, res) {
+    Artwork.findById(req.params.id, function(err, foundArtwork) {
+        if (err) {
+            console.log(err);
+        }
+    });
+
+    res.redirect("/artwork/" + req.params.id);
+});
+
 
 
 // Comment Stuff
@@ -100,5 +148,6 @@ router.delete("/:id/comment/:comment_id", function(req, res) {
         }
     });
 });
+
 
 module.exports = router;
