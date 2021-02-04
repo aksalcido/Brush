@@ -10,21 +10,24 @@
                 <div class="caption-full" style="border: 1px solid black; padding: 5px; margin-top: 10px;">
                     <!-- Name of the Artwork -->
                     <div style="display: inline-block; width: 100%;">
-                        <h4 style="display: inherit; margin-right: 85%;">
+                        <h4 style="display: inherit; margin-right: 90%;">
                             <% if (artwork.name.length == 0) { %>
                                 <i>No Name..</i>
                             <% } else { %>
                                 <%= artwork.name %>
                             <% } %>
                         </h4>
+                        
+                        <% if (currentUser && artwork.likes.some((likedBy) => likedBy.equals(currentUser._id))) { %>
+                            <form action="/artwork/<%= artwork._id%>/unlike?_method=PUT" method="POST" style="display: inherit;">
+                                <button type="submit">Unlike</button>
+                            </form>
+                        <% } else { %>
+                            <form action="/artwork/<%= artwork._id%>/like?_method=PUT" method="POST" style="display: inherit;">
+                                <button type="submit">Like</button>
+                            </form>
+                        <% } %>
 
-                        <form action="/artwork/<%= artwork._id%>/like?_method=PUT" method="POST" style="display: inherit;">
-                            <button type="submit">Like</button>
-                        </form>
-                    
-                        <form action="/artwork/<%= artwork._id%>/dislike?_method=PUT" method="POST" style="display: inherit;">
-                            <button type="submit">Dislike</button>
-                        </form>
                     </div>
 
                     <!-- Description of the Artwork -->
@@ -42,10 +45,11 @@
                     <% if (currentUser && artwork.author.id == currentUser.id) { %> 
                         <a class="btn btn-warning" href="<%= artwork._id %>/edit">Edit</a>
                         <form action="/artwork/<%= artwork._id %>?_method=DELETE"  method="POST" class="delete-form" style="float: right;">
-                            <input type="submit" class="btn btn-xs btn-danger" value="Delete">
+                            <input type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete this item?');" value="Delete">
                         </form>
                     <% } %>
-
+                    
+                    <h1> <%= artwork.likes.length %> likes</h1>
                 </div>
                 
                 <!-- Comment Section -->
@@ -70,13 +74,13 @@
                         <!-- Comment Box -->
                         <div class="col-md-12">
                             <!-- Comment Username -->
-                            <strong><%= comment.author.username %></strong>
+                            <a href="/profile/<%=comment.author.username%>"><strong><%= comment.author.username %></strong></a>
                             <!-- Comment Date -->
                             <span class="pull-right"><%= comment.createdAt %></span>
                             <!-- Delete Button -->
                             <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
                                 <form class="delete-form" action="/artwork/<%= artwork._id %>/comment/<%= comment._id %>?_method=DELETE" method="POST" style="float: right;">
-                                    <input type="submit" class="btn btn-xs btn-danger" value="Delete">
+                                    <input type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete this item?');" value="Delete">
                                 </form>
                             <% } %>
                             <!-- Comment Text -->

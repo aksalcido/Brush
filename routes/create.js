@@ -2,7 +2,8 @@ var express = require("express"),
     path = require('path')
 
 // Models
-var Artwork = require("../models/artwork");
+var User    = require("../models/user.js");
+var Artwork = require("../models/artwork.js");
 
 // Router
 var router = express.Router();

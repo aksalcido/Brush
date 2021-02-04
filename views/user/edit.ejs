@@ -4,16 +4,27 @@
     <h1 style="text-align: center;">Profile Edit Page</h1>
     
     <div class="container" style="width: 80%; margin: 20px auto;">
-        <form action="/profile/<%= user._id %>?_method=PUT" method="POST">
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="name">
-            </div>
-
+        <form action="/profile/<%= user._id %>?_method=PUT" method="POST"> 
             <!-- Description -->
             <div class="form-group">
                 <textarea class="form-control" name="user[description]" placeholder="description" rows="8" value="<%= user.description %>"></textarea>
             </div>
-            
+
+            <!-- Location -->
+            <div class="form-group">
+                <input class="form-control" type="text" name="user[location]" placeholder="location">
+            </div>
+
+            <!-- Gender -->
+            <div class="form-group">
+                <input class="form-control" type="text" name="user[gender]" placeholder="gender">
+            </div>
+             
+            <!-- Age -->
+            <div class="form-group">
+                <input class="form-control" type="text" name="user[age]" placeholder="age">
+            </div>
+     
             <!-- Image Upload -->
             <div class="form-group">
                 <input type="image" alt="Submit" width="48" height="48">

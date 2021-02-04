@@ -320,31 +320,42 @@ function savePreviousCanvas() {
 }
 
 function save() {
-    // Save contents of the Canvas
-    var img    = canvas.toDataURL("image/png");
-    var data   = JSON.stringify({image: img});
+    var confirmation = confirm("Do you want to save this? You will not be able to edit any further?");
 
-    fetch('/create',
-        { method: "POST", body: data, redirect: "follow", headers: {'Content-Type': 'application/json'}})
-        .then(response => { 
-            window.location.replace(response.url);
-        })
-        .then(function(myJson) { 
-            console.log(myJson); 
-        })
-        .catch(error => {
-            console.log(error);
-    });
+    if (confirmation) {
+        // Save contents of the Canvas
+        var img    = canvas.toDataURL("image/png");
+        var data   = JSON.stringify({image: img});
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        saveCanvas();
+        
+        fetch('/create',
+            { method: "POST", body: data, redirect: "follow", headers: {'Content-Type': 'application/json'}})
+            .then(response => { 
+                window.location.replace(response.url);
+            })
+            .then(function(myJson) { 
+                console.log(myJson); 
+            })
+            .catch(error => {
+                console.log(error);
+        });
+    }
 }
 
 
 function clear() {
-    if (!clearButton.classList.contains('disabled')) {
-        savePreviousCanvas();
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        saveCanvas();
-        
-        clearButton.classList.add("disabled");
+    var confirmation = confirm("Are you sure you want to clear the entire Canvas?");
+
+    if (confirmation) {
+        if (!clearButton.classList.contains('disabled')) {
+            savePreviousCanvas();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            saveCanvas();
+            
+            clearButton.classList.add("disabled");
+        }
     }
 }
 

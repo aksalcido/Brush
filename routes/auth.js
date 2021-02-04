@@ -25,7 +25,6 @@ router.get("/learn", function(req, res) {
     res.render("learn");
 });
 
-
 // ===== Authorization =====
 router.get("/register", function(req, res) {
     res.render("register");

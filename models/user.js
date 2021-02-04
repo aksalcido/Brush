@@ -9,6 +9,8 @@ var UserSchema = new mongoose.Schema({
     description: String,
     age: String,
     location: String,
+    gender: String,
+    totalComments: {type: Number, default: 0},
     createdAt: {
         type: Date, default: Date.now
     },
@@ -18,10 +20,16 @@ var UserSchema = new mongoose.Schema({
             ref: "Artwork"
         }
     ],
-    ratings: [
+    likes: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Rating"
+            ref: "Artwork"
+        }
+    ],
+    profileComments: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Comment"
         }
     ]
 });

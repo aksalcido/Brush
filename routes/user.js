@@ -2,6 +2,7 @@ var express = require("express");
 
 // Models
 var User = require("../models/user.js");
+var Comment = require("../models/comment.js");
 
 // Router
 var router = express.Router();
@@ -21,7 +22,7 @@ router.get("/", function(req, res) {
 
 // Maybe add search by id as well
 router.get("/:username", function(req, res) {
-    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("artworks").exec(function(err, foundUser) {
+    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("artworks").populate("profileComments").exec(function(err, foundUser) {
         if (err || !foundUser) {
             console.log("Could not find user");
             res.redirect("/home");
@@ -50,10 +51,58 @@ router.put("/:id", function(req, res) {
             console.log(err);
             res.redirect("/home");
         } else {
-            console.log("Updated: " + updatedUser);
             res.redirect("/profile/" + updatedUser.username);
         }
     });
 });
+
+
+router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
+    User.findById(req.params.id, function(err, foundUser) {
+        if (err) {
+            console.log(err);
+        } else {
+            Comment.create(req.body.comment, function(err, comment) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    // Update the comment Credentials
+                    comment.author.id = req.user._id;
+                    comment.author.username = req.user.username;
+                    comment.save();
+                    
+                    User.update({name: req.user.username}, {$inc: {totalComments: 1}});
+                    
+                    // Push the comment onto the User's Profile Comments (The one whos profile was commented on)
+                    foundUser.profileComments.push(comment);
+                    foundUser.save();
+
+                    // Redirect to that same User's Profile
+                    res.redirect("/profile/" + foundUser.username);
+                }
+            });
+        }
+    });
+
+});
+
+router.delete("/:id/comment/:comment_id", function(req, res) {
+    Comment.findByIdAndDelete(req.params.comment_id, function(err) {
+        if (err) {
+            console.log(err);
+            res.redirect("/home");
+        } else {
+            User.findById(req.params.id, function(err, foundUser) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    res.redirect("/profile/" + foundUser.username);
+                }
+            })
+        }
+    });
+});
+
+
 
 module.exports = router;
