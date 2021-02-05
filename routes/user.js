@@ -46,6 +46,40 @@ router.get("/:username", function(req, res) {
     });
 });    
 
+router.get("/:username/followers", function(req, res) {
+    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("followers").exec(function(err, foundUser) {
+        if (err || !foundUser) {
+            console.log("Could not find user");
+            res.redirect("/home");
+        } else {
+            res.render("user/followers", {user: foundUser});
+        }
+    });
+})
+
+router.get("/:username/following", function(req, res) {
+    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("following").exec(function(err, foundUser) {
+        if (err || !foundUser) {
+            console.log("Could not find user");
+            res.redirect("/home");
+        } else {
+            res.render("user/following", {user: foundUser});
+        }
+    });
+})
+
+router.get("/:username/favorites", function(req, res) {
+    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("favorites").exec(function(err, foundUser) {
+        if (err || !foundUser) {
+            console.log("Could not find user");
+            res.redirect("/home");
+        } else {
+            res.render("user/favorites", {user: foundUser});
+        }
+    });
+})
+
+
 // EDIT - Edit User Profile Information
 router.get("/:id/edit", function(req, res) {
     User.findById(req.params.id, function(err, foundUser) {
@@ -57,6 +91,44 @@ router.get("/:id/edit", function(req, res) {
         }
     });
 });
+
+
+
+// Follow
+router.get("/:username/follow", middlewareObj.isLoggedIn, function(req, res) {
+    // Find User that currentUser is trying to Follow -- foundUser
+    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).exec(function(err, foundUser) {
+        if (err) {
+            console.log(err);
+            res.redirect("/home");
+        } else {
+            // foundUser contains the person currentUser wishes to follow; So we add foundUser to following of currentUser and
+            // followers of foundUser.
+            User.findByIdAndUpdate(res.locals.currentUser._id, {
+                $addToSet: { following : foundUser._id }
+            }, {
+                new: true
+            }).exec(function(err, updatedUser) {
+                if (err) {
+                    console.log("Error completing the follow request");
+                    res.redirect("/home");
+                } else {
+                    foundUser.followers.push(updatedUser);
+                    foundUser.save();
+                    res.redirect("/profile/" + req.params.username);
+                }
+            });
+        }
+    });
+});
+
+
+router.get("/:username/unfollow", middlewareObj.isLoggedIn, function(req, res) {
+    res.send("Follow clicked");
+});
+
+
+
 
 // PUT - Edits the User Profile Information
 router.put("/:id", upload.single('file'), function(req, res, next) {
@@ -73,7 +145,6 @@ router.put("/:id", upload.single('file'), function(req, res, next) {
         }
     });
 });
-
 
 router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
     User.findById(req.params.id, function(err, foundUser) {

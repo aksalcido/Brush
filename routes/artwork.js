@@ -73,7 +73,7 @@ router.put("/:id/like", middlewareObj.isLoggedIn, function(req, res) {
                 new: true
             }).exec(function(err, updatedArtwork) {
                 if (err) {
-                    return res.status(422).json({error: err});
+
                 } else {
                     console.log("Saving");
                     foundUser.likes.push(updatedArtwork);
@@ -97,6 +97,34 @@ router.put("/:id/unlike", middlewareObj.isLoggedIn, function(req, res) {
     });
 });
 
+
+router.put("/:id/favorite", middlewareObj.isLoggedIn, function(req, res) {
+    User.findById(res.locals.currentUser, function(err, foundUser) {
+        if (err) {
+            console.log(err);
+            res.redirect("/home");
+        } else {
+            Artwork.findByIdAndUpdate(req.params.id, {
+                $addToSet: { favorites: foundUser._id }
+            }, {
+                new: true
+            }).exec(function(err, updatedArtwork) {
+                if (err) {
+                    return res.status(422).json({error: err});
+                } else {
+                    foundUser.favorites.push(updatedArtwork);
+                    foundUser.save();
+
+                    res.redirect("/artwork/" + updatedArtwork._id);
+                }
+            });
+        }
+    });
+});
+
+router.put("/:id/unfavorite", middlewareObj.isLoggedIn, function(req, res) {
+
+});
 
 // Comment Stuff
 router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {

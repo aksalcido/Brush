@@ -1,0 +1,44 @@
+<%- include("../partials/header") %>
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" aria-current="page"><a href="/profile/<%= user.username %>">Home</a></li>
+            <li class="breadcrumb-item"><a href="/profile/<%= user.username %>/followers">Followers</a></li>
+            <li class="breadcrumb-item active">Following</li>
+            <li class="breadcrumb-item"><a href="/profile/<%= user.username %>/favorites">Favorites</a></li>
+        </ol>
+    </nav>
+
+
+    <% if (user.following.length === 0) { %>
+        <div class="col-md-12 text-center">
+          <h2>No following found for <%= user.username %></h2>
+        </div>
+    <% } %>
+
+    <div class="row gutters-sm mt-3">
+        <% user.following.forEach( function(following_user) { %>
+            <p><a href="/profile/<%= following_user.username %>" style="color: inherit;">
+                <div class="col-sm-3 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <!-- Following_User Username -->
+                            <h6 class="d-flex mb-3"> <%= following_user.username %> </h6>
+
+                            <!-- Following_User Profile Picture -->              
+                            <% if (following_user.profilePicture) { %>
+                                <img src="/uploads/<%= following_user.profilePicture %>" class="card-img-top" alt="">
+                            <% } else { %>
+                                <img src="/images/girl.png" class="card-img-top" alt="">
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </a></p> 
+    <% }) %>
+
+</div>
+
+
+<%- include("../partials/footer") %>

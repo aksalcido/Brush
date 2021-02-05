@@ -28,6 +28,17 @@
                             </form>
                         <% } %>
 
+
+                        <% if (currentUser && artwork.favorites.some((favoritedBy) => favoritedBy.equals(currentUser._id))) { %>
+                            <form action="/artwork/<%= artwork._id%>/unfavorite?_method=PUT" method="POST" style="display: inherit;">
+                                <button type="submit">Unfavorite</button>
+                            </form>
+                        <% } else { %>
+                            <form action="/artwork/<%= artwork._id%>/favorite?_method=PUT" method="POST" style="display: inherit;">
+                                <button type="submit">Favorite</button>
+                            </form>
+                        <% } %>
+
                     </div>
 
                     <!-- Description of the Artwork -->
@@ -50,6 +61,7 @@
                     <% } %>
                     
                     <h1> <%= artwork.likes.length %> likes</h1>
+                    <h1> <%= artwork.favorites.length %> favorites</h1>
                 </div>
                 
                 <!-- Comment Section -->

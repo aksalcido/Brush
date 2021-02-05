@@ -1,6 +1,15 @@
 <%- include("../partials/header") %>
 
 <div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Home</li>
+            <li class="breadcrumb-item"><a href="/profile/<%= user.username %>/followers">Followers</a></li>
+            <li class="breadcrumb-item"><a href="/profile/<%= user.username %>/following">Following</a></li>
+            <li class="breadcrumb-item"><a href="/profile/<%= user.username %>/favorites">Favorites</a></li>
+        </ol>
+    </nav>
+    
     <div class="row gutters-sm mt-3">
         <!-- User and Profile Information -->
         <div class="col-md-4 mb-3">
@@ -18,6 +27,16 @@
                         </div>
                         <% if (currentUser && currentUser.username === user.username) { %>
                             <a class="btn btn-warning" href="<%= user._id %>/edit">Edit</a>
+                        <% } %>
+
+                        
+                        <!-- Follow Button -->
+                        <% if (currentUser && currentUser.username !== user.username) { %>
+                            <% if (currentUser.following.some((following_user) => following_user === user)) { %>
+                                <a class="btn btn-primary" href="<%= user.username %>/unfollow">Unfollow</a>
+                            <% } else { %>
+                                <a class="btn btn-primary" href="<%= user.username %>/follow">Follow</a>
+                            <% } %>
                         <% } %>
                     </div>
                 </div>
@@ -51,8 +70,13 @@
                     </li>
 
                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                        <h6>Community Comments</h6>
-                        <span class="text-secondary"><%= user.totalComments %></span>
+                        <h6>Followers</h6>
+                        <span class="text-secondary"><%= user.followers.length %></span>
+                    </li>
+
+                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                        <h6>Following</h6>
+                        <span class="text-secondary"><%= user.following.length %></span>
                     </li>
 
                 </ul>
