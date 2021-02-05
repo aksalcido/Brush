@@ -1,4 +1,5 @@
 var express = require("express");
+var multer = require("multer");
 
 // Models
 var User = require("../models/user.js");
@@ -6,9 +7,22 @@ var Comment = require("../models/comment.js");
 
 // Router
 var router = express.Router();
+var path = require('path');
 
 // Middleware
 var middlewareObj = require("../middleware/index.js");
+
+// Setting up Multer
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "./public/uploads/");
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+})
+
+const upload = multer({ storage: storage });
 
 router.get("/", function(req, res) {
     console.log(res.locals.currentUser);
@@ -45,7 +59,11 @@ router.get("/:id/edit", function(req, res) {
 });
 
 // PUT - Edits the User Profile Information
-router.put("/:id", function(req, res) {
+router.put("/:id", upload.single('file'), function(req, res, next) {
+    // If User uploading a profile picture
+    if (req.file)
+        req.body.user.profilePicture = req.file.filename;
+    
     User.findByIdAndUpdate(req.params.id, req.body.user, function(err, updatedUser) {
         if (err) {
             console.log(err);

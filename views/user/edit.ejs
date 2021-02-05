@@ -4,30 +4,31 @@
     <h1 style="text-align: center;">Profile Edit Page</h1>
     
     <div class="container" style="width: 80%; margin: 20px auto;">
-        <form action="/profile/<%= user._id %>?_method=PUT" method="POST"> 
+        <form action="/profile/<%= user._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
             <!-- Description -->
             <div class="form-group">
-                <textarea class="form-control" name="user[description]" placeholder="description" rows="8" value="<%= user.description %>"></textarea>
+                <textarea class="form-control" name="user[description]" placeholder="description" rows="8"><%= user.description %></textarea>
             </div>
 
             <!-- Location -->
             <div class="form-group">
-                <input class="form-control" type="text" name="user[location]" placeholder="location">
+                <input class="form-control" type="text" name="user[location]" placeholder="location" value="<%= user.location %>">
             </div>
 
             <!-- Gender -->
             <div class="form-group">
-                <input class="form-control" type="text" name="user[gender]" placeholder="gender">
+                <input class="form-control" type="text" name="user[gender]" placeholder="gender" value="<%= user.gender %>">
             </div>
              
             <!-- Age -->
             <div class="form-group">
-                <input class="form-control" type="text" name="user[age]" placeholder="age">
+                <input class="form-control" type="text" name="user[age]" placeholder="age" value="<%= user.age %>">
             </div>
      
             <!-- Image Upload -->
             <div class="form-group">
-                <input type="image" alt="Submit" width="48" height="48">
+                <label for="img">Select image:</label>
+                <input type="file" name="file" accept="image/*">
             </div>
 
             <div class="form-group">
