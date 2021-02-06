@@ -8,4 +8,14 @@ middlewareObj.isLoggedIn = function(req, res, next) {
     res.redirect("../../login");
 }
 
+middlewareObj.hasAvailableArtworkSlots = function(req, res, next) {
+    console.log(req.user.artworks.length);
+    
+    if (req.user.artworks.length < 21) {
+        return next();
+    }
+
+    res.redirect("/home");
+}
+
 module.exports = middlewareObj;

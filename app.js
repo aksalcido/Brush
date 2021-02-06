@@ -1,6 +1,7 @@
 // Imported Libraries
 var express = require("express"),
     app = express(),
+    flash = require("connect-flash"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
     passport = require("passport"),
@@ -20,15 +21,28 @@ var Comment = require("./models/comment.js");
 
 // Global Variables
 var BASE_PORT = 3000;
+var DROP_DATABASE = false;
 
-// Setup (if not created already) and Connect the Mongoose Database 
-mongoose.connect("mongodb://localhost:27017/brush_database", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then( () => console.log("Connected to DB!") )
-.catch(error => console.log(error.message));
-
+if (!DROP_DATABASE) {
+    // Setup (if not created already) and Connect the Mongoose Database
+    mongoose.connect("mongodb://localhost:27017/brush_database", {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
+    .then( () => console.log("Connected to DB!") )
+    .catch(error => console.log(error.message));      
+} else {
+    mongoose.connect("mongodb://localhost:27017/brush_database", {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
+    .then(() => { db.dropDatabase(function(err, result) {
+        if (err) throw err;
+        console.log("Operation Success ? " + result);
+        db.close();
+    })})
+    .catch(error => console.log(error.message));
+}
 
 // Set up BodyParser to handle HTTP POST reqs
 app.use(bodyParser.urlencoded({extended: true}));
@@ -44,6 +58,9 @@ app.use(express.static(__dirname + '/public'));
 
 // Allows us to make put and delete requests when providing '_method'
 app.use(methodOverride("_method"));
+
+// Enables Flash
+app.use(flash());
 
 // Set up Session and Passport Authentication with Users
 var session = require("express-session");
@@ -65,11 +82,14 @@ passport.deserializeUser(User.deserializeUser());
 
 // Middleware
 var middlewareObj = require("./middleware/index.js");
+const { db } = require("./models/user.js");
 
 // MIDDLEWARE that will run for every single route
 app.use(function(req, res, next) {
     res.locals.currentUser = req.user;
-
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
+    
     // Middleware is ran and then next route
     next();
 });

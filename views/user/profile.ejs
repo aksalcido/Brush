@@ -32,7 +32,7 @@
                         
                         <!-- Follow Button -->
                         <% if (currentUser && currentUser.username !== user.username) { %>
-                            <% if (currentUser.following.some((following_user) => following_user === user)) { %>
+                            <% if (user.followers.some((follower) => follower._id.equals(currentUser._id))) { %>
                                 <a class="btn btn-primary" href="<%= user.username %>/unfollow">Unfollow</a>
                             <% } else { %>
                                 <a class="btn btn-primary" href="<%= user.username %>/follow">Follow</a>

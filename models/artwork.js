@@ -37,5 +37,13 @@ var ArtworkSchema = new mongoose.Schema({
     ]
 });
 
+ArtworkSchema.pre('update', function(next) {
+    this.model('User').update(
+        { },
+        { "$pull": { "artworks": this._id } },
+        { "multi": true },
+        next
+    );
+});
 
 module.exports = mongoose.model("Artwork", ArtworkSchema);

@@ -20,7 +20,7 @@ router.get("/artwork", function(req, res) {
 router.get("/:id", function(req, res) {
     Artwork.findById(req.params.id).populate("comments").populate("likes").exec(function(err, foundArtwork) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
         } else {
             console.log(foundArtwork.image);
             res.render("artwork/show", {artwork: foundArtwork});
@@ -32,7 +32,7 @@ router.get("/:id", function(req, res) {
 router.get("/:id/edit", function(req, res) {
     Artwork.findById(req.params.id, function(err, foundArtwork) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
         } else {
             res.render("artwork/edit", {artwork: foundArtwork});
         }
@@ -53,34 +53,29 @@ router.put("/:id", function(req, res) {
 router.delete("/:id", function(req, res) {
     Artwork.findByIdAndDelete(req.params.id, function(err) {
         if (err) {
+            req.flash("error", err.message);
             res.redirect("/artwork/" + req.params.id);
         } else {
+            // Remove Artwork from other Models referencing it
+
             res.redirect("/profile");
         }
     });
 });
 
 router.put("/:id/like", middlewareObj.isLoggedIn, function(req, res) {
-    // Check if User has already liked the Artwork
-    User.findById(res.locals.currentUser, function(err, foundUser) {
+    Artwork.findByIdAndUpdate(req.params.id, {
+        $addToSet: { likes: req.user._id }
+    }, {
+        new: true
+    }).exec(function(err, updatedArtwork) {
         if (err) {
-            console.log(err);
-            res.redirect("/home");
+            req.flash("error", err.message);
         } else {
-            Artwork.findByIdAndUpdate(req.params.id, {
-                $addToSet: { likes: foundUser._id }
-            }, {
-                new: true
-            }).exec(function(err, updatedArtwork) {
-                if (err) {
-
-                } else {
-                    console.log("Saving");
-                    foundUser.likes.push(updatedArtwork);
-                    foundUser.save();
-                    res.redirect("/artwork/" + updatedArtwork._id);
-                }
-            });
+            console.log("Saving");
+            req.user.likes.push(updatedArtwork);
+            req.user.save();
+            res.redirect("/artwork/" + updatedArtwork._id);
         }
     });
 });
@@ -89,7 +84,7 @@ router.put("/:id/unlike", middlewareObj.isLoggedIn, function(req, res) {
     // Check if User has already liked the Artwork
     User.findById(res.locals.currentUser, function(err, foundUser) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
             res.redirect("/home");
         } else {
             // Remove
@@ -99,25 +94,18 @@ router.put("/:id/unlike", middlewareObj.isLoggedIn, function(req, res) {
 
 
 router.put("/:id/favorite", middlewareObj.isLoggedIn, function(req, res) {
-    User.findById(res.locals.currentUser, function(err, foundUser) {
+    Artwork.findByIdAndUpdate(req.params.id, {
+        $addToSet: { favorites: req.user._id }
+    }, {
+        new: true
+    }).exec(function(err, updatedArtwork) {
         if (err) {
-            console.log(err);
-            res.redirect("/home");
+            req.flash("error", err.message);
         } else {
-            Artwork.findByIdAndUpdate(req.params.id, {
-                $addToSet: { favorites: foundUser._id }
-            }, {
-                new: true
-            }).exec(function(err, updatedArtwork) {
-                if (err) {
-                    return res.status(422).json({error: err});
-                } else {
-                    foundUser.favorites.push(updatedArtwork);
-                    foundUser.save();
+            req.user.favorites.push(updatedArtwork);
+            req.user.save();
 
-                    res.redirect("/artwork/" + updatedArtwork._id);
-                }
-            });
+            res.redirect("/artwork/" + updatedArtwork._id);
         }
     });
 });
@@ -131,7 +119,7 @@ router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
     // Lookup Artwork by ID
     Artwork.findById(req.params.id, function(err, artwork) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
             res.redirect("home");
         } else {
             // Create New Comment
@@ -159,7 +147,7 @@ router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
 router.delete("/:id/comment/:comment_id", function(req, res) {
     Comment.findByIdAndDelete(req.params.comment_id, function(err) {
         if (err) {
-            // Flash
+            req.flash("error", err.message);
             res.redirect("/artwork/" + req.params.id);
         } else {
             // Flash

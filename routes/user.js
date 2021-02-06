@@ -22,23 +22,30 @@ var storage = multer.diskStorage({
     }
 })
 
+// Get stream (API) for feeds -- implement LATER
+
+
+// Handles Image Upload for Profile Pictures
 const upload = multer({ storage: storage });
 
 router.get("/", function(req, res) {
     console.log(res.locals.currentUser);
     if (res.locals.currentUser) {
         res.redirect("/profile/" + res.locals.currentUser.username);
-        //res.render("profile");
     } else {
         res.redirect("/login");
     }   
 });
 
-// Maybe add search by id as well
 router.get("/:username", function(req, res) {
     User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("artworks").populate("profileComments").exec(function(err, foundUser) {
         if (err || !foundUser) {
-            console.log("Could not find user");
+            if (err)
+                req.flash("error", err.message);
+
+            if (!foundUser)
+                req.flash("error", "Could not find user with username of: " + req.params.username);
+
             res.redirect("/home");
         } else {
             res.render("user/profile", {user: foundUser});
@@ -49,7 +56,7 @@ router.get("/:username", function(req, res) {
 router.get("/:username/followers", function(req, res) {
     User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("followers").exec(function(err, foundUser) {
         if (err || !foundUser) {
-            console.log("Could not find user");
+            req.flash("error", err.message);
             res.redirect("/home");
         } else {
             res.render("user/followers", {user: foundUser});
@@ -60,7 +67,12 @@ router.get("/:username/followers", function(req, res) {
 router.get("/:username/following", function(req, res) {
     User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("following").exec(function(err, foundUser) {
         if (err || !foundUser) {
-            console.log("Could not find user");
+            if (err)
+                req.flash("error", err.message);
+    
+            if (!foundUser)
+                req.flash("error", "Could not find user with username of: " + req.params.username);
+
             res.redirect("/home");
         } else {
             res.render("user/following", {user: foundUser});
@@ -71,7 +83,12 @@ router.get("/:username/following", function(req, res) {
 router.get("/:username/favorites", function(req, res) {
     User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("favorites").exec(function(err, foundUser) {
         if (err || !foundUser) {
-            console.log("Could not find user");
+            if (err)
+                req.flash("error", err.message);
+                
+            if (!foundUser)
+                req.flash("error", "Could not find user with username of: " + req.params.username);
+
             res.redirect("/home");
         } else {
             res.render("user/favorites", {user: foundUser});
@@ -84,7 +101,7 @@ router.get("/:username/favorites", function(req, res) {
 router.get("/:id/edit", function(req, res) {
     User.findById(req.params.id, function(err, foundUser) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
             res.redirect("/home");
         } else {
             res.render("user/edit", {user: foundUser});
@@ -99,7 +116,7 @@ router.get("/:username/follow", middlewareObj.isLoggedIn, function(req, res) {
     // Find User that currentUser is trying to Follow -- foundUser
     User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).exec(function(err, foundUser) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
             res.redirect("/home");
         } else {
             // foundUser contains the person currentUser wishes to follow; So we add foundUser to following of currentUser and
@@ -129,7 +146,6 @@ router.get("/:username/unfollow", middlewareObj.isLoggedIn, function(req, res) {
 
 
 
-
 // PUT - Edits the User Profile Information
 router.put("/:id", upload.single('file'), function(req, res, next) {
     // If User uploading a profile picture
@@ -138,7 +154,7 @@ router.put("/:id", upload.single('file'), function(req, res, next) {
     
     User.findByIdAndUpdate(req.params.id, req.body.user, function(err, updatedUser) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
             res.redirect("/home");
         } else {
             res.redirect("/profile/" + updatedUser.username);
@@ -149,11 +165,11 @@ router.put("/:id", upload.single('file'), function(req, res, next) {
 router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
     User.findById(req.params.id, function(err, foundUser) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
         } else {
             Comment.create(req.body.comment, function(err, comment) {
                 if (err) {
-                    console.log(err);
+                    req.flash("error", err.message);
                 } else {
                     // Update the comment Credentials
                     comment.author.id = req.user._id;
@@ -178,12 +194,12 @@ router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
 router.delete("/:id/comment/:comment_id", function(req, res) {
     Comment.findByIdAndDelete(req.params.comment_id, function(err) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
             res.redirect("/home");
         } else {
             User.findById(req.params.id, function(err, foundUser) {
                 if (err) {
-                    console.log(err);
+                    req.flash("error", err.message);
                 } else {
                     res.redirect("/profile/" + foundUser.username);
                 }
