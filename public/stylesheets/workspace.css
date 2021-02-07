@@ -15,6 +15,31 @@ canvas {
   display: block;
 }
 
+/* ===== Loader Animation ===== */
+.loader-wrapper {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: url(https://cdn.dribbble.com/users/563824/screenshots/3633228/untitled-5.gif);
+  background-color: white;
+  background-repeat: no-repeat;
+  background-position: center center;
+  z-index: 7;
+}
+
+.loader {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  border: 4px solid #Fff;
+  top: 50%;
+  animation: loader 2s infinite ease;
+}
+
 /* ===== Tools Container Styling ===== */
 .tools-container {
   display: inline-block;

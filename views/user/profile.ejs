@@ -46,22 +46,40 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                         <h6>Location</h6>
-                        <span class="text-secondary"><%= user.location %></span>
+                        <span class="text-secondary">
+                            <% if (user.location) { %>
+                                <%= user.location %> %>
+                            <% } else { %>
+                                Unknown
+                            <% } %>
+                        </span>
                     </li>
         
                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                         <h6>Gender</h6>
-                        <span class="text-secondary"><%= user.gender %></span>
+                        <span class="text-secondary">
+                            <% if (user.gender) { %>
+                                <%= user.gender %>
+                            <% } else { %>
+                                Unknown
+                            <% } %>
+                        </span>
                     </li>
 
                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                         <h6>Age</h6>
-                        <span class="text-secondary"><%= user.age %></span>
+                        <span class="text-secondary">
+                            <% if (user.age) { %>
+                                <%= user.age %>
+                            <% } else { %>
+                                Unknown
+                            <% } %>
+                        </span>
                     </li>
 
                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                        <h6>Posts Created</h6>
-                        <span class="text-secondary"><%= user.artworks.length %></span>
+                        <h6>Total Likes</h6>
+                        <span class="text-secondary"><%= totalLikes %></span>
                     </li>
 
                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
@@ -116,7 +134,11 @@
                                         <% if (artwork.description.length === 0) { %>
                                             <i>No description</i>
                                         <% } else { %>
-                                            <%= artwork.description %>
+                                            <%= artwork.description.substring(0, 100) %>
+                                            
+                                            <% if (artwork.description.length >= 100) { %>
+                                                <i>...</i>
+                                            <% } %>
                                         <% } %>
                                     </p>
                                 </div>
@@ -135,7 +157,7 @@
         <div class="text-right">
             <form action="/profile/<%=user._id%>/comment" method="POST">
                 <div class="form-group">
-                    <textarea class="form-control" name="comment[text]" placeholder="text" rows="3"></textarea>
+                    <textarea class="form-control" name="comment[text]" placeholder="text" maxlength="1000" rows="3"></textarea>
                 </div>
                 
                 <div class="form-group">
@@ -154,7 +176,7 @@
                 <a href="/profile/<%=comment.author.username%>"><strong><%= comment.author.username %></strong></a>
 
                 <!-- Comment Date -->
-                <span class="pull-right"><%= comment.createdAt %></span>
+                <span class="pull-right"><%= comment.createdAt.toISOString().replace(/T/, ' ').replace(/\..+/, '')  %></span>
                 <!-- Delete Button -->
                 <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
                     <form class="delete-form" action="/profile/<%= user._id %>/comment/<%= comment._id %>?_method=DELETE" method="POST" style="float: right;">

@@ -413,14 +413,13 @@ function changeColor(color, colorButton = null) {
     removeCustomColorEffects();
 }
 
-
-
 /* ============================== Initialization Functions ============================== */
 /* */
 function initCanvas() {
     // Default Settings
     canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.height = window.innerHeight - toolContainer.offsetHeight;
+    canvas.style.top = toolContainer.offsetHeight.toString() + "px";
 
     // Removes the transparency of the Canvas and adds a White background
     ctx.fillStyle='white';
@@ -476,6 +475,11 @@ function initCanvas() {
     
     // Handles if the mouse leaves the canvas/window, then we disable drawing and save the canvas to localStorage
     canvas.addEventListener('mouseout', saveCanvas);
+
+    // Window Warn on Resize
+    window.addEventListener("resize", (event) => {
+        alert("WARNING! Resizing the Window will alter the Image! Return back to original size to prevent loss of Progress!");
+    });
 }
 
 /* Initializes the color buttons so that they are able to be clicked to change the color of the User */
@@ -719,5 +723,10 @@ function init() {
 
     // Loads the Canvas from Local Storage
     loadCanvas(localStorage.getItem(canvasName));
+
+    setTimeout(() => {
+        document.querySelector(".loader-wrapper").style.display = 'none';
+        document.querySelector(".loader").style.display = 'none';
+    }, 1500);
 }
 

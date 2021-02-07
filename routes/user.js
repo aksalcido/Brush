@@ -48,7 +48,15 @@ router.get("/:username", function(req, res) {
 
             res.redirect("/home");
         } else {
-            res.render("user/profile", {user: foundUser});
+            var totalLikes = 0;
+
+            foundUser.artworks.forEach( (aw) => {
+                totalLikes += aw.likes.length;
+            });
+
+            console.log(totalLikes);
+
+            res.render("user/profile", {user: foundUser, totalLikes: totalLikes});
         }
     });
 });    
@@ -56,7 +64,12 @@ router.get("/:username", function(req, res) {
 router.get("/:username/followers", function(req, res) {
     User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("followers").exec(function(err, foundUser) {
         if (err || !foundUser) {
-            req.flash("error", err.message);
+            if (err)
+                req.flash("error", err.message);
+    
+            if (!foundUser)
+                req.flash("error", "Could not find user with username of: " + req.params.username);
+            
             res.redirect("/home");
         } else {
             res.render("user/followers", {user: foundUser});
@@ -108,7 +121,6 @@ router.get("/:id/edit", function(req, res) {
         }
     });
 });
-
 
 
 // Follow
@@ -166,10 +178,12 @@ router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
     User.findById(req.params.id, function(err, foundUser) {
         if (err) {
             req.flash("error", err.message);
+            res.redirect("/home");
         } else {
             Comment.create(req.body.comment, function(err, comment) {
                 if (err) {
                     req.flash("error", err.message);
+                    res.redirect("/home");
                 } else {
                     // Update the comment Credentials
                     comment.author.id = req.user._id;

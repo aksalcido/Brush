@@ -50,7 +50,7 @@
                         <% } %>
                     </p>
 
-                    <h4>Created by <a href="/profile"><%= artwork.author.username %></a> on <%= artwork.createdAt %></h4>
+                    <h4>Created by <a href="/profile/<%=artwork.author.username%>"><%= artwork.author.username %></a> on <%= artwork.createdAt.toISOString().replace(/T/, ' ').replace(/\..+/, '')  %></h4>
                     
                     <!-- Edit/Delete Button for Artwork -->
                     <% if (currentUser && artwork.author.id == currentUser.id) { %> 
@@ -70,7 +70,7 @@
                     <div class="text-right">
                         <form action="<%=artwork._id%>/comment" method="POST">
                             <div class="form-group">
-                                <textarea class="form-control" name="comment[text]" placeholder="text" rows="3"></textarea>
+                                <textarea class="form-control" name="comment[text]" placeholder="text" maxlength="1000" rows="3"></textarea>
                             </div>
                             
                             <div class="form-group">
@@ -88,7 +88,8 @@
                             <!-- Comment Username -->
                             <a href="/profile/<%=comment.author.username%>"><strong><%= comment.author.username %></strong></a>
                             <!-- Comment Date -->
-                            <span class="pull-right"><%= comment.createdAt %></span>
+                            <span class="pull-right"><%= comment.createdAt.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></span>
+
                             <!-- Delete Button -->
                             <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
                                 <form class="delete-form" action="/artwork/<%= artwork._id %>/comment/<%= comment._id %>?_method=DELETE" method="POST" style="float: right;">

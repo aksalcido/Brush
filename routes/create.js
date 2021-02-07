@@ -31,7 +31,8 @@ router.post("/", function(req, res) {
 
     Artwork.create(newArtwork, function(err, newlyCreated) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
+            res.redirect("/home");
         } else {
             req.user.artworks.push(newlyCreated);
             req.user.save();

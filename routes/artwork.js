@@ -21,6 +21,7 @@ router.get("/:id", function(req, res) {
     Artwork.findById(req.params.id).populate("comments").populate("likes").exec(function(err, foundArtwork) {
         if (err) {
             req.flash("error", err.message);
+            res.redirect("/home");
         } else {
             console.log(foundArtwork.image);
             res.render("artwork/show", {artwork: foundArtwork});
@@ -33,6 +34,7 @@ router.get("/:id/edit", function(req, res) {
     Artwork.findById(req.params.id, function(err, foundArtwork) {
         if (err) {
             req.flash("error", err.message);
+            res.redirect("/home");
         } else {
             res.render("artwork/edit", {artwork: foundArtwork});
         }
@@ -42,7 +44,7 @@ router.get("/:id/edit", function(req, res) {
 router.put("/:id", function(req, res) {
     Artwork.findByIdAndUpdate(req.params.id, req.body.artwork, function(err, updatedArtwork) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
             res.redirect("/profile");
         } else {
             res.redirect("/artwork/" + req.params.id);
@@ -71,6 +73,7 @@ router.put("/:id/like", middlewareObj.isLoggedIn, function(req, res) {
     }).exec(function(err, updatedArtwork) {
         if (err) {
             req.flash("error", err.message);
+            res.redirect("/home");
         } else {
             console.log("Saving");
             req.user.likes.push(updatedArtwork);
@@ -101,6 +104,7 @@ router.put("/:id/favorite", middlewareObj.isLoggedIn, function(req, res) {
     }).exec(function(err, updatedArtwork) {
         if (err) {
             req.flash("error", err.message);
+            res.redirect("/home");
         } else {
             req.user.favorites.push(updatedArtwork);
             req.user.save();

@@ -9,7 +9,7 @@
 </head>
 <body>
     <!-- Toolbar on Top of Page -->
-    <div class="tools-container slide-in">
+    <div class="tools-container slide-in" style="z-index: 2; position: absolute;">
         <!-- Color Display for the current color -->
         <div id="color-display">
         </div>
@@ -162,8 +162,12 @@
     <div class="shape-click hidden">
     </div>
 
-    <canvas></canvas>
+    <canvas style="position: relative;"></canvas>
 
+    <!-- Loader Animation Div -->
+    <div class="loader-wrapper">
+        <span class="loader"></span><span></span>
+    </div>
 
     <script src="../scripts/workspace.js"></script>
 </body>

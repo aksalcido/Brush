@@ -33,7 +33,11 @@
                                 <% if (favorite.description.length === 0) { %>
                                     <i>No description</i>
                                 <% } else { %>
-                                    <%= favorite.description %>
+                                    <%= favorite.description.substr(0, 100) %>
+                                <% } %>
+
+                                <% if (favorite.description.length >= 100) { %>
+                                    <i>...</i>
                                 <% } %>
                             </p>
                         </div>
@@ -42,11 +46,7 @@
             </a></p> 
         <% }) %>
     </div>
-
-
 </div>
-
-
 
 
 

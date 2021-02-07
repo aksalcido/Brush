@@ -3,6 +3,7 @@ var express = require("express"),
 
 // Models 
 var User = require("../models/user.js");
+var Artwork = require("../models/artwork.js");
 
 // Router 
 var router = express.Router();
@@ -17,7 +18,26 @@ router.get('/', function(req, res) {
 
 
 router.get("/home", function(req, res) {
-    res.render("home.ejs");
+    var randomArtwork = [];
+    
+    Artwork.countDocuments({}, function(err, count) {
+        if (err) {
+            console.log(err);
+        } else {
+            for (var i = 0; i < 6; i++) {
+                var random = Math.floor(Math.random() * count)
+                Artwork.findOne().skip(random).exec(
+                    function (err, result) {
+                        randomArtwork.push(result._id);
+                    }
+                );
+            }
+        }
+    });
+
+    console.log(randomArtwork.length);
+
+    res.render("home.ejs", {randomArtwork: randomArtwork});
 });
 
 router.get("/learn", function(req, res) {
@@ -50,12 +70,21 @@ router.get("/login", function(req, res) {
     res.render("login");
 });
 
+/*
+router.post("/login", passport.authenticate("local"), function(req, res) {
+    res.redirect(req.session.returnTo || '/home');
+    delete req.session.returnTo;
+
+});
+*/
 
 router.post("/login", passport.authenticate("local", {
     successRedirect: "/home",
     failureRedirect: "/login"
 }), function(req, res) {}
 );
+
+
 
 
 router.get("/logout", function(req, res) {
