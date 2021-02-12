@@ -18,35 +18,28 @@ router.get('/', function(req, res) {
 
 
 router.get("/home", function(req, res) {
-    var randomArtwork = [];
-    
-    Artwork.countDocuments({}, function(err, count) {
+    Artwork.find({}, function(err, artworks) {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
         } else {
-            for (var i = 0; i < 6; i++) {
-                var random = Math.floor(Math.random() * count)
-                Artwork.findOne().skip(random).exec(
-                    function (err, result) {
-                        randomArtwork.push(result._id);
-                    }
-                );
-            }
+            res.render("home", {artworks: artworks});
         }
     });
-
-    console.log(randomArtwork.length);
-
-    res.render("home.ejs", {randomArtwork: randomArtwork});
 });
 
-router.get("/learn", function(req, res) {
-    res.render("learn");
+router.get("/discover", function(req, res) {
+	Artwork.find({}, function(err, artworks) {
+		if (err) {
+			console.log("Error finding campgrounds");
+		} else {
+			res.render("discover", {artworks: artworks});;
+		}
+	});
 });
 
 // ===== Authorization =====
 router.get("/register", function(req, res) {
-    res.render("register");
+    res.render("auth/register");
 });
 
 router.post("/register", function(req, res) {
@@ -56,7 +49,7 @@ router.post("/register", function(req, res) {
     User.register(newUser, req.body.password, function(err, user) {
         if (err) {
             req.flash("error", err.message);
-            return res.redirect("register");
+            return res.redirect("auth/register");
         }
         
         passport.authenticate("local")(req, res, function() {
@@ -67,7 +60,7 @@ router.post("/register", function(req, res) {
 });
 
 router.get("/login", function(req, res) {
-    res.render("login");
+    res.render("auth/login");
 });
 
 /*

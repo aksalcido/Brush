@@ -1,0 +1,35 @@
+#profile-picture {
+    border: 1px solid black;
+    width: 300px;
+}
+
+.artwork-title {
+    color: inherit;
+}
+
+.missing-attr {
+    color: gray;
+    font-style: italic;
+}
+
+.card-text {
+    text-align: center;
+}
+
+.well {
+    margin-top: 10px;
+}
+
+.form-group p {
+    float: left;
+}
+
+.comment-column {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+}
+
+.commenter-username {
+    font-weight: bold;
+}
+

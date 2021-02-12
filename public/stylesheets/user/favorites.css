@@ -1,0 +1,12 @@
+.artwork-title {
+    color: inherit;
+}
+
+.missing-attr {
+    color: lightslategray;
+    font-style: italic;
+}
+
+.card-text {
+    text-align: center;
+}

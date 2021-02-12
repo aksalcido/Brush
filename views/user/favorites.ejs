@@ -1,4 +1,10 @@
 <%- include("../partials/header") %>
+<link rel="stylesheet" href="/stylesheets/user/favorites.css">
+</head>
+<body>
+   <!-- Bootstrap Navbar -->
+   <%- include ("../partials/default") %>
+
 
 <div class="container">
     <nav aria-label="breadcrumb">
@@ -18,20 +24,20 @@
 
     <div class="row gutters-sm mt-3">
         <% user.favorites.forEach( function(favorite) { %>
-            <p><a href="/artwork/<%= favorite._id %>" style="color: inherit;">
+            <p><a class="artwork-title" href="/artwork/<%= favorite._id %>">
                 <div class="col-sm-4 mb-3">
                     <div class="card h-100">
                         <div class="card-body">
                             <% if (favorite.name.length === 0) { %>
-                                <h6 class="d-flex align-items-center mb-3" style="color: lightslategray;"> No name </h6>
+                                <h6 class="missing-attr" class="d-flex align-items-center mb-3"> No name </h6>
                             <% } else { %>
                                 <h6 class="d-flex mb-3"> <%= favorite.name%> </h6>
                             <% } %>
 
                             <img src="<%=favorite.img.data%>" class="card-img-top" alt="">
-                            <p class="card-text text-secondary" style="text-align: center;">
+                            <p class="card-text text-secondary">
                                 <% if (favorite.description.length === 0) { %>
-                                    <i>No description</i>
+                                    <span class="missing-attr">No description</span>
                                 <% } else { %>
                                     <%= favorite.description.substr(0, 100) %>
                                 <% } %>

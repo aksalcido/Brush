@@ -174,12 +174,23 @@ router.put("/:id", upload.single('file'), function(req, res, next) {
     });
 });
 
+
+
+
 router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
     User.findById(req.params.id, function(err, foundUser) {
         if (err) {
             req.flash("error", err.message);
-            res.redirect("/home");
+            return res.redirect("/home");
         } else {
+            // (!str.replace(/\s/g, '').length)
+            
+            // Check if text field contains data
+            if (req.body.comment.text.length === 0) {
+                req.flash("error", "Comment contains no text");
+                return res.redirect("/profile/" + foundUser.username);
+            }
+        
             Comment.create(req.body.comment, function(err, comment) {
                 if (err) {
                     req.flash("error", err.message);
@@ -204,6 +215,8 @@ router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
     });
 
 });
+
+
 
 router.delete("/:id/comment/:comment_id", function(req, res) {
     Comment.findByIdAndDelete(req.params.comment_id, function(err) {

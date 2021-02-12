@@ -12,25 +12,28 @@ var router = express.Router();
 // Middleware
 var middlewareObj = require("../middleware/index.js");
 
-router.get("/artwork", function(req, res) {
-    console.log(res.locals.currentUser);
-    res.render("artwork/index");
-});
-
 router.get("/:id", function(req, res) {
+    /*
+    const page = req.query.page;
+    const limit = req.query.limit;
+
+    const startIndex = (page - 1) * limit;
+    */
+   const page = req.query.page ? req.query.page : 1;
+
+
     Artwork.findById(req.params.id).populate("comments").populate("likes").exec(function(err, foundArtwork) {
         if (err) {
             req.flash("error", err.message);
             res.redirect("/home");
         } else {
-            console.log(foundArtwork.image);
-            res.render("artwork/show", {artwork: foundArtwork});
+            res.render("artwork/show", {artwork: foundArtwork, page: page});
         }
     });
 });
 
-// NEED TO CHECK ARTWORK OWNERSHIP MIDDLEWARE TO PREVENT JUST EDITING 
-router.get("/:id/edit", function(req, res) {
+
+router.get("/:id/edit", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwnership, function(req, res) {
     Artwork.findById(req.params.id, function(err, foundArtwork) {
         if (err) {
             req.flash("error", err.message);
@@ -41,7 +44,7 @@ router.get("/:id/edit", function(req, res) {
     });
 });
 
-router.put("/:id", function(req, res) {
+router.put("/:id", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwnership, function(req, res) {
     Artwork.findByIdAndUpdate(req.params.id, req.body.artwork, function(err, updatedArtwork) {
         if (err) {
             req.flash("error", err.message);
@@ -52,7 +55,7 @@ router.put("/:id", function(req, res) {
     });
 });
 
-router.delete("/:id", function(req, res) {
+router.delete("/:id", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwnership, function(req, res) {
     Artwork.findByIdAndDelete(req.params.id, function(err) {
         if (err) {
             req.flash("error", err.message);
@@ -131,7 +134,6 @@ router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
                 if (err) {
                     console.log(err);
                 } else {
-                    console.log("Creating Comment...");
                     // Update info concerning the new comment
                     comment.author.id = req.user._id;
                     comment.author.username = req.user.username;
@@ -148,7 +150,7 @@ router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
     });
 });
 
-router.delete("/:id/comment/:comment_id", function(req, res) {
+router.delete("/:id/comment/:comment_id", middlewareObj.isLoggedIn, middlewareObj.validateCommentOwnership, function(req, res) {
     Comment.findByIdAndDelete(req.params.comment_id, function(err) {
         if (err) {
             req.flash("error", err.message);

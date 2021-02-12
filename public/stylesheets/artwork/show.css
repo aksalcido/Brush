@@ -1,0 +1,18 @@
+img {
+    width: 100%;
+    height:auto; 
+    margin-top: 10px; 
+}
+
+.caption-full {
+    padding: 5px; 
+    margin-top: 10px;
+}
+
+.well {
+    margin-top: 10px;
+}
+
+#total-comments {
+    float: left;
+}

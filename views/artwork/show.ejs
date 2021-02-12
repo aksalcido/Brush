@@ -1,13 +1,18 @@
-<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/artwork/show.css">
+<%- include("../partials/header") %>
+</head>
+
+<body>
+   <!-- Bootstrap Navbar -->
+   <%- include ("../partials/default") %>
 
 <div class="container">
     <div class="row">
         <div class="col-lg-12">
             <div class="thumbnail">
-                <img class="rounded mx-auto d-block" src="<%= artwork.img.data %>" style="width: 100%;
-                height:auto; margin-top: 10px; border: 1px solid black;">
+                <img class="rounded mx-auto d-block" src="<%= artwork.img.data %>" style="border: 1px solid black;">
                 
-                <div class="caption-full" style="border: 1px solid black; padding: 5px; margin-top: 10px;">
+                <div class="caption-full" style="border: 1px solid black;">
                     <!-- Name of the Artwork -->
                     <div style="display: inline-block; width: 100%;">
                         <h4 style="display: inherit; margin-right: 90%;">
@@ -42,7 +47,7 @@
                     </div>
 
                     <!-- Description of the Artwork -->
-                    <p style="">
+                    <p>
                         <% if (artwork.description.length == 0) { %>
                             <i>No Description</i>
                         <% } else { %>
@@ -65,7 +70,7 @@
                 </div>
                 
                 <!-- Comment Section -->
-                <div class="well" style="margin-top: 10px;">
+                <div class="well">
                     <!-- Comment Input Field & Submit Button -->
                     <div class="text-right">
                         <form action="<%=artwork._id%>/comment" method="POST">
@@ -74,7 +79,7 @@
                             </div>
                             
                             <div class="form-group">
-                                <p style="float: left;"> <%= artwork.comments.length %> Comments </p>
+                                <p id="total-comments"> <%= artwork.comments.length %> Comments </p>
                                 <button class="btn btn-success">Add New Comment</a>
                             </div>
                         </form>
@@ -103,7 +108,10 @@
                         </div>
                     <% }) %>
                 </div>
-            
+
+                <a href="/artwork/<%= artwork._id %>?page=<%= parseInt(page) - 1 %>"> Previous Page </h1>
+
+                <a href="/artwork/<%= artwork._id %>?page=<%= parseInt(page) + 1 %>"> Next Page </h1>
             </div>
         </div>
     </div>

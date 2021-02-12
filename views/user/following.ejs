@@ -1,4 +1,9 @@
 <%- include("../partials/header") %>
+<link rel="stylesheet" href="/stylesheets/user/following.css">
+</head>
+<body>
+   <!-- Bootstrap Navbar -->
+   <%- include ("../partials/default") %>
 
 <div class="container">
     <nav aria-label="breadcrumb">
@@ -19,7 +24,7 @@
 
     <div class="row gutters-sm mt-3">
         <% user.following.forEach( function(following_user) { %>
-            <p><a href="/profile/<%= following_user.username %>" style="color: inherit;">
+            <p><a class="following-username" href="/profile/<%= following_user.username %>">
                 <div class="col-sm-3 mb-3">
                     <div class="card h-100">
                         <div class="card-body">

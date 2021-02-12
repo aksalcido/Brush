@@ -1,9 +1,15 @@
-<%- include('../partials/header') %>
+<%- include("../partials/header") %>
+<link rel="stylesheet" href="/stylesheets/user/edit.css">
+</head>
+<body>
+   <!-- Bootstrap Navbar -->
+   <%- include ("../partials/default") %>
+
 
 <div class="container">
-    <h1 style="text-align: center;">Profile Edit Page</h1>
+    <h1>Profile Edit Page</h1>
     
-    <div class="container" style="width: 80%; margin: 20px auto;">
+    <div class="container">
         <form action="/profile/<%= user._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
             <!-- Description -->
             <div class="form-group">

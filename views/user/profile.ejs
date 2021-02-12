@@ -1,4 +1,9 @@
 <%- include("../partials/header") %>
+<link rel="stylesheet" href="/stylesheets/user/profile.css">
+</head>
+<body>
+   <!-- Bootstrap Navbar -->
+   <%- include ("../partials/default") %>
 
 <div class="container">
     <nav aria-label="breadcrumb">
@@ -17,11 +22,13 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex flex-column align-items-center text-center">
-                        <% if (user.profilePicture) { %>
-                            <img src="/uploads/<%= user.profilePicture %>" style="border: 1px solid black; width: 300px;">
+                        <img id="profile-picture" src="
+                        <% if (user.profilePicture) { %> 
+                            /uploads/<%= user.profilePicture %> 
                         <% } else { %>
-                            <img src="/images/girl.png" style="border: 1px solid black; width: 300px;">
-                        <% } %>
+                            /images/girl.png
+                        <% } %>">
+
                         <div class="mt-3">
                             <h3><%= user.username %></h3>
                         </div>
@@ -29,7 +36,6 @@
                             <a class="btn btn-warning" href="<%= user._id %>/edit">Edit</a>
                         <% } %>
 
-                        
                         <!-- Follow Button -->
                         <% if (currentUser && currentUser.username !== user.username) { %>
                             <% if (user.followers.some((follower) => follower._id.equals(currentUser._id))) { %>
@@ -119,40 +125,42 @@
             <!-- Artwork Showcase -->
             <div class="row gutters-sm mt-3">
                 <% user.artworks.forEach(function(artwork) { %>
-                    <p><a href="/artwork/<%= artwork._id %>" style="color: inherit;">
+                    <p><a class="artwork-title" href="/artwork/<%= artwork._id %>">
                         <div class="col-sm-4 mb-3">
                             <div class="card h-100">
                                 <div class="card-body">
-                                    <% if (artwork.name.length === 0) { %>
-                                        <h6 class="d-flex align-items-center mb-3" style="color: lightslategray;"> No name </h6>
-                                    <% } else { %>
-                                        <h6 class="d-flex mb-3"> <%= artwork.name%> </h6>
-                                    <% } %>
-
-                                    <img src="<%=artwork.img.data%>" class="card-img-top" alt="">
-                                    <p class="card-text text-secondary" style="text-align: center;">
-                                        <% if (artwork.description.length === 0) { %>
-                                            <i>No description</i>
+                                    <!-- Artwork Title -->
+                                    <h6 class="d-flex mb-3">
+                                        <% if (artwork.name.length === 0) { %>
+                                            <span class="missing-attr">No Name</span>
                                         <% } else { %>
-                                            <%= artwork.description.substring(0, 100) %>
-                                            
-                                            <% if (artwork.description.length >= 100) { %>
-                                                <i>...</i>
-                                            <% } %>
+                                            <%= artwork.name %>
+                                        <% } %>
+                                    </h6>
+                                    
+                                    <!-- Artwork Image -->
+                                    <img src="<%=artwork.img.data%>" class="card-img-top" alt="">
+                                    
+                                    <!-- Artwork Description -->
+                                    <p class="card-text text-secondary">
+                                        <% if (artwork.description.length === 0) { %>
+                                            <span class="missing-attr">No description</span>
+                                        <% } else { %>
+                                            <%= artwork.description.substring(0, 100) %> <% if (artwork.description.length >= 100) { %> <i>...</i> <% } %>
                                         <% } %>
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </a></p>  
-                <% }) %>   
+                <% }) %>
             </div>
         </div>
 
     </div>
 
     <!-- Profile Comment Section -->
-    <div class="well" style="margin-top: 10px;">
+    <div class="well">
         <!-- Comment Input Field & Submit Button -->
         <div class="text-right">
             <form action="/profile/<%=user._id%>/comment" method="POST">
@@ -161,7 +169,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <p style="float: left;"> <%= user.profileComments.length %> Comments </p>
+                    <p> <%= user.profileComments.length %> Comments </p>
                     <button class="btn btn-success">Add New Comment</a>
                 </div>
             </form>
@@ -171,9 +179,9 @@
         
         <% user.profileComments.reverse().forEach(function(comment) { %>
             <!-- Comment Box -->
-            <div class="col-md-12">
+            <div class="col-md-12 comment-column">
                 <!-- Comment Username -->
-                <a href="/profile/<%=comment.author.username%>"><strong><%= comment.author.username %></strong></a>
+                <a href="/profile/<%=comment.author.username%>"><span class="commenter-username"><%= comment.author.username %></span></a>
 
                 <!-- Comment Date -->
                 <span class="pull-right"><%= comment.createdAt.toISOString().replace(/T/, ' ').replace(/\..+/, '')  %></span>

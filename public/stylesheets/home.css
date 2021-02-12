@@ -1,0 +1,183 @@
+#home-display {
+    height: 750px;
+    width: 100%;
+}
+
+#home-message {
+    position: absolute; 
+    z-index: 20;
+    top: 8%;
+    left: 2%;
+}
+
+#home-message h1 {
+    font-size: 72px;
+}
+
+#home-message p {
+    font-size: 24px;
+}
+
+.home-text {
+    color: #fff;
+    text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+}
+
+.img-thumbnail {
+    height: 85%;
+    transition: 0.15s;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.img-thumbnail:hover {
+     max-height: 100%;
+}
+
+.artwork-name {
+    font-style: italic;
+}
+
+/* First Row */
+#trending-container1 {
+    background-color: white; 
+    padding-top: 10px; 
+    padding-bottom: 50px;
+}
+
+#trending-container1 .col-12 {
+    margin-bottom: 15px; 
+    border-bottom: 2px solid lightgray;
+}
+
+/* Second Row */
+#trending-container2 {
+    background-color: #f0f0f0; 
+    padding-top: 10px; 
+    padding-bottom: 50px;
+}
+
+#trending-container2 .col-12 {
+    max-width: 100%; 
+    float: right; 
+    text-align: right; 
+    margin-bottom: 15px; 
+    border-bottom: 2px solid lightgray;
+}
+
+/* Third Row */
+#trending-container3 {
+    background-color: #686261; 
+    padding-top: 10px; 
+    padding-bottom: 50px;
+}
+
+#trending-container3 .col-12 {
+    color: white; 
+    margin-bottom: 15px; 
+    border-bottom: 2px solid lightgray;
+}
+
+.slideshow {
+    position: absolute;
+    height: 750px;
+    width: 100%;
+    background-size: cover;
+    z-index: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.slideshow li {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    opacity: 0;
+    z-index: 0;
+    animation: imageAnimation 55s linear infinite; 
+    filter: blur(1px);
+}
+
+.slideshow li:nth-child(1) {
+    background-image: url(../images/gradients/0.jpg);
+}
+
+.slideshow li:nth-child(2) {
+    background-image: url(../images/gradients/1.jpg);
+    animation-delay: 5s;
+}
+
+.slideshow li:nth-child(3) {
+    background-image: url(../images/gradients/2.jpg);
+    animation-delay: 10s; 
+}
+
+.slideshow li:nth-child(4) {
+    background-image: url(../images/gradients/3.jpg);
+    animation-delay: 15s; 
+}
+
+.slideshow li:nth-child(5) {
+    background-image: url(../images/gradients/4.jpg);
+    animation-delay: 20s; 
+}
+
+.slideshow li:nth-child(6) {
+    background-image: url(../images/gradients/5.jpg);
+    animation-delay: 25s; 
+}
+
+.slideshow li:nth-child(7) {
+    background-image: url(../images/gradients/6.jpg);
+    animation-delay: 30s;
+}
+
+.slideshow li:nth-child(8) {
+    background-image: url(../images/gradients/7.jpg);
+    animation-delay: 35s; 
+}
+
+.slideshow li:nth-child(9) {
+    background-image: url(../images/gradients/8.jpg);
+    animation-delay: 40s; 
+}
+
+.slideshow li:nth-child(10) {
+    background-image: url(../images/gradients/9.jpg);
+    animation-delay: 45s; 
+}
+
+.slideshow li:nth-child(11) {
+    background-image: url(../images/gradients/10.jpg);
+    animation-delay: 50s; 
+}
+
+@keyframes imageAnimation {
+    0% {
+        opacity: 0;
+        animation-timing-function: ease-in;
+    }
+
+    10% {
+        opacity: 1;
+        animation-timing-function: ease-out;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    30% {
+        opacity: 0;
+    }
+}
+
+/* Older browser support - .no-cssanimations class added by modernizr */
+.no-cssanimations .slideshow li {
+	opacity: 1;
+}

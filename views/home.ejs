@@ -1,131 +1,109 @@
+<link rel="stylesheet" href="stylesheets/home.css">
 <%- include("./partials/header") %>
+</head>
 
+<body>
+   <!-- Bootstrap Navbar -->
+   <%- include ("./partials/default") %>
 
-    <div class="jumbotron" style="height: 750px; background-image: 
-    url(https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHw%3D&w=1000&q=80);
-    background-repeat: no-repeat;
-    background-size: cover;
-    ">
+  <div id="home-display">
+      <div id="home-message">
+        <h1 class="display-4 home-text">Hello<% if (currentUser) { %> <%= currentUser.username %><% } %>, Welcome to Brush!</h1>
+          <p class="lead home-text">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+        <hr class="my-4 home-text">
 
-        <h1 class="display-4">Welcome to Brush!</h1>
-        <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-        <hr class="my-4">
-        <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-        <p class="lead">
-          <a class="btn btn-primary btn-lg" href="/learn" role="button">Learn more</a>
+        <p class="lead home-text">
+          Get started Creating Now
         </p>
-    </div> 
+        <a class="btn btn-primary btn-lg" href="/create" role="button">Create</a>
+      </div>
 
-    <style>
-       .img-thumbnail {
-         max-height: 90%;
-       }
-    </style>
+      <!-- Text Content -->
+      <ul class="slideshow">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+  </div>
 
-    <div class="container-fluid" style="background-color: white; padding-top: 10px; padding-bottom: 50px;">
-        <div class="col-12 col-md-8" style="margin-bottom: 15px; border-bottom: 2px solid lightgray;">
+    <!-- Trending -->
+    <div class="container-fluid" id="trending-container1">
+        <div class="col-12 col-md-8">
             <h1>Trending</h1>
         </div>
 
         <div class="row">
-            <div class="col">
-               <a href="/artwork/id1"><img class="img-thumbnail" src="https://source.unsplash.com/IYkIWmxSfmI"></a>
-            </div>
-
-            <div class="col">
-               <a href="/artwork/id2"><img class="img-thumbnail" src="https://source.unsplash.com/xX6BOQ0fJvk"></a>
-            </div>
-
-            <div class="col">
-               <a href="/artwork/id3"><img class="img-thumbnail" src="https://source.unsplash.com/IYkIWmxSfmI"></a>
-            </div>
-
-            <div class="col">
-               <a href="/artwork/id4"><img class="img-thumbnail" src="https://source.unsplash.com/xX6BOQ0fJvk"></a>
-            </div>
-
-            <div class="col">
-               <a href="/artwork/id5"><img class="img-thumbnail" src="https://source.unsplash.com/xX6BOQ0fJvk"></a>
-            </div>
-
-            <div class="col">
-               <a href="/artwork/id6"><img class="img-thumbnail" src="https://source.unsplash.com/xX6BOQ0fJvk"></a>
-            </div>
+           <% for (var i = 0; i < 6; i++) { %>
+               <div class="col">
+                  <a href="/artwork/<%= artworks[i]._id %>"><img class="img-thumbnail" src="<%= artworks[i].img.data %>"></a>
+                  <figcaption class="figure-caption">
+                      <span class="artwork-name">
+                          <% if (artworks[i].name) { %>
+                            <%= artworks[i].name %>
+                          <% } else { %>
+                            Nameless
+                          <% } %>
+                     </span> by <a href="/profile/<%= artworks[i].author.username %>"><%= artworks[i].author.username %></a>
+                  </figcaption>
+               </div>
+            <% } %>
         </div>
     </div>
 
-    <div class="container-fluid" style="background-color: #f0f0f0; padding-top: 10px; padding-bottom: 50px;">
-        <div class="col-12 col-md-8" style="max-width: 100%; float: right; text-align: right; margin-bottom: 15px; border-bottom: 2px solid lightgray;">
+    <!-- Trending 2 -->
+    <div class="container-fluid" id="trending-container2">
+        <div class="col-12 col-md-8">
             <h1>Trending</h1>
          </div>
 
-        <div class="row">
-            <div class="col">
-               <img class="img-thumbnail" src="https://images.unsplash.com/photo-1570393080660-de4e4a15a247?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NXx8YXJ0fGVufDB8MHwwfA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-            </div>
-
-            <div class="col">
-               <img class="img-thumbnail" src="https://images.unsplash.com/photo-1541367777708-7905fe3296c0?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTJ8fGFydHxlbnwwfDB8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-            </div>
-
-            <div class="col">
-               <img class="img-thumbnail" src="https://images.unsplash.com/photo-1545144760-f44b51664396?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTd8fGFydHxlbnwwfDB8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-            </div>
-
-            <div class="col">
-               <img class="img-thumbnail" src="https://images.unsplash.com/photo-1573595283891-b3d46b2096bb?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MjF8fGFydHxlbnwwfDB8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-            </div>
-
-            <div class="col">
-               <img class="img-thumbnail" src="https://images.unsplash.com/photo-1581085173515-7632824993fb?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1950&q=80">
-            </div>
-
-            <div class="col">
-               <img class="img-thumbnail" src="https://images.unsplash.com/photo-1588771431170-db3da0ede538?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1567&q=80">
-            </div>
-        </div>
+         <div class="row">
+            <% for (var i = 6; i < 12; i++) { %>
+                <div class="col">
+                   <a href="/artwork/<%= artworks[i]._id %>"><img class="img-thumbnail" src="<%= artworks[i].img.data %>"></a>
+                   <figcaption class="figure-caption">
+                    <span class="artwork-name">
+                        <% if (artworks[i].name) { %>
+                          <%= artworks[i].name %>
+                        <% } else { %>
+                          Nameless
+                        <% } %>
+                   </span> by <a href="/profile/<%= artworks[i].author.username %>"><%= artworks[i].author.username %></a>
+                </figcaption>
+             </div>
+             <% } %>
+         </div>
     </div>
 
-
-
-    <div class="container-fluid" style="background-color: #686261; padding-top: 10px; padding-bottom: 50px;">
-        <div class="col-12 col-md-8" style="color: white; margin-bottom: 15px; border-bottom: 2px solid lightgray;">
+    <!-- Trending 3 -->
+    <div class="container-fluid" id="trending-container3"> 
+        <div class="col-12 col-md-8">
             <h1>Trending</h1>
         </div>
 
         <div class="row">
-			<div class="col">
-				<img class="img-thumbnail" src="https://images.unsplash.com/photo-1547362705-4da0fd6003f2?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NDN8fGFydHxlbnwwfDB8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-			</div>
-
-			<div class="col">
-				<img class="img-thumbnail" src="https://images.unsplash.com/photo-1595430243277-34c931f7b59d?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NDR8fGFydHxlbnwwfDB8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-            </div>
-
-            <div class="col">
-				<img class="img-thumbnail" src="https://images.unsplash.com/photo-1601551319383-e52c41518071?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NTB8fGFydHxlbnwwfDB8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-			</div>
-
-			<div class="col">
-				<img class="img-thumbnail" src="https://source.unsplash.com/xX6BOQ0fJvk">
-            </div>
-
-            <div class="col">
-				<img class="img-thumbnail" src="https://images.unsplash.com/photo-1599031425762-838bd43d4f66?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NTh8fGFydHxlbnwwfDB8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-            </div>
-
-            <div class="col">
-				<img class="img-thumbnail" src="https://images.unsplash.com/photo-1607422573530-5e1931d9ac84?ixid=MXwxMjA3fDB8MHxzZWFyY2h8Njh8fGFydHxlbnwwfDB8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60">
-            </div>
-        </div>
-      </div>
-
-      <div class="container">
-         <img src="https://cdn.dribbble.com/users/563824/screenshots/3633228/untitled-5.gif">
-
-         <% randomArtwork.forEach( (raw) => { %>
-            
-         <% }); %>
+            <% for (var i = 12; i < 18; i++) { %>
+                <div class="col">
+                   <a href="/artwork/<%= artworks[i]._id %>"><img class="img-thumbnail" src="<%= artworks[i].img.data %>"></a>
+                   <figcaption class="figure-caption">
+                    <span class="artwork-name">
+                        <% if (artworks[i].name) { %>
+                          <%= artworks[i].name %>
+                        <% } else { %>
+                          Nameless
+                        <% } %>
+                   </span> by <a href="/profile/<%= artworks[i].author.username %>"><%= artworks[i].author.username %></a>
+                </figcaption>
+             </div>
+             <% } %>
+         </div>
       </div>
 
 <%- include("./partials/footer") %>

@@ -1,6 +1,12 @@
-var middlewareObj = {};
+// Imported Models
+var Artwork = require("../models/artwork");
+var Comment = require("../models/comment");
 
 //const url = require('url');
+
+// Export Middleware
+var middlewareObj = {};
+
 
 middlewareObj.isLoggedIn = function(req, res, next) {
     if (req.isAuthenticated()) {
@@ -21,6 +27,40 @@ middlewareObj.isLoggedIn = function(req, res, next) {
     res.redirect("../../login");
 }
 
+
+middlewareObj.validateArtworkOwnership = function(req, res, next) {
+    Artwork.findById(req.params.id, function(err, foundArtwork) {
+        if (err) {
+            req.flash("error", err.message);
+            res.redirect("/home");
+        } else {
+            if (foundArtwork.author.id.equals(req.user._id)) {
+                next();
+            } else {
+                req.flash("error", "You don't have permission to do that");
+                res.redirect("/artwork/" + foundArtwork._id);
+            }
+        }
+    });
+}
+
+middlewareObj.validateCommentOwnership = function(req, res, next) {
+    Comment.findById(req.params.comment_id, function(err, foundComment) {
+        if (err) {
+            req.flash("error", err.message);
+            res.redirect("/home");
+        } else {
+            if (foundComment.author.id.equals(req.user._id)) {
+                next();
+            } else {
+                req.flash("error", "You don't have permission to do that");
+                res.redirect("/home");
+            }
+        }
+    });
+}
+
+
 middlewareObj.hasAvailableArtworkSlots = function(req, res, next) {
     console.log(req.user.artworks.length);
     
@@ -30,5 +70,7 @@ middlewareObj.hasAvailableArtworkSlots = function(req, res, next) {
 
     res.redirect("/home");
 }
+
+
 
 module.exports = middlewareObj;

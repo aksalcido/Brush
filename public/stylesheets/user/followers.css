@@ -1,0 +1,12 @@
+.follower-username {
+    color: inherit;
+}
+
+.card {
+    transition: 1s;
+}
+
+.card:hover {
+    width: 110%;
+}
+

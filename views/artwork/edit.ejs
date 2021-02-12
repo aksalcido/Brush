@@ -1,11 +1,17 @@
-<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/artwork/edit.css">
+<%- include("../partials/header") %>
+</head>
+
+<body>
+   <!-- Bootstrap Navbar -->
+   <%- include ("../partials/default") %>
 
 <div class="container">
-    <h1 style="text-align: center;">
+    <h1>
         Edit '<%= artwork.name %>'
     </h1>
 
-    <div style="width: 80%; margin: 25px auto;">
+    <div id="form-container">
         <form action="/artwork/<%= artwork._id %>?_method=PUT" method="POST">
             <!-- Name -->
             <div class="form-group">

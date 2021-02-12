@@ -48,14 +48,12 @@ a {
     top: 0;
     left: 0;
     background-size: cover;
-    background-position: 50% 50%;
     background-repeat: no-repeat;
     opacity: 0;
     z-index: 0;
     animation: imageAnimation 30s linear infinite; 
     filter: blur(4px);
 }
-
 
 .slideshow li:nth-child(1) {
     background-image: url("../images/kelli.jpg");

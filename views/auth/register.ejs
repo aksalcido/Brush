@@ -1,0 +1,55 @@
+<%- include("../partials/header") %>
+<link rel="stylesheet" href="/stylesheets/auth/register.css">
+</head>
+<body>
+   <!-- Bootstrap Navbar -->
+   <%- include ("../partials/default") %>
+
+<div class="container">
+    <div class="d-flex justify-content-center h-100">
+        <div class="card">
+            <div class="card-header">
+              <h3>Register</h3>
+            </div>
+            
+            <div class="card-body">
+                <form action="/register" method="POST">
+                    <!-- Username Input -->
+                    <div class="input-group form-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">@</span>
+                        </div>
+                        <input class="form-control" type="text" name="username" placeholder="username">
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="input-group form-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">  </span>
+                        </div>
+                        <input class="form-control" type="password" name="password" placeholder="password">
+                    </div>
+
+                    <!-- Email Input -->
+                    <div class="input-group form-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1"></span>
+                        </div>
+                        <input class="form-control" type="text" name="email" placeholder="email (optional)">
+                    </div>
+            
+                    <div>
+                        <button class="btn btn-primary">Sign Up</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-footer">
+            </div>
+
+          </div>
+    </div>
+</div>
+
+<%- include("../partials/footer") %>
+
