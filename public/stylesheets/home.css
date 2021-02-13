@@ -8,6 +8,9 @@
     z-index: 20;
     top: 8%;
     left: 2%;
+    background:rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    border-radius: 15px 50px;
 }
 
 #home-message h1 {
@@ -181,3 +184,16 @@
 .no-cssanimations .slideshow li {
 	opacity: 1;
 }
+
+
+.navbar-inner {
+    background:transparent;
+}
+
+/*
+.navbar.transparent.navbar-inverse .navbar-inner {
+    background: rgba(0,0,0,0.4);
+ }
+
+ navbar transparent navbar-inverse navbar-fixed-top
+ */

@@ -153,7 +153,31 @@ router.get("/:username/follow", middlewareObj.isLoggedIn, function(req, res) {
 
 
 router.get("/:username/unfollow", middlewareObj.isLoggedIn, function(req, res) {
-    res.send("Follow clicked");
+    // Verify that User trying to be unfollowed is a real user
+    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).exec(function(err, foundUser) {
+        if (err) {
+            req.flash("error", err.message);
+            res.redirect("/home");
+        } else {
+            // Update User that is making the unfollow request (remove foundUser from following)
+            User.updateOne({ _id: req.user._id }, {$pull: {following: foundUser._id}}, function(err, updatedUnfollowingUser) {
+                if (err) {
+                    req.flash("error", err.message);
+                    res.redirect("/profile/" + foundUser.username);
+                } else {
+                    // Update User that is being unfollowed (remove updatedUnfollowingUser from followers)
+                    User.updateOne({ _id: foundUser._id }, {$pull: {followers: req.user._id}}, function(err, updatedLosingFollowerUser) {
+                        if (err) {
+                            req.flash("error", err.message);
+                            res.redirect("/profile/" + updatedUnfollowingUser.username);
+                        } else {
+                            res.redirect("/profile/" + foundUser.username);
+                        }
+                    });
+                }
+            });
+        }
+    });
 });
 
 
