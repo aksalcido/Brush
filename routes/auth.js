@@ -28,13 +28,24 @@ router.get("/home", function(req, res) {
 });
 
 router.get("/discover", function(req, res) {
-	Artwork.find({}, function(err, artworks) {
-		if (err) {
-			console.log("Error finding campgrounds");
-		} else {
-			res.render("discover", {artworks: artworks});;
-		}
-	});
+    var page = req.query.page ? (req.query.page >= 1 ? req.query.page : 1) : 1;
+    const limit = 10;
+
+    var sortType = {likesTotal: -1};
+
+    if (req.query.type) {
+        if (req.query.type === "favorites") {
+            sortType = {favoritesTotal: -1};
+        }
+    }
+
+    Artwork.find({}).sort(sortType).skip((page - 1) * limit).limit(limit).exec(function(err, result) {
+        if (err) {
+            req.flash("error", err.message);
+        } else {
+            res.render("discover", {artworks: result, page: page, limit: limit});
+        }
+    });
 });
 
 // ===== Authorization =====

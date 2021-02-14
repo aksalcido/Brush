@@ -33,7 +33,6 @@
                             </form>
                         <% } %>
 
-
                         <% if (currentUser && artwork.favorites.some((favoritedBy) => favoritedBy.equals(currentUser._id))) { %>
                             <form action="/artwork/<%= artwork._id%>/unfavorite?_method=PUT" method="POST" style="display: inherit;">
                                 <button type="submit">Unfavorite</button>
@@ -109,9 +108,6 @@
                     <% }) %>
                 </div>
 
-                <a href="/artwork/<%= artwork._id %>?page=<%= parseInt(page) - 1 %>"> Previous Page </h1>
-
-                <a href="/artwork/<%= artwork._id %>?page=<%= parseInt(page) + 1 %>"> Next Page </h1>
             </div>
         </div>
     </div>

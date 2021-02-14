@@ -3,8 +3,18 @@
 <body>
    <!-- Bootstrap Navbar -->
    <%- include ("./partials/default") %>
-   
+
+
    <div class="container-fluid" style="width: 80%;">
+
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/discover?type=likes"> Likes </a></li>
+            <li class="breadcrumb-item"><a href="/discover?type=favorites"> Favorites </a></li>
+            <li class="breadcrumb-item"><a href="/discover?types=popular"> Popular </a></li>
+        </ol>
+      </nav>
+
        <table class="table table-striped">
          <thead>
            <tr>
@@ -17,9 +27,12 @@
          </thead>
 
          <tbody>
-          <% artworks.forEach( (artwork) => { %>
+          <% 
+            var count = (page - 1) * 10;
+            artworks.forEach( (artwork) => { %>
+
             <tr>
-              <th scope="row">1</th>
+              <th scope="row"><%= ++count %></th>
               <td><a href="/artwork/<%= artwork._id %>"><img src="<%= artwork.img.data %>" style="height: 150px; border: 1px solid black;"></a></td>
               <!-- Artwork Name -->
               <td><a href="/artwork/<%= artwork._id %>">
@@ -42,8 +55,16 @@
             </tr>
           <% }) %>
          </tbody>
-
        </table>
+
+       <% if (parseInt(page) !== 1) { %>
+         <a href="/discover/?page=<%= parseInt(page) - 1 %>">Back </a>
+       <% } %>
+
+       <% if (artworks.length === limit) { %>
+        <a href="/discover/?page=<%= parseInt(page) + 1 %>">Next </a>
+        <% } %>
+      
    </div>
 
 

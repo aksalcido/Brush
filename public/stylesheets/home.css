@@ -1,12 +1,15 @@
 #home-display {
+    position: relative;
     height: 750px;
     width: 100%;
+    top: -50px;
+    z-index: 1;
 }
 
 #home-message {
     position: absolute; 
     z-index: 20;
-    top: 8%;
+    top: 12%;
     left: 2%;
     background:rgba(0, 0, 0, 0.1);
     padding: 40px;
@@ -89,6 +92,8 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    top: 0;
+    left: 0;
 }
 
 .slideshow li {
@@ -185,10 +190,6 @@
 	opacity: 1;
 }
 
-
-.navbar-inner {
-    background:transparent;
-}
 
 /*
 .navbar.transparent.navbar-inverse .navbar-inner {

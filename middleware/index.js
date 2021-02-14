@@ -68,6 +68,7 @@ middlewareObj.hasAvailableArtworkSlots = function(req, res, next) {
         return next();
     }
 
+    req.flash("error", "You have already created the maximum amount of works!");
     res.redirect("/home");
 }
 

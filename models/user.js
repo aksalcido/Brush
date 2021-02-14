@@ -11,6 +11,8 @@ var UserSchema = new mongoose.Schema({
     location: String,
     gender: String,
     totalComments: {type: Number, default: 0},
+    totalLikes: {type: Number, default: 0},
+    totalFavorites: {type: Number, default: 0},
     createdAt: {
         type: Date, default: Date.now
     },

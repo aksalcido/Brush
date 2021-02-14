@@ -13,21 +13,12 @@ var router = express.Router();
 var middlewareObj = require("../middleware/index.js");
 
 router.get("/:id", function(req, res) {
-    /*
-    const page = req.query.page;
-    const limit = req.query.limit;
-
-    const startIndex = (page - 1) * limit;
-    */
-   const page = req.query.page ? req.query.page : 1;
-
-
     Artwork.findById(req.params.id).populate("comments").populate("likes").exec(function(err, foundArtwork) {
         if (err) {
             req.flash("error", err.message);
             res.redirect("/home");
         } else {
-            res.render("artwork/show", {artwork: foundArtwork, page: page});
+            res.render("artwork/show", {artwork: foundArtwork});
         }
     });
 });
@@ -62,15 +53,22 @@ router.delete("/:id", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwn
             res.redirect("/artwork/" + req.params.id);
         } else {
             // Remove Artwork from other Models referencing it
-
-            res.redirect("/profile");
+            User.updateOne({ _id: req.user._id }, {$pull: {artworks: req.params.id}}, function(err, updatedUser) {
+                if (err) {
+                    req.flash("error", err.message);
+                    res.redirect("/home");
+                } else {
+                    res.redirect("/profile");
+                }
+            })
         }
     });
 });
 
 router.put("/:id/like", middlewareObj.isLoggedIn, function(req, res) {
     Artwork.findByIdAndUpdate(req.params.id, {
-        $addToSet: { likes: req.user._id }
+        $addToSet: { likes: req.user._id },
+        $inc: { likesTotal: 1 }
     }, {
         new: true
     }).exec(function(err, updatedArtwork) {
@@ -92,7 +90,10 @@ router.put("/:id/unlike", middlewareObj.isLoggedIn, function(req, res) {
             req.flash("error", err.message);
             res.redirect("/home");
         } else {
-            Artwork.updateOne({ _id: req.params.id }, {$pull: {likes: req.user._id}}, function(err, updatedArtwork) {
+            Artwork.updateOne({ _id: req.params.id }, {
+                $pull: {likes: req.user._id},
+                $inc: { likesTotal: -1 }
+            }, function(err, updatedArtwork) {
                 if (err) {
                     req.flash("error", err.message);
                     res.redirect("/home");
@@ -107,7 +108,8 @@ router.put("/:id/unlike", middlewareObj.isLoggedIn, function(req, res) {
 
 router.put("/:id/favorite", middlewareObj.isLoggedIn, function(req, res) {
     Artwork.findByIdAndUpdate(req.params.id, {
-        $addToSet: { favorites: req.user._id }
+        $addToSet: { favorites: req.user._id },
+        $inc: { favoritesTotal: 1 }
     }, {
         new: true
     }).exec(function(err, updatedArtwork) {
@@ -129,7 +131,10 @@ router.put("/:id/unfavorite", middlewareObj.isLoggedIn, function(req, res) {
             req.flash("error", err.message);
             res.redirect("/home");
         } else {
-            Artwork.updateOne({ _id: req.params.id }, {$pull: {favorites: req.user._id}}, function(err, updatedArtwork) {
+            Artwork.updateOne({ _id: req.params.id }, {
+                $pull: {favorites: req.user._id}, 
+                $inc: { favoritesTotal: -1 }
+            }, function(err, updatedArtwork) {
                 if (err) {
                     req.flash("error", err.message);
                     res.redirect("/home");

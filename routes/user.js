@@ -133,11 +133,7 @@ router.get("/:username/follow", middlewareObj.isLoggedIn, function(req, res) {
         } else {
             // foundUser contains the person currentUser wishes to follow; So we add foundUser to following of currentUser and
             // followers of foundUser.
-            User.findByIdAndUpdate(res.locals.currentUser._id, {
-                $addToSet: { following : foundUser._id }
-            }, {
-                new: true
-            }).exec(function(err, updatedUser) {
+            User.findByIdAndUpdate(res.locals.currentUser._id, { $addToSet: { following : foundUser._id } }, { new: true }).exec(function(err, updatedUser) {
                 if (err) {
                     console.log("Error completing the follow request");
                     res.redirect("/home");

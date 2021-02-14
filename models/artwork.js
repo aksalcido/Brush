@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+var mongoosePaginate = require('mongoose-paginate-v2');
 
 var ArtworkSchema = new mongoose.Schema({
     name: String,
@@ -23,27 +24,20 @@ var ArtworkSchema = new mongoose.Schema({
             ref: "Comment"
         }
     ],
+    likesTotal: { type: Number, default: 0 },
     likes: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User"
             }
     ],
+    favoritesTotal: { type: Number, default: 0},
     favorites: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }
     ]
-});
-
-ArtworkSchema.pre('update', function(next) {
-    this.model('User').update(
-        { },
-        { "$pull": { "artworks": this._id } },
-        { "multi": true },
-        next
-    );
 });
 
 module.exports = mongoose.model("Artwork", ArtworkSchema);
