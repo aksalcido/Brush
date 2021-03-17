@@ -1,8 +1,27 @@
+.navbar {
+    align-items: normal !important;
+}
+
+.container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.display-4 {
+    font-weight: bold !important;
+}
+
 #home-display {
     position: relative;
     height: 750px;
     width: 100%;
-    top: -50px;
     z-index: 1;
 }
 
@@ -14,6 +33,7 @@
     background:rgba(0, 0, 0, 0.1);
     padding: 40px;
     border-radius: 15px 50px;
+    font-family: 'Fira Sans', sans-serif;
 }
 
 #home-message h1 {
@@ -21,7 +41,7 @@
 }
 
 #home-message p {
-    font-size: 24px;
+    font-size: 32px !important;
 }
 
 .home-text {
@@ -29,52 +49,87 @@
     text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
 }
 
+#create-text {
+    font-size: 24px !important;
+}
+
+.front-page-header {
+    font-family: 'Fira Sans', sans-serif;
+    width: 100%; 
+    text-align: center; 
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4); 
+    margin-bottom: 30px;
+}
+
+
+/* Rows */
+.first-display-row figcaption a {
+    color: rgb(45, 58, 243);
+ }
+
+ .second-display-row figcaption a {
+    color: rgb(25, 110, 150);
+ }
+
+ .third-display-row figcaption a {
+    color: lightblue;
+ }
+
+/* Displayed Artwork */
 .img-thumbnail {
     height: 85%;
-    transition: 0.15s;
-    border: 1px solid rgba(0, 0, 0, 0.5);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(51, 51, 51, 0.3) !important;
 }
 
 .img-thumbnail:hover {
-     max-height: 100%;
+    transform: scale(1.05);
 }
+
+figcaption {
+    font-family: 'Raleway', sans-serif;
+    text-align: center;
+    font-size: 18px !important;
+    color: black!important;
+ }
 
 .artwork-name {
     font-style: italic;
 }
 
+
+/* All Containers */
+.home-display-container {
+    padding-top: 20px; 
+    padding-bottom: 40px;
+}
+
 /* First Row */
 #trending-container1 {
-    background-color: white; 
-    padding-top: 10px; 
-    padding-bottom: 50px;
+    background-color: white;
 }
 
 #trending-container1 .col-12 {
-    margin-bottom: 15px; 
     border-bottom: 2px solid lightgray;
 }
 
 /* Second Row */
 #trending-container2 {
-    background-color: #f0f0f0; 
-    padding-top: 10px; 
-    padding-bottom: 50px;
+    background-color: #f0f0f0;
+    padding-top: 40px;
 }
 
 #trending-container2 .col-12 {
     max-width: 100%; 
     float: right; 
-    text-align: right; 
-    margin-bottom: 15px; 
+    text-align: right;  
     border-bottom: 2px solid lightgray;
 }
 
 /* Third Row */
 #trending-container3 {
-    background-color: #686261; 
-    padding-top: 10px; 
-    padding-bottom: 50px;
+    background-color: #686261;
+    padding-top: 40px;
 }
 
 #trending-container3 .col-12 {
@@ -83,6 +138,7 @@
     border-bottom: 2px solid lightgray;
 }
 
+/* Jumbotron Color Animation */
 .slideshow {
     position: absolute;
     height: 750px;
@@ -112,56 +168,56 @@
 }
 
 .slideshow li:nth-child(1) {
-    background-image: url(../images/gradients/0.jpg);
+    background-image: url(../../images/gradients/0.jpg);
 }
 
 .slideshow li:nth-child(2) {
-    background-image: url(../images/gradients/1.jpg);
+    background-image: url(../../images/gradients/1.jpg);
     animation-delay: 5s;
 }
 
 .slideshow li:nth-child(3) {
-    background-image: url(../images/gradients/2.jpg);
+    background-image: url(../../images/gradients/2.jpg);
     animation-delay: 10s; 
 }
 
 .slideshow li:nth-child(4) {
-    background-image: url(../images/gradients/3.jpg);
+    background-image: url(../../images/gradients/3.jpg);
     animation-delay: 15s; 
 }
 
 .slideshow li:nth-child(5) {
-    background-image: url(../images/gradients/4.jpg);
+    background-image: url(../../images/gradients/4.jpg);
     animation-delay: 20s; 
 }
 
 .slideshow li:nth-child(6) {
-    background-image: url(../images/gradients/5.jpg);
+    background-image: url(../../images/gradients/5.jpg);
     animation-delay: 25s; 
 }
 
 .slideshow li:nth-child(7) {
-    background-image: url(../images/gradients/6.jpg);
+    background-image: url(../../images/gradients/6.jpg);
     animation-delay: 30s;
 }
 
 .slideshow li:nth-child(8) {
-    background-image: url(../images/gradients/7.jpg);
+    background-image: url(../../images/gradients/7.jpg);
     animation-delay: 35s; 
 }
 
 .slideshow li:nth-child(9) {
-    background-image: url(../images/gradients/8.jpg);
+    background-image: url(../../images/gradients/8.jpg);
     animation-delay: 40s; 
 }
 
 .slideshow li:nth-child(10) {
-    background-image: url(../images/gradients/9.jpg);
+    background-image: url(../../images/gradients/9.jpg);
     animation-delay: 45s; 
 }
 
 .slideshow li:nth-child(11) {
-    background-image: url(../images/gradients/10.jpg);
+    background-image: url(../../images/gradients/10.jpg);
     animation-delay: 50s; 
 }
 
@@ -189,12 +245,3 @@
 .no-cssanimations .slideshow li {
 	opacity: 1;
 }
-
-
-/*
-.navbar.transparent.navbar-inverse .navbar-inner {
-    background: rgba(0,0,0,0.4);
- }
-
- navbar transparent navbar-inverse navbar-fixed-top
- */

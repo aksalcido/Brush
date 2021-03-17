@@ -1,17 +1,17 @@
-<%- include("./partials/header") %>
+<%- include("../partials/header") %>
+<link rel="stylesheet" href="/stylesheets/main/discover.css">
 </head>
 <body>
    <!-- Bootstrap Navbar -->
-   <%- include ("./partials/default") %>
+   <%- include ("../partials/default") %>
 
 
-   <div class="container-fluid" style="width: 80%;">
-
+  <div class="container-fluid">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/discover?type=likes"> Likes </a></li>
             <li class="breadcrumb-item"><a href="/discover?type=favorites"> Favorites </a></li>
-            <li class="breadcrumb-item"><a href="/discover?types=popular"> Popular </a></li>
+            <li class="breadcrumb-item"><a href="/discover?type=random"> Random </a></li>
         </ol>
       </nav>
 
@@ -57,15 +57,24 @@
          </tbody>
        </table>
 
-       <% if (parseInt(page) !== 1) { %>
-         <a href="/discover/?page=<%= parseInt(page) - 1 %>">Back </a>
-       <% } %>
+    <div class="row">
+        <div class="col-sm-3 mb-3"></div>
 
-       <% if (artworks.length === limit) { %>
-        <a href="/discover/?page=<%= parseInt(page) + 1 %>">Next </a>
-        <% } %>
-      
-   </div>
+        <div class="col-sm-3 mb-3">
+          <% if (parseInt(page) !== 1) { %>
+            <a href="/discover/?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light" style="float: right;">Back</button></a>
+          <% } %>
+        </div>
+
+        <div class="col-sm-3 mb-3">
+          <% if (artworks.length === limit) { %>
+          <a href="/discover/?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark">Next</button></a>
+          <% } %>
+        </div>
+
+        <div class="col-sm-3 mb-3"></div>
+    </div>
+  </div>  
 
 
-<%- include("./partials/footer") %>
+<%- include("../partials/footer") %>

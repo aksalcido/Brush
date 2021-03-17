@@ -1,51 +1,69 @@
-<div class="container-fluid" style="width: 60%;">
+<div class="container-fluid">
 
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="z-index: 20; background-color: transparent;">
+        <!-- Logo & Return to Landing Page -->
+        <div class="navbar-header"> 
+            <a class="navbar-brand" href="/"><i class="fas fa-paint-brush"></i> Brush</a>
+        </div>
 
-<!-- Bootstrap Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light" style="z-index: 20; background-color: transparent;">
-    <!-- Logo & Return to Landing Page -->
-    <div class="navbar-header"> 
-        <a class="navbar-brand" href="/">Brush</a>
-    </div>
+        <!-- Collapse Content Inner -->
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <!-- Page Tabs on the Left of the Navbar -->
+            <ul class="nav navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/home">Home<span class="sr-only">(current)</span></a>
+                </li>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <!-- Content on the Left of the Navbar -->
-        <ul class="nav navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="/home">Home<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/discover">Discover</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/create">Create</a>
-            <li class="nav-item">
-                <a class="nav-link" href="/profile">Profile</a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/discover">Discover</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/create">Create</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile">Profile</a>
+                </li>
+
+                <!-- Search Bar -->
+                <li class="nav-item">
+                    <form class="form-inline" action="/artwork/search" method="GET">
+                        <div class="form-group">
+                            <input id="navbar-search-bar" class="form-control mr-sm-2" type="search" name="q" placeholder="Search artwork" aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>             
+                        </div>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Login/Logout/Register Info on the right of the Navbar (Doesn't Collapse) -->
+        <ul class="nav navbar-nav navbar-right">
+            <% if (!currentUser) { %>
+                <li class="nav-item">
+                    <li id="login-display"><a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                </li>
+                <li class="nav-item">
+                    <li id="register-display"><a href="/register"><i class="fas fa-user-plus"></i> Sign Up</a></li>
+                </li>
+            <% } else { %>
+                <li class="nav-item">
+                    <li id="signed-in-display"><a href="/profile/<%= currentUser.username %>"><i class="fas fa-user"><%= currentUser.username %></i></a></li>
+                </li>
+                <li class="nav-item">
+                    <li id="logout-display"><a href="/logout"><i class="fas fa-sign-out-alt">Logout</i></a></li>
+                </li> 
+            <% } %>
         </ul>
+        
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarMenu"> 
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <!-- Content on the Right  of the Navbar -->
-        <% if (!currentUser) { %>
-        <ul class="nav navbar-nav ml-auto">
-            <li class="nav-item active">
-                <li><a href="/login">Login</a></li>
-            </li>
-            <li class="nav-item">
-                <li><a href="/register">Sign Up</a></li>
-            </li>
-        </ul>
-        <% } else { %>
-        <ul class="nav navbar-nav ml-auto">
-            <li class="nav-item">
-                <li><a href="/profile/<%= currentUser.username %>">Sign In As <%= currentUser.username %> </a></li>
-            </li>
-            <li class="nav-item">
-                <li><a href="/logout"> Logout</a></li>
-            </li> 
-        </ul>
-        <% } %>
-    </div>
-</nav>
+    </nav>
+
 </div>
 
 <div class="container">

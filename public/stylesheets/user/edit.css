@@ -1,8 +1,27 @@
+html, body{
+    height:100%;
+    width:100%;
+}
+
+.container-fluid {
+    width: 60%;
+}
+
+body {
+    height: 100%;
+}
+
+#edit-wrapper {
+    margin-top: 0;
+    height: 100%;
+    padding: 25px;
+}
+
 h1 {
     text-align: center;
 }
 
 .container {
+    background: #fff;
     width: 80%;
-     margin: 20px auto;
 }

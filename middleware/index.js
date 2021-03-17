@@ -66,12 +66,39 @@ middlewareObj.hasAvailableArtworkSlots = function(req, res, next) {
     
     if (req.user.artworks.length < 21) {
         return next();
+    } else { 
+        req.flash("error", "You have already created the maximum amount of works!");
+        res.redirect("/profile/" + req.user.username);
     }
-
-    req.flash("error", "You have already created the maximum amount of works!");
-    res.redirect("/home");
 }
 
+
+middlewareObj.usernameToLowerCase = function(req, res, next) {
+    req.body.username = req.body.username.toLowerCase();
+    next();
+}
+
+middlewareObj.validateUsername = function(req, res, next) {
+    if (req.body.username.length <= 2 || req.body.username.length > 20) {
+        req.flash("error", "Username must be greater than 2 and not exceed length 20");
+        res.redirect("/register");
+    } else {
+        next();
+    }
+}
+
+middlewareObj.validatePassword = function(req, res, next) {
+    let re = new RegExp("^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$");
+    
+    console.log(re.test(req.body.password));
+
+    if (!re.test(req.body.password)) {
+        req.flash("error", "Password must be Minimum eight characters with at least one letter, number, and special character.");
+        res.redirect("/register");
+    } else {
+        next();
+    }
+}
 
 
 module.exports = middlewareObj;

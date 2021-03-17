@@ -15,33 +15,59 @@ const customRGBSliders = document.querySelectorAll(".custom-rgb");
 // Check boxes
 const lineCheckboxes = document.querySelectorAll(".brush-checkbox");
 
-// Buttons 
-const saveButton  = document.querySelector('#save');
-const undoButton  = document.querySelector("#undo");
-const redoButton  = document.querySelector("#redo");
-const clearButton = document.querySelector('#clear');
-const hideButton  = document.querySelector("#hide");
-
 // Tools
 const paintBrushButton  = document.querySelector("#paint-brush");
-const fillBucketButton  = document.querySelector("#fill-bucket");
+const fillButton        = document.querySelector("#fill-bucket");
+const eraserButton      = document.querySelector("#eraser");
 const colorPickerButton = document.querySelector("#color-picker");
 const shapePickerButton = document.querySelector("#shape-picker");
 
-//const horizontalDisplay = document.querySelector(".horizontal-display");
-const fRectangleButton  = document.querySelector("#filledRectangle");
-const sRectangleButton  = document.querySelector("#strokedRectangle");
-
-const clickPoint = document.querySelector(".shape-click");
-
 // Dropdown and Content
-const effectsDropdownButton = document.querySelector(".dropbtn");
-const effectsOptions = document.querySelectorAll("#effects-dropdown a");
+const brushEffectOptions = document.querySelectorAll(".dropdown-menu a");
 
 // Custom Effects
 const rainbowButton = document.querySelector("#rainbow");
 const directionalButton = document.querySelector("#directional");
 const invertButton = document.querySelector("#invert");
+const grayscaleButton = document.querySelector("#grayscale");
+
+// Canvas Buttons 
+const saveButton  = document.querySelector('#save');
+const undoButton  = document.querySelector("#undo");
+const redoButton  = document.querySelector("#redo");
+const clearButton = document.querySelector('#clear');
+const hideButton  = document.querySelector("#hide");
+const showButton  = document.querySelector("#show");
+
+// Shape Related 
+const fRectangleButton  = document.querySelector("#filledRectangle");
+const sRectangleButton  = document.querySelector("#strokedRectangle");
+const clickPoint = document.querySelector(".shape-click");
+
+// Local Storage Keys Names for Access
+const storageKeys = {
+    canvasName: "brushCanvas",
+    lastUsedColor: "lastUsedColor"
+};
+
+
+// Contains the default settings for the brush on load
+const defaultBrushSettings = {
+    lineJoin: 'round',
+    lineCap: 'round',
+    lineWidth: 2,
+    globalAlpha: 1.0,
+    strokeStyle: localStorage.getItem(storageKeys.lastUsedColor) || 'black',
+};
+
+var previousCanvas = localStorage.getItem(storageKeys.canvasName) || null;
+
+// Represents the State of the Program and allows the User to undo/redo up to 'max' amount of turns
+const State = {
+    states: [previousCanvas],
+    index: 1,
+    max: 15
+};
 
 // GLOBAL Drawing Variables
 let lastX     = 0;
@@ -49,38 +75,26 @@ let lastY     = 0;
 let isDrawing = false;
 let currentTool = paintBrushButton; // by default our currentTool is equal to our paint brush
 let currentColor = null;
+let eraseMode = false;
+let activeBrushEffect = brushEffectOptions[0];
 
 // Custom Effects Variables
 let customEffects = [];
 let hue = 0;
 let direction = true;
 
-// Local Storage Keys
-const canvasName = "brushCanvas";
-const previousName = "previousCanvas";
-const lastUsedColor = "lastUsedColor";
-
-
-var previousCanvas = localStorage.getItem(previousName) || null;
-
-// Represents the State of the Program and allows the User to undo/redo up to 'max' amount of turns
-const State = {
-    states: [previousCanvas],
-    index: 0,
-    max: 5
-};
-
 // Initialize the Program
 init();
 
+
 /* ============================== User Tool Methods ============================== */
 function draw(event) {
-    //console.log(isDrawing);
     if (!isDrawing) 
         return;
     
-    // Custom Effects are ran here if Any
-    handleCustomEffects();
+    // Custom Effects are Ran Here (if any) so long as we are not in Erasemode
+    if (!eraseMode) 
+        handleCustomEffects();
 
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -91,37 +105,238 @@ function draw(event) {
 }
 
 function fill(c, r) {
-    console.log('Filled called');
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-
+    var newColor = hexToRgb(ctx.strokeStyle);
     var pixel = ctx.getImageData(c, r, 1, 1);
-    var pixelData = pixel.data;
-    console.log(pixelData);
-    const ocolor = `rgba(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]}, ${pixelData[3]})`;
+    var originalColor = pixel.data;
 
-
-    for(var i = 0; i < 2000; i += 4) {
-        data[i] = 130;
-        data[i + 1] = 40;
-        data[i + 2] = 40;
-    }
-
-    ctx.putImageData(imageData, 0, 0, dirtyWidth=500, dirtyHeight=1000);
-
-    //fillPixel(data, c, r, ocolor, ctx.strokeStyle);
+    //fillHelper(c, r, originalColor, newColor);
+    //floodFillQueue(c, r, originalColor, newColor);
+    floodFillSpanFilling(c, r, originalColor, newColor);
+    saveCanvas();
 }
 
-function fillPixel(data, c, r, ocolor, ncolor) {
-    console.log("ocolor: " + ocolor);
-    console.log("ncolor: " + ncolor);
 
-    for(var i = 0; i < canvas.height; i += 4) {
-        data[i] = 130;
-        data[i + 1] = 40;
-        data[i + 2] = 40;
+function hexToRgb(hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+      return r + r + g + g + b + b;
+    });
+  
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+    if (result)
+        return new Uint8ClampedArray([parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16), 255]);
+
+    return null;
+}
+
+/* In Development */
+function floodFillSpanFillingOptimized(x, y, originalColor, newColor) {
+    if (!inside(x, y, originalColor))           //    if not Inside(x, y) then return
+        return;
+    
+    var queue = [];                            // let s = new empty queue or stack
+    queue.push([x, x, y, 1]);                  // Add (x, x, y, 1) to s
+    queue.push([x, x, y - 1, -1]);             // Add (x, x, y - 1, -1) to s
+
+    while (queue.length != 0) {
+        let coord = queue[0];                  
+        queue.shift();                         
+
+        let x1 = coord[0];
+        let x2 = coord[1];
+        let y  = coord[2];
+        let dy = coord[3];
+        let x = x1;
+    
+        //console.log("[x1, x2, y, dy, x]");
+        //console.log(x1 + " " + x2 + " " + y + " " + dy + " " + x);
+        //console.log("------------------------------------");
+
+        if (inside(x, y, originalColor)) {
+            while (inside(x - 1, y, originalColor)) {
+                setCoordinate(x - 1, y, newColor);
+                x--;
+            }
+        }
+
+        if (x < x1) {
+            queue.push([x, x1 - 1, y - dy, -dy]);
+        }
+
+        while (x1 < x2) {
+            while (inside(x1, y, originalColor)) {
+                setCoordinate(x1, y, newColor);
+                x1++;
+            }
+
+            queue.push([x, x1 - 1, y + dy, dy]);
+
+            if ((x1 - 1) > x2) {
+                queue.push([x2 + 1, x1 - 1, y - dy, -dy]);
+            }
+
+            while (x1 < x2 && !inside(x1, y, originalColor)) {
+                x1++;
+            }
+
+            x = x1;
+        }
     }
 }
+
+function inside(x, y, originalColor) {
+    var pixel = ctx.getImageData(x, y, 1, 1);
+    var data = pixel.data;
+
+    if (data[0] !== originalColor[0] || data[1] !== originalColor[1] || data[2] !== originalColor[2] || data[3] !== originalColor[3]) {
+        return false;
+    }
+
+    return true;
+}
+
+
+function floodFillSpanFilling(x, y, originalColor, newColor) {
+    if (!inside(x, y, originalColor))
+        return;
+    
+    var queue = [];
+    queue.push([x, y]);
+
+    while (queue.length != 0) {
+        let coord = queue[0];
+        queue.shift();
+        let lx = coord[0];
+        
+        while (inside(lx - 1, coord[1], originalColor)) {
+            setCoordinate(lx - 1, coord[1], newColor);
+            lx -= 1;
+        }
+
+        while (inside(coord[0], coord[1], originalColor)) {
+            setCoordinate(coord[0], coord[1], newColor);
+            coord[0] += 1;
+        }
+
+        scan(lx, coord[0] - 1, coord[1] + 1, queue, originalColor);
+        scan(lx, coord[0] - 1, coord[1] - 1, queue, originalColor);
+    }
+}
+
+function scan(lx, rx, y, queue, originalColor) {
+    let added = false;
+    
+    for (var x = lx; x < rx; x++) {
+        if (!inside(x, y, originalColor))
+            added = false;
+        else if (!added) {
+            queue.push([x, y]);
+            added = true;
+        }
+    }
+}
+
+function setCoordinate(x, y, newColor) {
+    var pixel = ctx.getImageData(x, y, 1, 1);
+    var data = pixel.data;
+
+    pixel.data[0] = newColor[0];
+    pixel.data[1] = newColor[1];
+    pixel.data[2] = newColor[2];
+    pixel.data[3] = newColor[3]; 
+
+    ctx.putImageData(pixel, x, y);
+}
+
+/* Non Recursive floodFill -- Too Slow */
+function floodFillQueue(c, r, originalColor, newColor) {
+    var queue = [];
+    queue.push([c, r]);
+
+    // While Queue is not empty
+    while (queue.length != 0) {
+        let coord = queue[0];
+        queue.shift();
+
+        if (coord[0] <= 0 || coord[1] <= 0)
+            continue;
+
+        var pixel = ctx.getImageData(coord[0], coord[1], 1, 1);
+        var data = pixel.data;
+    
+        if (data[0] !== originalColor[0] || data[1] !== originalColor[1] || data[2] !== originalColor[2] || data[3] !== originalColor[3])
+            continue;
+        
+        pixel.data[0] = newColor[0];
+        pixel.data[1] = newColor[1];
+        pixel.data[2] = newColor[2];
+        pixel.data[3] = newColor[3]; 
+
+        ctx.putImageData(pixel, coord[0], coord[1]);
+
+        // (x - 1, y)
+        var pixel = ctx.getImageData(coord[0] - 1, coord[1], 1, 1);
+        var data = pixel.data;
+    
+        if (data[0] === originalColor[0] || data[1] === originalColor[1] || data[2] === originalColor[2] || data[3] === originalColor[3]) {
+            ctx.putImageData(pixel, coord[0] - 1, coord[1]);
+            queue.push([coord[0] - 1, coord[1]]);
+        }
+
+        // (x + 1, y)
+        var pixel = ctx.getImageData(coord[0] + 1, coord[1], 1, 1);
+        var data = pixel.data;
+    
+        if (data[0] === originalColor[0] || data[1] === originalColor[1] || data[2] === originalColor[2] || data[3] === originalColor[3]) {
+            ctx.putImageData(pixel, coord[0] + 1, coord[1]);
+            queue.push([coord[0] + 1, coord[1]]);
+        }
+
+
+        // (x, y - 1)
+        var pixel = ctx.getImageData(coord[0], coord[1] - 1, 1, 1);
+        var data = pixel.data;
+    
+        if (data[0] === originalColor[0] || data[1] === originalColor[1] || data[2] === originalColor[2] || data[3] === originalColor[3]) {
+            ctx.putImageData(pixel, coord[0], coord[1] - 1);
+            queue.push([coord[0], coord[1] - 1]);
+        }
+
+        // (x, y + 1)
+        var pixel = ctx.getImageData(coord[0], coord[1] + 1, 1, 1);
+        var data = pixel.data;
+    
+        if (data[0] === originalColor[0] || data[1] === originalColor[1] || data[2] === originalColor[2] || data[3] === originalColor[3]) {
+            ctx.putImageData(pixel, coord[0], coord[1] + 1);
+            queue.push([coord[0], coord[1] + 1]);
+        }
+
+    }
+}
+
+/* Recursive Flood Fill -- Stack overflow */
+function floodFillRecursive(c, r, originalColor, newColor) {
+    var pixel = ctx.getImageData(c, r, 1, 1);
+    var data = pixel.data;
+
+    if (data[0] !== originalColor[0] || data[1] !== originalColor[1] || data[2] !== originalColor[2] || data[3] !== originalColor[3])
+        return;
+
+    pixel.data[0] = newColor[0];
+    pixel.data[1] = newColor[1];
+    pixel.data[2] = newColor[2];
+    pixel.data[3] = newColor[3]; 
+
+    ctx.putImageData(pixel, c, r);
+
+    fillHelper(c - 1, r, originalColor, newColor);
+    fillHelper(c + 1, r, originalColor, newColor);
+    fillHelper(c, r - 1, originalColor, newColor);
+    fillHelper(c, r + 1, originalColor, newColor);
+}
+
 
 // Pick Color based off Clicked Pixel on Canvas //
 function pick(c, r) {
@@ -143,10 +358,6 @@ function drawShape(ex, ey, c, r) {
         clickPoint.classList.remove('hidden');
     } 
     else {
-        // Saves the Canvas before the Rectangle is drawn for our Undo functionality -- Allows User to revert from drawn shape
-        savePreviousCanvas();
-        localStorage.setItem(previousName, previousCanvas);
-
         if (currentTool.dataset.tool === 'filledRectangle') {
             ctx.beginPath();
             ctx.rect(lastX, lastY, c - lastX, r - lastY);
@@ -160,6 +371,9 @@ function drawShape(ex, ey, c, r) {
         // Sets the Coordinates for initial point back to default: [0, 0]
         [lastX, lastY] = [0, 0];
         clickPoint.classList.add('hidden');
+
+        // Saves the Canvas before the Rectangle is drawn for our Undo functionality -- Allows User to revert from drawn shape
+        saveCanvas();
     }
 }
 
@@ -172,12 +386,6 @@ function handleCustomEffects() {
         }
         else if (effect === rainbowButton.dataset.effect) {
             rainbow();
-        }
-        else if (effect === "cust") {
-            testCustom();
-        }
-        else {
-            
         }
     });
 }
@@ -219,85 +427,174 @@ function invert() {
 
     // Revert Brush back to Previous State
     ctx.globalCompositeOperation = currentCompositeOperation;
+
+    saveCanvas();
 }
 
 function grayscale() {
+    var img = new Image;
+    img.src = canvas.toDataURL();
+    ctx.drawImage(img, 0, 0);
 
+    let imgData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+    let pixels = imgData.data;
+
+    for (var i = 0; i < pixels.length; i += 4) {
+        let lightness = parseInt((pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3);
+    
+        pixels[i] = lightness;
+        pixels[i + 1] = lightness;
+        pixels[i + 2] = lightness;
+    }
+
+    ctx.putImageData(imgData, 0, 0);
+    
+    saveCanvas();
 }
 
-let dotted = 0;
-let customStored;
 
-function testCustom() {
-
-    /* Dynamic LineCap
-    console.log("dotted: ", dotted, " lineJoin: ", ctx.lineCap);
-
-    if (dotted <= 150) {
-        ctx.lineCap = 'round';
-    }
-
-    else if (dotted <= 300) {
-        ctx.lineCap = 'butt';
-    }
-
-    else if (dotted <= 450) {
-        ctx.lineCap = 'square';
-    }
-
-    else {
-        dotted = 0;
-    }
-
-    dotted++;
-    */
- 
-    /* Skip in between
-    if (ctx.strokeStyle !== '#ffffff')
-        customStored = ctx.strokeStyle;
-
-    if (dotted % 2 != 0) {
-        ctx.strokeStyle = "white";
-    } else {
-        ctx.strokeStyle = customStored;
-    }
-
-    dotted++;
-    */
-}
-
+/* ============================== Removing Custom Effects Methods ============================== */
 /* When we pick a normal color normally, we remove any custom color effects for better functionality of the program */
 function removeCustomColorEffects() {
     // ATM we only have rainbowButton effect
-    const index = customEffects.indexOf(rainbowButton.dataset.effect);
+    removeRainbowEffect();
+}
 
-    if (index > -1) {
-        customEffects.splice(index, 1);
+/* Remove all Custom Effects -- Mainly for Tool Transition */
+function removeCustomEffects() {
+    removeRainbowEffect();
+    removeDirectionalEffect();
+}
+
+// Removes the rainbow effect
+function removeRainbowEffect() {
+    const rainbowIndex = customEffects.indexOf(rainbowButton.dataset.effect);
+
+    if (rainbowIndex > -1) {
+        customEffects.splice(rainbowIndex, 1);
         colorDisplay.style.transition = "0.5s";
         rainbowButton.classList.remove("active-custom");    
     }
 }
 
-/* ============================== Canvas Methods ============================== */
-/* Loads the Canvas from the content of the the 'dataURL' */
-function loadCanvas(dataURL) {
-    var img = new Image;
-    img.src = dataURL;
-    img.onload = function() {
-        ctx.drawImage(img, 0, 0);
-    };
+// Removes the Dynamic Width effect
+function removeDirectionalEffect() {
+    const directionalIndex = customEffects.indexOf(directionalButton.dataset.effect);
+
+    if (directionalIndex > -1) {
+        customEffects.splice(directionalIndex, 1);
+        directionalButton.classList.remove("active-custom");    
+    }
+}
+
+
+/* ============================== Initialize Canvas Functions  ============================== */
+function initCanvas() {
+    // Default Settings
+    resize(window.innerWidth, window.innerHeight - toolContainer.offsetHeight);
+    
+    canvas.style.top = toolContainer.offsetHeight.toString() + "px";
+
+    // Removes the transparency of the Canvas and adds a White background
+    ctx.fillStyle='white';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // Assign default settings to the brush
+    assignDefaultBrushSettings();
+    
+    colorDisplay.style.background = ctx.strokeStyle;
+
+    initCanvasEventListeners();    
+}
+
+function initCanvasEventListeners() {
+    canvas.addEventListener('mousemove', draw);
+
+    // Click Down Events
+    canvas.addEventListener('mousedown', (event) => clickDown(event));
+    
+    // This handles the case where the User simply clicks to add small a single stroke
+    canvas.addEventListener('click', (event) => singleClickDown(event));
+
+    // When the Mouse is released while painting/erasing, we want to save the canvas to local storage and to State
+    canvas.addEventListener('mouseup', () => {
+        if (currentTool.dataset.tool === 'paint' || currentTool.dataset.tool === 'eraser') 
+            saveCanvas();
+    });
+
+    // Handles if the mouse leaves the canvas/window, then we disable drawing and save the canvas to localStorage
+    canvas.addEventListener('mouseout', () => {
+        if (isDrawing) 
+            saveCanvas();
+    });
+
+    // Window Warn on Resize
+    window.addEventListener("resize", (event) => {
+        alert("WARNING! Resizing the Window will alter the Image! Return back to original size to prevent loss of Progress!");
+    });
+}
+
+function resize(x, y){ 
+    ctx.canvas.width = x;
+    ctx.canvas.height = y;
+} 
+
+function assignDefaultBrushSettings() {
+    ctx.lineJoin    = defaultBrushSettings.lineJoin;
+    ctx.lineCap     = defaultBrushSettings.lineCap;
+    ctx.lineWidth   = defaultBrushSettings.lineWidth;
+    ctx.globalAlpha = defaultBrushSettings.globalAlpha;
+    ctx.strokeStyle = defaultBrushSettings.strokeStyle;
+}
+
+function clickDown(event) {
+    var c = event.offsetX;
+    var r = event.offsetY;
+
+    if (currentTool.dataset.tool === 'paint' || currentTool.dataset.tool === 'eraser') {
+        if (currentTool.dataset.tool === 'eraser')
+            changeColor("white", null);
+
+        isDrawing = true;
+        [lastX, lastY] = [c, r];
+    }
+    else if (currentTool.dataset.tool === 'fill') {
+        fill(c, r);
+    }
+    else if (currentTool.dataset.tool === 'pick') {
+        pick(c, r);
+    }
+    else {
+        drawShape(event.pageX, event.pageY, c, r);
+    }
+}
+
+function singleClickDown(event) {
+    if (currentTool != paintBrushButton)
+        return;
+
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(event.offsetX, event.offsetY);
+    ctx.stroke();
+}
+
+function release() {
+    if (currentTool.dataset.tool === 'paint' || currentTool.dataset.tool === 'eraser') {
+        saveCanvas();
+    }
 }
 
 /* Saves the Canvas to localStorage so that we do not lose progress if we were to accidentally close the browser/tab. This function
    is called after we draw anything on the canvas. */
 function saveCanvas() {
     isDrawing = false;
-    clearButton.classList.remove('disabled');
-    localStorage.setItem(canvasName, canvas.toDataURL());
+    localStorage.setItem(storageKeys.canvasName, canvas.toDataURL());
+    storeState();
 }
 
-/* Stores the previousCanvas to equal the current Canvas dataURL before we draw again */
-function savePreviousCanvas() {
+/* Stores the current canvas as a 'previous state' that we are capable of returning to by clicking undo */
+function storeState() {
     previousCanvas = canvas.toDataURL();
 
     // Max previous states we are storing reached -- must starting shifting elements to the left -- eleminating the oldest stored canvas from memory
@@ -309,180 +606,30 @@ function savePreviousCanvas() {
     else if (State.index < State.states.length - 1) {
         State.states[State.index++] = previousCanvas;
         State.states.splice(State.index + 1, State.states.length);
+        redoButton.classList.add("disabled");
     // First few drawn brushes for the Session
     } else {
-        State.states[++State.index] = previousCanvas;
+        State.states[State.index++] = previousCanvas;
     }
 
     // If State.index becomes greater than 0, that means we have states we can refer back to so we enable the undoButton
-    if (State.index > 0)
+    if (State.index > 0) {
         undoButton.classList.remove("disabled");
-}
-
-function save() {
-    var confirmation = confirm("Do you want to save this? You will not be able to edit any further?");
-
-    if (confirmation) {
-        // Save contents of the Canvas
-        var img    = canvas.toDataURL("image/png");
-        var data   = JSON.stringify({image: img});
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        saveCanvas();
-        
-        fetch('/create',
-            { method: "POST", body: data, redirect: "follow", headers: {'Content-Type': 'application/json'}})
-            .then(response => { 
-                window.location.replace(response.url);
-            })
-            .then(function(myJson) { 
-                console.log(myJson); 
-            })
-            .catch(error => {
-                console.log(error);
-        });
+        undoButton.disabled = false;
     }
 }
 
-
-function clear() {
-    var confirmation = confirm("Are you sure you want to clear the entire Canvas?");
-
-    if (confirmation) {
-        if (!clearButton.classList.contains('disabled')) {
-            savePreviousCanvas();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            saveCanvas();
-            
-            clearButton.classList.add("disabled");
-        }
-    }
+/* Loads the Canvas from the content of the the 'dataURL' */
+function loadCanvas(dataURL) {
+    var img = new Image;
+    img.src = dataURL;
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0);
+    };
 }
 
-/* Undo functionality by clearing the Canvas and calling loadCanvas on the State previous to the current one. Disables undoButton if there are no previous States to go back to, and Enables clearButton if there are is a previousCanvas. */
-function undo(event) {
-    if (State.index <= 0) {
-        return;
-    }
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    loadCanvas(State.states[State.index--]);
-
-    if (State.index === 0) {
-        undoButton.classList.add("disabled");
-    }
-    
-    // If there is a previousCanvas we can revert to, then we remove the 'disabled' functionality from the clearButton
-    if (previousCanvas) {
-        clearButton.classList.remove('disabled');
-    }
-}
-
-/* Redo functionality by loading the Canvas forward as long as we are not at the most current state. */
-function redo(event) {
-    if (State.index === State.states.length - 1) {
-        return;
-    } else {
-        loadCanvas(State.states[++State.index]);
-    }
-}
-
-/* Changes the ColorDisplay which shows the current color of the User */
-function changeColor(color, colorButton = null) {
-    // Removes the Class current-color from the currentColor we have
-    if (currentColor != null)
-        currentColor.classList.remove('current-color');
-
-    ctx.strokeStyle = color;
-    
-    // currentColor only stores the current color button if it is not null. (e.g Is nnull when we use the Color Picker Tool)
-    if (colorButton) {
-        currentColor = colorButton;
-        // Adds the current-color class to the chosen color to indicate that it's currently in use
-        colorButton.classList.add('current-color');
-    }
-
-    // Changes the Color Display on the Top to match the chosen color
-    colorDisplay.style.background = ctx.strokeStyle;
-
-    // Store the Last Used Color
-    localStorage.setItem(lastUsedColor, ctx.strokeStyle);
-
-    // Removes any Custom Color Effects since we are changing the color
-    removeCustomColorEffects();
-}
-
-/* ============================== Initialization Functions ============================== */
-/* */
-function initCanvas() {
-    // Default Settings
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight - toolContainer.offsetHeight;
-    canvas.style.top = toolContainer.offsetHeight.toString() + "px";
-
-    // Removes the transparency of the Canvas and adds a White background
-    ctx.fillStyle='white';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    // Default Brush Settings
-    ctx.lineJoin    = 'round';
-    ctx.lineCap     =  'round';
-    ctx.lineWidth = 2;
-    ctx.globalAlpha = 1.0;
-    ctx.strokeStyle = localStorage.getItem(lastUsedColor) || 'black';
-    colorDisplay.style.background = ctx.strokeStyle;
-
-    // Canvas Event Listeners
-    canvas.addEventListener('mousemove', draw);
-
-    canvas.addEventListener('mousedown', (event) => {
-        var c = event.offsetX;
-        var r = event.offsetY;
-
-        if (currentTool.dataset.tool === 'paint') {
-            isDrawing = true;
-            [lastX, lastY] = [c, r];
-    
-            // Store the Previous Canvas -- Allows Undo Functionality 
-            savePreviousCanvas();
-            localStorage.setItem(previousName, previousCanvas);
-        }
-        else if (currentTool.dataset.tool === 'fill') {
-            fill(c, r);
-        }
-        else if (currentTool.dataset.tool === 'pick') {
-            pick(c, r);
-        }
-        else {
-            drawShape(event.pageX, event.pageY, c, r);
-        }
-    });
-    
-    // This handles the case where the User simply clicks to add small dots
-    canvas.addEventListener('click', (event) => {
-        if (currentTool != paintBrushButton)
-            return;
-
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(event.offsetX, event.offsetY);
-        ctx.stroke();
-    });
-
-    // When the mouse is released up, we want to stop drawing and save the canvas to localStorage
-    canvas.addEventListener('mouseup', saveCanvas);
-    
-    // Handles if the mouse leaves the canvas/window, then we disable drawing and save the canvas to localStorage
-    canvas.addEventListener('mouseout', saveCanvas);
-
-    // Window Warn on Resize
-    window.addEventListener("resize", (event) => {
-        alert("WARNING! Resizing the Window will alter the Image! Return back to original size to prevent loss of Progress!");
-    });
-}
-
-/* Initializes the color buttons so that they are able to be clicked to change the color of the User */
+/* ============================== Color Initializations ============================== */
+/* =====  Initializes the color buttons so that they are able to be clicked to change the color of the User ===== */
 function initColors() {
     // Initialize Default Colors
     colors.forEach(color => {
@@ -502,14 +649,50 @@ function initColors() {
     });
 }
 
+
+/* Changes the ColorDisplay which shows the current color of the User */
+function changeColor(color, colorButton = null) {
+    // Removes the Class current-color from the currentColor we have
+    if (currentColor != null)
+        currentColor.classList.remove('current-color');
+    
+    ctx.strokeStyle = color;
+    
+    // Prevent Hud Changes if we are currently Erasing
+    if (eraseMode) return;
+
+    // currentColor only stores the current color button if it is not null. (e.g Is nnull when we use the Color Picker Tool)
+    if (colorButton) {
+        currentColor = colorButton;
+        // Adds the current-color class to the chosen color to indicate that it's currently in use
+        colorButton.classList.add('current-color');
+    }
+
+    // Changes the Color Display on the Top to match the chosen color
+    colorDisplay.style.background = ctx.strokeStyle;
+
+    // Store the Last Used Color
+    localStorage.setItem(storageKeys.lastUsedColor, ctx.strokeStyle);
+
+    // Removes any Custom Color Effects since we are changing the color
+    removeCustomColorEffects();
+}
+
+
 /* Initializes the Slider Listener functionality for the Checkboxes in the Tool Container */
 function initSliders() {
     // Width Event Listener
-    widthSlider.addEventListener('change', () => ctx.lineWidth = widthSlider.value);
+    widthSlider.addEventListener('change', () => {
+        ctx.lineWidth = widthSlider.value;
+        
+        // Remove Directional Custom Effect on Width Change
+        removeDirectionalEffect();
+    });
 
     // Transparency Event Listener
     transparencySlider.addEventListener('change', () => ctx.globalAlpha = transparencySlider.value / 10);
 }
+
 
 /* Initializes the Event Listener functionality for the Checkboxes in the Tool Container */
 function initCheckBoxes() {
@@ -529,87 +712,38 @@ function initCheckBoxes() {
     });
 }
 
-
-
 const background = document.querySelector('.dropdown-background');
-
-/* Initializes the Event Listeners functionality for the buttons in the Tool Container */
-function initButtons() {
-    // Save Button to save the drawn image
-    saveButton.addEventListener('click', save);
-    
-    // ClearButton to clear Canvas
-    clearButton.addEventListener('click', clear);
-
-    // Undobutton to undo the last thing drawn on the Canvas
-    undoButton.addEventListener('click', undo); 
-    redoButton.addEventListener('click', redo);
-
-    // Hides the ToolContainer
-    hideButton.addEventListener("click", () => toolContainer.classList.add("inactive"));
-
+/* ============================== Tool Initializations ============================== */
+function initTools() {
     // User Tools -- Paint Brush, Fill-Bucket, ColorPicker, and Shape Picker 
     paintBrushButton.addEventListener("click", () => toolTransition(paintBrushButton));
-    paintBrushButton.addEventListener("mouseenter", () => handleDropdownEnter(paintBrushButton));
-    paintBrushButton.addEventListener("mouseleave", () => handleDropdownLeave(paintBrushButton));
+    
+    fillButton.addEventListener("click", () => toolTransition(fillButton));
 
-    fillBucketButton.addEventListener("click", () => toolTransition(fillBucketButton));
+    eraserButton.addEventListener("click", () => toolTransition(eraserButton));
 
     colorPickerButton.addEventListener("click", () => toolTransition(colorPickerButton));
 
     shapePickerButton.addEventListener("click", () => toolTransition(shapePickerButton));
-    shapePickerButton.addEventListener("mouseenter", () => handleDropdownEnter(shapePickerButton));
-    shapePickerButton.addEventListener("mouseleave", () => handleDropdownLeave(shapePickerButton));
 
     // Shape Button Event Listeners
     fRectangleButton.addEventListener("click", () => shapePickerButton.dataset.tool = fRectangleButton.dataset.tool);
     sRectangleButton.addEventListener("click", () => shapePickerButton.dataset.tool = sRectangleButton.dataset.tool);
+
 }
-
-function handleDropdownEnter(button) {
-    button.classList.add('trigger-enter');
-    // Arrow Function -- value of this is inherited from parent
-    setTimeout(() => button.classList.contains('trigger-enter') &&
-    button.classList.add('trigger-enter-active'), 150);
-    background.classList.add('open');
-
-    // Acquire the dropdown for the current tool
-    const dropdown = button.querySelector(".dropdown");
-    const dropdownCoords = dropdown.getBoundingClientRect();
-    
-    var leftHARD = 30;
-    var offsetHARD = 30;
-
-    // Adjusts the dropdown background to move to the current tool dropdown
-    background.style.setProperty('width', `${dropdownCoords.width}px`);
-    background.style.setProperty('height', `${dropdownCoords.height}px`);
-    background.style.setProperty('transform', `translate(${dropdownCoords.left - leftHARD}px, ${dropdownCoords.top - offsetHARD}px)`);
-}
-
-function handleDropdownLeave(button) {
-    // Hide dropdown and background
-    button.classList.remove('trigger-enter', 'trigger-enter-active');
-    background.classList.remove('open');
-
-    const dropdown = button.querySelector(".dropdown");
-    const dropdownCoords = dropdown.getBoundingClientRect();
-
-    // Removes the background from the scene and prevents it from getting in the way of the Canvas
-    background.style.setProperty('width', '0px');
-    background.style.setProperty('height', '0px');
-    background.style.setProperty('transform', `translate(${-dropdownCoords.left}px, ${-dropdownCoords.top}px)`);
-}
-
-
-
-
 
 /* Handles the transition between new Tools clicked by the User */
 function toolTransition(newTool) {
+    // Handles the Tool Transition for erase mode
+    handleEraseModeTransition(newTool.dataset.tool);
+
+    // Remove Custom Color Effects for better functionality
+    removeCustomEffects();
+
     // Removes the previous tool as being shown as the current tool in use
     currentTool.classList.remove("current-tool");
     currentTool = newTool;
-    
+
     // Displays the newTool as the Current Tool in Use
     currentTool.classList.add("current-tool");
 
@@ -618,26 +752,127 @@ function toolTransition(newTool) {
         clickPoint.classList.add('hidden');
     }
 
-    // Handles Closing the HorizontalDisplay for the Shapes Menu when we click on other tools
-    if (newTool != shapePickerButton) {
-        //horizontalDisplay.classList.add("hidden");
-    } else {
-        //horizontalDisplay.classList.toggle("hidden"); 
-    }
-
     // Reasign the Last coordinates to 0 in case we drew previously
     [lastX, lastY] = [0, 0];
+}
+
+/* ===== Initializes the Event Listeners functionality for the buttons in the Tool Container ===== */
+function initCanvasButtons() {
+    // Save Button to save the drawn image
+    saveButton.addEventListener('click', save);
+    
+    // ClearButton to clear Canvas
+    clearButton.addEventListener('click', clear);
+
+    // Undobutton to undo the last thing drawn on the Canvas
+    undoButton.addEventListener('click', undo); 
+    
+    // Redo button to redo any undo changes made    
+    redoButton.addEventListener('click', redo);
+
+    // Hides the ToolContainer
+    hideButton.addEventListener("click", hide);
+}
+
+/* Save the Canvas and Upload to backend as a fetch request */
+function save() {
+    var confirmation = confirm("Do you want to save this? You will not be able to edit any further?");
+
+    if (confirmation) {
+        // Save contents of the Canvas
+        var img    = canvas.toDataURL("image/png");
+        var data   = JSON.stringify({image: img});
+
+        // Mark Canvas as blank for future use
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        saveCanvas();
+        
+        fetch('/create',
+            { method: "POST", body: data, redirect: "follow", headers: {'Content-Type': 'application/json'}})
+            .then(response => { 
+                window.location.replace(response.url);
+            })
+            .then(function(myJson) { 
+                console.log(myJson); 
+            })
+            .catch(error => {
+                console.log(error);
+        });
+    }
+}
+
+/* Clear the entire Canvas */
+function clear() {
+    var confirmation = confirm("Are you sure you want to clear the entire Canvas?");
+
+    if (confirmation) {
+        ctx.fillStyle='white';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        
+        saveCanvas();
+    }
+}
+
+/* Undo functionality by clearing the Canvas and calling loadCanvas on the State previous to the current one. Disables undoButton if there are no previous States to go back to, and Enables clearButton if there are is a previousCanvas. */
+function undo(event) {
+    if (undoButton.classList.contains("disabled") || State.index <= 1) {
+        return;
+    }
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    loadCanvas(State.states[--State.index - 1]);
+    redoButton.classList.remove("disabled");
+
+    if (State.index === 1) {
+        undoButton.classList.add("disabled");
+    }
+}
+
+/* Redo functionality by loading the Canvas forward as long as we are not at the most current state. */
+function redo(event) {
+    if (redoButton.classList.contains("disabled") || State.index === State.states.length) {
+        return;
+    } else {
+        undoButton.classList.remove("disabled");
+        loadCanvas(State.states[State.index++]);
+
+        if (State.index === State.states.length) {
+            redoButton.classList.add("disabled");
+        }
+    }
+}
+
+function hide(event) {
+    toolContainer.classList.add("inactive");
+    showButton.classList.remove("non-existent");
+    canvas.style.top = "100px";
+}
+
+// ===================== //
+function handleEraseModeTransition(tool) {
+    if (eraseMode && tool !== 'eraser') {
+        eraseMode = false;
+        changeColor(localStorage.getItem(storageKeys.lastUsedColor));
+    }
+
+    if (!eraseMode && tool === 'eraser') {
+        eraseMode = true;
+
+        // Store the Last Used Color
+        localStorage.setItem(storageKeys.lastUsedColor, ctx.strokeStyle);
+    }
 }
 
 /* Initializes the Dropdown on the Tool Container */
 function initDropdowns() {
     /* Brush Effects Dropdown */
-    effectsDropdownButton.addEventListener('click', (event) => {
-        document.getElementById("effects-dropdown").classList.toggle("show");
-    });
-
-    effectsOptions.forEach(effect => {
-        effect.addEventListener('click', () => ctx.globalCompositeOperation = effect.dataset.effect);
+    brushEffectOptions.forEach(effect => {
+        effect.addEventListener('click', () => {
+            activeBrushEffect.classList.remove("active-brush-effect");
+            ctx.globalCompositeOperation = effect.dataset.effect
+            activeBrushEffect = effect;
+            activeBrushEffect.classList.add("active-brush-effect");
+        });
     });
 
     // Closes the dropdown if any event outside of it occurs
@@ -655,11 +890,14 @@ function initDropdowns() {
     }
 }
 
-
 /* Initializes the Custom Effects Buttons. */
 function initCustoms() {
     // Event Listener for the Custom Rainbow StrokeStyle
     rainbowButton.addEventListener("click", () => {
+        if (eraseMode) {
+            toolTransition(paintBrushButton);
+        }
+
         const index = customEffects.indexOf(rainbowButton.dataset.effect);
 
         if (index > -1) {
@@ -692,10 +930,8 @@ function initCustoms() {
     // Event Listener for Inverting the Canvas
     invertButton.addEventListener("click", invert);
 
-    const custButton = document.querySelector("#cust");
-    custButton.addEventListener("click", () => {
-        customEffects.push("cust");
-    });
+    // Event Listener for Grayscaling the Canvas
+    grayscaleButton.addEventListener("click", grayscale);
 }
 
 /* Program Init() Method that sets up and begins the program */
@@ -712,8 +948,11 @@ function init() {
     // Initializes the Checkboxes
     initCheckBoxes();
 
-    // Initialize the Buttons event listeners
-    initButtons();
+    // Initialize the Tool Buttons
+    initTools();
+    
+    // Initialize the Canvas Buttons
+    initCanvasButtons();
 
     // Initialize the Dropdowns
     initDropdowns();
@@ -722,11 +961,12 @@ function init() {
     initCustoms();
 
     // Loads the Canvas from Local Storage
-    loadCanvas(localStorage.getItem(canvasName));
+    loadCanvas(localStorage.getItem(storageKeys.canvasName));
 
     setTimeout(() => {
         document.querySelector(".loader-wrapper").style.display = 'none';
         document.querySelector(".loader").style.display = 'none';
-    }, 1500);
+        document.querySelector(".brush-wrapper").style.display = "block";
+    }, 2000);
 }
 

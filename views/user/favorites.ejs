@@ -22,10 +22,10 @@
         </div>
     <% } %>
 
-    <div class="row gutters-sm mt-3">
+    <div class="row">
         <% user.favorites.forEach( function(favorite) { %>
             <p><a class="artwork-title" href="/artwork/<%= favorite._id %>">
-                <div class="col-sm-4 mb-3">
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-3">
                     <div class="card h-100">
                         <div class="card-body">
                             <% if (favorite.name.length === 0) { %>
@@ -34,7 +34,7 @@
                                 <h6 class="d-flex mb-3"> <%= favorite.name%> </h6>
                             <% } %>
 
-                            <img src="<%=favorite.img.data%>" class="card-img-top" alt="">
+                            <img src="<%=favorite.img.data%>" class="card-img-top artwork-display-img" alt="">
                             <p class="card-text text-secondary">
                                 <% if (favorite.description.length === 0) { %>
                                     <span class="missing-attr">No description</span>
@@ -51,6 +51,25 @@
                 </div>
             </a></p> 
         <% }) %>
+    </div>
+
+    
+    <div class="row comment-navigation-row">
+        <div class="col-sm-6 mb-3">
+          <% if (parseInt(page) !== 1) { %>
+            <a href="/profile/<%= user.username %>/favorites?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light comment-back">Back</button></a>
+          <% } else { %>
+            <a href="/profile/<%= user.username %>/favorites?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light comment-back" disabled>Back</button></a>
+          <% } %>
+        </div>
+    
+        <div class="col-sm-6 mb-3">
+            <% if (user.favorites.length === 0) { %>
+                <a href="/profile/<%= user.username %>/favorites?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark comment-next" disabled>Next</button></a>
+            <% } else { %>
+                <a href="/profile/<%= user.username %>/favorites?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark comment-next">Next</button></a>
+            <% } %>
+        </div>
     </div>
 </div>
 

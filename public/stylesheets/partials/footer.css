@@ -1,0 +1,45 @@
+body {
+    position: relative;
+    padding-bottom: 175px;
+    min-height: 100vh;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+#footer-container {
+    width: 100%;
+    text-align: center;
+}
+
+#footer-social-media {
+    max-height: inherit;
+}
+
+#footer-social-list {
+    text-align: center;
+    list-style: none;
+}
+
+#footer-social-list li {
+    display: inline-block;
+}
+
+#footer-social-list a {
+    color: inherit;
+}
+
+#footer-social-list i {
+    padding: 20px;
+    font-size: 84px;
+    transition: all 0.2s ease;
+}
+
+#footer-social-list i:hover {
+    transform: scale(1.1);
+    color: #fff;
+    text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+}

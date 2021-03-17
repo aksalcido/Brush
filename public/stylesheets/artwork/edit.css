@@ -1,8 +1,14 @@
+html, body {
+    height: 100%;
+}
+
 h1 {
     text-align: center;
 }
 
-#form-container {
-    width: 80%; 
-    margin: 25px auto;
+#edit-wrapper {
+    background: #fff;
+    width: 80%;
+    height: 100%;
+    padding: 25px;
 }

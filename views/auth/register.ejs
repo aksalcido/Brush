@@ -5,7 +5,7 @@
    <!-- Bootstrap Navbar -->
    <%- include ("../partials/default") %>
 
-<div class="container">
+<div class="container" id="register-container">
     <div class="d-flex justify-content-center h-100">
         <div class="card">
             <div class="card-header">
@@ -29,6 +29,15 @@
                         </div>
                         <input class="form-control" type="password" name="password" placeholder="password">
                     </div>
+
+                    <!-- Re-enter Password Input -->
+                    <div class="input-group form-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">  </span>
+                        </div>
+                        <input class="form-control" type="password" name="confirm_password" placeholder="re-enter password">
+                    </div>
+
 
                     <!-- Email Input -->
                     <div class="input-group form-group">

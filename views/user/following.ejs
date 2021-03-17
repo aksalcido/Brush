@@ -22,10 +22,10 @@
         </div>
     <% } %>
 
-    <div class="row gutters-sm mt-3">
+    <div class="row">
         <% user.following.forEach( function(following_user) { %>
             <p><a class="following-username" href="/profile/<%= following_user.username %>">
-                <div class="col-sm-3 mb-3">
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                     <div class="card h-100">
                         <div class="card-body">
                             <!-- Following_User Username -->
@@ -35,13 +35,32 @@
                             <% if (following_user.profilePicture) { %>
                                 <img src="/uploads/<%= following_user.profilePicture %>" class="card-img-top" alt="">
                             <% } else { %>
-                                <img src="/images/girl.png" class="card-img-top" alt="">
+                                <img src="/images/default/girl.png" class="card-img-top" alt="">
                             <% } %>
                         </div>
                     </div>
                 </div>
             </a></p> 
     <% }) %>
+    </div>
+
+    <div class="row comment-navigation-row">
+        <div class="col-sm-6 mb-3">
+          <% if (parseInt(page) !== 1) { %>
+            <a href="/profile/<%= user.username %>/following?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light comment-back">Back</button></a>
+          <% } else { %>
+            <a href="/profile/<%= user.username %>/following?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light comment-back" disabled>Back</button></a>
+          <% } %>
+        </div>
+
+        <div class="col-sm-6 mb-3">
+            <% if (user.following.length === 0) { %>
+                <a href="/profile/<%= user.username %>/following?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark" disabled>Next</button></a>
+            <% } else { %>
+                <a  href="/profile/<%= user.username %>/following?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark">Next</button></a>
+            <% } %>
+        </div>
+    </div>
 
 </div>
 

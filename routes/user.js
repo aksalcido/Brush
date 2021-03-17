@@ -22,14 +22,10 @@ var storage = multer.diskStorage({
     }
 })
 
-// Get stream (API) for feeds -- implement LATER
-
-
 // Handles Image Upload for Profile Pictures
 const upload = multer({ storage: storage });
 
 router.get("/", function(req, res) {
-    console.log(res.locals.currentUser);
     if (res.locals.currentUser) {
         res.redirect("/profile/" + res.locals.currentUser.username);
     } else {
@@ -38,31 +34,45 @@ router.get("/", function(req, res) {
 });
 
 router.get("/:username", function(req, res) {
-    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("artworks").populate("profileComments").exec(function(err, foundUser) {
-        if (err || !foundUser) {
-            if (err)
-                req.flash("error", err.message);
+    var page = req.query.page ? (req.query.page >= 1 ? req.query.page : 1) : 1;
+    const limit = 15;
 
-            if (!foundUser)
-                req.flash("error", "Could not find user with username of: " + req.params.username);
+    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("artworks").populate({
+        path: "profileComments",
+        options: {
+            sort: { createdAt: -1, _id: 1 },
+        }}).exec(function(err, foundUser) {
+            if (err || !foundUser) {
+                if (err)
+                    req.flash("error", err.message);
 
-            res.redirect("/home");
-        } else {
-            var totalLikes = 0;
+                if (!foundUser)
+                    req.flash("error", "Could not find user with username of: " + req.params.username);
 
-            foundUser.artworks.forEach( (aw) => {
-                totalLikes += aw.likes.length;
-            });
+                res.redirect("/home");
+            } else {
+                var totalLikes = 0;
 
-            console.log(totalLikes);
+                foundUser.artworks.forEach( (aw) => {
+                    totalLikes += aw.likes.length;
+                });
 
-            res.render("user/profile", {user: foundUser, totalLikes: totalLikes});
-        }
+                res.render("user/profile", {user: foundUser, totalLikes: totalLikes, page: page, limit: limit});
+            }
     });
 });    
 
 router.get("/:username/followers", function(req, res) {
-    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("followers").exec(function(err, foundUser) {
+    var page = req.query.page ? (req.query.page >= 1 ? req.query.page : 1) : 1;
+    const limit = 12;
+
+    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate({
+        path: "followers",
+        options: {
+            limit: limit,
+            skip: (page - 1) * limit
+        }
+    }).exec(function(err, foundUser) {
         if (err || !foundUser) {
             if (err)
                 req.flash("error", err.message);
@@ -72,29 +82,49 @@ router.get("/:username/followers", function(req, res) {
             
             res.redirect("/home");
         } else {
-            res.render("user/followers", {user: foundUser});
+            res.render("user/followers", {user: foundUser, page: page, limit: limit});
         }
     });
 })
 
 router.get("/:username/following", function(req, res) {
-    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("following").exec(function(err, foundUser) {
+    var page = req.query.page ? (req.query.page >= 1 ? req.query.page : 1) : 1;
+    const limit = 12;
+
+    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate({
+        path: "following",
+        options: {
+            limit: limit,
+            skip: (page - 1) * limit
+        }
+    }).exec(function(err, foundUser) {
         if (err || !foundUser) {
             if (err)
                 req.flash("error", err.message);
     
             if (!foundUser)
                 req.flash("error", "Could not find user with username of: " + req.params.username);
-
+            
             res.redirect("/home");
         } else {
-            res.render("user/following", {user: foundUser});
+            res.render("user/following", {user: foundUser, page: page, limit: limit});
         }
     });
 })
 
+
+
 router.get("/:username/favorites", function(req, res) {
-    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate("favorites").exec(function(err, foundUser) {
+    var page = req.query.page ? (req.query.page >= 1 ? req.query.page : 1) : 1;
+    const limit = 12;
+
+    User.findOne({username: new RegExp('^' + req.params.username + '$', "i")}).populate({
+        path: 'favorites',
+        options: {
+            limit: limit,
+            skip: (page - 1) * limit
+        }
+    }).exec(function(err, foundUser) {
         if (err || !foundUser) {
             if (err)
                 req.flash("error", err.message);
@@ -104,7 +134,7 @@ router.get("/:username/favorites", function(req, res) {
 
             res.redirect("/home");
         } else {
-            res.render("user/favorites", {user: foundUser});
+            res.render("user/favorites", {user: foundUser, page: page, limit: limit});
         }
     });
 })
@@ -135,7 +165,7 @@ router.get("/:username/follow", middlewareObj.isLoggedIn, function(req, res) {
             // followers of foundUser.
             User.findByIdAndUpdate(res.locals.currentUser._id, { $addToSet: { following : foundUser._id } }, { new: true }).exec(function(err, updatedUser) {
                 if (err) {
-                    console.log("Error completing the follow request");
+                    req.flash("error", err.message);
                     res.redirect("/home");
                 } else {
                     foundUser.followers.push(updatedUser);

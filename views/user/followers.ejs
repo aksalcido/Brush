@@ -21,28 +21,46 @@
       </div>
     <% } %>
 
-    <div class="row gutters-sm mt-3">
+    <div class="row">
       <% user.followers.forEach( function(follower) { %>
           <p><a class="follower-username" href="/profile/<%= follower.username %>">
-              <div class="col-sm-3 mb-3">
+              <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                   <div class="card h-100">
-                      <div class="card-body">
+                    <div class="card-body">
                           <!-- Follower Username -->
                           <h6 class="d-flex mb-3"> <%= follower.username %> </h6>
                           
                           <!-- Follower Profile Picture -->
                           <% if (follower.profilePicture) { %>
-                            <img src="/uploads/<%= follower.profilePicture %>" class="card-img-top" alt="">
+                            <img src="/uploads/<%= follower.profilePicture %>" class="card-img-top img-fluid" alt="">
                           <% } else { %>
-                            <img src="/images/girl.png" class="card-img-top" alt="">
+                            <img src="/images/default/girl.png" class="card-img-top img-fluid" alt="">
                           <% } %>
-                      </div>
+                    </div>
                   </div>
               </div>
           </a></p> 
       <% }) %>
   </div>
 
-</div>
+  <div class="row comment-navigation-row">
+    <div class="col-sm-6 mb-3">
+      <% if (parseInt(page) !== 1) { %>
+        <a href="/profile/<%= user.username %>/followers?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light comment-back">Back</button></a>
+      <% } else { %>
+        <a href="/profile/<%= user.username %>/followers?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light comment-back" disabled>Back</button></a>
+      <% } %>
+    </div>
 
+    <div class="col-sm-6 mb-3">
+      <% if (user.followers.length === 0) { %>
+        <a href="/profile/<%= user.username %>/followers?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark comment-next" disabled>Next</button></a>
+      <% } else { %>
+        <a href="/profile/<%= user.username %>/followers?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark comment-next">Next</button></a>
+      <% } %>
+    </div>
+
+  </div>
+
+</div>
 <%- include("../partials/footer") %>

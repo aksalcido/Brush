@@ -1,25 +1,23 @@
-<link rel="stylesheet" href="/stylesheets/artwork/edit.css">
 <%- include("../partials/header") %>
+<link rel="stylesheet" href="/stylesheets/artwork/edit.css">
 </head>
 
 <body>
    <!-- Bootstrap Navbar -->
    <%- include ("../partials/default") %>
 
-<div class="container">
-    <h1>
-        Edit '<%= artwork.name %>'
-    </h1>
-
-    <div id="form-container">
+<div class="container" id="edit-wrapper">
+    <div class="container">
+        <h1> Edit '<%= artwork.name %>'</h1>
+        
         <form action="/artwork/<%= artwork._id %>?_method=PUT" method="POST">
             <!-- Name -->
             <div class="form-group">
-                <input class="form-control" type="text" name="artwork[name]" placeholder="name" value="<%= artwork.name %>">
+                <input class="form-control" type="text" name="artwork[name]" placeholder="name" maxlength="150" value="<%= artwork.name %>">
             </div>
             <!-- Description -->
             <div class="form-group">
-                <textarea class="form-control" name="artwork[description]" placeholder="description" maxlength="5000" rows="5"><%= artwork.description %></textarea>
+                <textarea class="form-control" name="artwork[description]" placeholder="description" maxlength="5000" rows="25"><%= artwork.description %></textarea>
             </div>
 
             <!-- Submit -->
@@ -29,10 +27,10 @@
                 </button>
             </div>
         </form>
-    
-        <a href="/artwork/<%=artwork._id%>">Back</a>
+
+        <a href="/artwork/<%=artwork._id%>"><button type="button" class="btn btn-light">Back</button></a>
     </div>
 
-</div>>
+</div>
 
 <%- include('../partials/footer') %>

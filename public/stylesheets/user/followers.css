@@ -1,12 +1,59 @@
+.container-fluid {
+    width: 60%;
+}
+
+.container {
+    background: #fff;
+}
+
+.row {
+    font-family: 'Raleway', sans-serif;
+}
+
+.row a {
+    text-decoration: none;
+    color: inherit;
+}
+
+h6 {
+    font-weight: bold;
+}
+
 .follower-username {
     color: inherit;
 }
 
+.card-body img {
+    height: 200px;
+    max-width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
 .card {
-    transition: 1s;
+    transition: all 0.2s ease;
 }
 
 .card:hover {
-    width: 110%;
+    z-index: 20;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
 }
 
+
+@media (max-width: 545px) {
+    .comment-navigation-row {
+        margin-bottom: 200px;
+    }
+
+    .comment-next {
+        float: right;
+    }
+}
+  
+@media (min-width: 546px) {
+    .comment-back {
+        float: right;
+    }
+}
+  
+  

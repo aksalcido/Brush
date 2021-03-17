@@ -6,34 +6,34 @@
    <%- include ("../partials/default") %>
 
 
-<div class="container">
-    <h1>Profile Edit Page</h1>
-    
+<div class="container" id="edit-wrapper">
     <div class="container">
+        <h1>Profile Edit Page</h1>
+        
         <form action="/profile/<%= user._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
             <!-- Description -->
             <div class="form-group">
-                <textarea class="form-control" name="user[description]" placeholder="description" rows="8"><%= user.description %></textarea>
+                <textarea class="form-control" name="user[description]" maxlength="5000" placeholder="description" rows="8"><%= user.description %></textarea>
             </div>
 
             <!-- Location -->
             <div class="form-group">
-                <input class="form-control" type="text" name="user[location]" placeholder="location" value="<%= user.location %>">
+                <input class="form-control" type="text" name="user[location]" maxlength="100" placeholder="location" value="<%= user.location %>">
             </div>
 
             <!-- Gender -->
             <div class="form-group">
-                <input class="form-control" type="text" name="user[gender]" placeholder="gender" value="<%= user.gender %>">
+                <input class="form-control" type="text" name="user[gender]" maxlength="100" placeholder="gender" value="<%= user.gender %>">
             </div>
              
             <!-- Age -->
             <div class="form-group">
-                <input class="form-control" type="text" name="user[age]" placeholder="age" value="<%= user.age %>">
+                <input class="form-control" type="text" name="user[age]" maxlength="6" placeholder="age" value="<%= user.age %>">
             </div>
      
             <!-- Image Upload -->
             <div class="form-group">
-                <label for="img">Select image:</label>
+                <label for="img">Select Profile Image:</label>
                 <input type="file" name="file" accept="image/*">
             </div>
 
@@ -42,10 +42,12 @@
                     Submit
                 </button>
             </div>
-        </form>  
+        </form>
+
+        <a href="/profile/<%= user.username %>"><button type="button" class="btn btn-light">Back</button></a>
     </div>
 
-   <a href="/profile/<%= user.username %>">zzz</a>
+
 </div>
 
 

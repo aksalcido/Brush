@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="stylesheets/home.css">
+<link rel="stylesheet" href="/stylesheets/main/home.css">
 <%- include("./partials/header") %>
 </head>
 
@@ -12,7 +12,7 @@
           <p class="lead home-text">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
         <hr class="my-4 home-text">
 
-        <p class="lead home-text">
+        <p id="create-text" class="lead home-text">
           Get started Creating Now
         </p>
         <a class="btn btn-primary btn-lg" href="/create" role="button">Create</a>
@@ -35,74 +35,101 @@
   </div>
 
     <!-- Trending -->
-    <div class="container-fluid" id="trending-container1">
-        <div class="col-12 col-md-8">
-            <h1>Trending</h1>
+    <div class="container-fluid home-display-container" id="trending-container1">
+
+        <div class="front-page-header">
+          <h1>Popular and Favorites</h1>
         </div>
 
         <div class="row">
            <% for (var i = 0; i < 6; i++) { %>
-               <div class="col">
+               <div class="col-lg-2 col-md-4 first-display-row">
+                 <% if (i < artworks.length) { %>
                   <a href="/artwork/<%= artworks[i]._id %>"><img class="img-thumbnail" src="<%= artworks[i].img.data %>"></a>
                   <figcaption class="figure-caption">
                       <span class="artwork-name">
+                        <a href="/artwork/<%= artworks[i]._id %>">
                           <% if (artworks[i].name) { %>
                             <%= artworks[i].name %>
                           <% } else { %>
                             Nameless
                           <% } %>
+                        </a>
                      </span> by <a href="/profile/<%= artworks[i].author.username %>"><%= artworks[i].author.username %></a>
                   </figcaption>
+                <%  } else { %>
+                  <a href=""><img class="img-thumbnail" src="../images/default/placeholder.jpg"></a>
+                  <figcaption class="figure-caption">
+                    <span class="artwork-name">
+                      Placeholder
+                    </span>
+                </figcaption>
+                <% } %>
                </div>
             <% } %>
         </div>
     </div>
 
     <!-- Trending 2 -->
-    <div class="container-fluid" id="trending-container2">
-        <div class="col-12 col-md-8">
-            <h1>Trending</h1>
-         </div>
-
+    <div class="container-fluid home-display-container" id="trending-container2">
          <div class="row">
             <% for (var i = 6; i < 12; i++) { %>
-                <div class="col">
-                   <a href="/artwork/<%= artworks[i]._id %>"><img class="img-thumbnail" src="<%= artworks[i].img.data %>"></a>
-                   <figcaption class="figure-caption">
+                <div class="col-lg-2 col-md-4 second-display-row">
+                 <% if (i < artworks.length) { %>
+                  <a href="/artwork/<%= artworks[i]._id %>"><img class="img-thumbnail" src="<%= artworks[i].img.data %>"></a>
+                  <figcaption class="figure-caption">
+                      <span class="artwork-name">
+                          <a href="/artwork/<%= artworks[i]._id %>">
+                            <% if (artworks[i].name) { %>
+                              <%= artworks[i].name %>
+                            <% } else { %>
+                              Nameless
+                            <% } %>
+                          </a>
+                     </span> by <a href="/profile/<%= artworks[i].author.username %>"><%= artworks[i].author.username %></a>
+                  </figcaption>
+                <%  } else { %>
+                  <a href=""><img class="img-thumbnail" src="../images/default/placeholder.jpg"></a>
+                  <figcaption class="figure-caption">
                     <span class="artwork-name">
-                        <% if (artworks[i].name) { %>
-                          <%= artworks[i].name %>
-                        <% } else { %>
-                          Nameless
-                        <% } %>
-                   </span> by <a href="/profile/<%= artworks[i].author.username %>"><%= artworks[i].author.username %></a>
+                      Placeholder
+                    </span>
                 </figcaption>
-             </div>
-             <% } %>
+                <% } %>
+               </div>
+            <% } %>
          </div>
     </div>
 
     <!-- Trending 3 -->
-    <div class="container-fluid" id="trending-container3"> 
-        <div class="col-12 col-md-8">
-            <h1>Trending</h1>
-        </div>
+    <div class="container-fluid home-display-container" id="trending-container3"> 
 
         <div class="row">
             <% for (var i = 12; i < 18; i++) { %>
-                <div class="col">
-                   <a href="/artwork/<%= artworks[i]._id %>"><img class="img-thumbnail" src="<%= artworks[i].img.data %>"></a>
-                   <figcaption class="figure-caption">
-                    <span class="artwork-name">
-                        <% if (artworks[i].name) { %>
-                          <%= artworks[i].name %>
-                        <% } else { %>
-                          Nameless
-                        <% } %>
-                   </span> by <a href="/profile/<%= artworks[i].author.username %>"><%= artworks[i].author.username %></a>
-                </figcaption>
-             </div>
-             <% } %>
+                <div class="col-lg-2 col-md-4 third-display-row">
+                  <% if (i < artworks.length) { %>
+                    <a href="/artwork/<%= artworks[i]._id %>"><img class="img-thumbnail" src="<%= artworks[i].img.data %>"></a>
+                    <figcaption class="figure-caption">
+                        <span class="artwork-name">
+                          <a href="/artwork/<%= artworks[i]._id %>">
+                            <% if (artworks[i].name) { %>
+                              <%= artworks[i].name %>
+                            <% } else { %>
+                              Nameless
+                            <% } %>
+                          </a>
+                       </span> by <a href="/profile/<%= artworks[i].author.username %>"><%= artworks[i].author.username %></a>
+                    </figcaption>
+                  <%  } else { %>
+                    <a href=""><img class="img-thumbnail" src="../images/default/placeholder.jpg"></a>
+                    <figcaption class="figure-caption">
+                      <span class="artwork-name">
+                        Placeholder
+                      </span>
+                  </figcaption>
+                  <% } %>
+                 </div>
+              <% } %>
          </div>
       </div>
 

@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="/stylesheets/artwork/show.css">
 <%- include("../partials/header") %>
+<link rel="stylesheet" href="/stylesheets/artwork/show.css">
 </head>
 
 <body>
@@ -13,9 +13,9 @@
                 <img class="rounded mx-auto d-block" src="<%= artwork.img.data %>" style="border: 1px solid black;">
                 
                 <div class="caption-full" style="border: 1px solid black;">
-                    <!-- Name of the Artwork -->
+                    <!-- Name of the Artwork && Favorites/Likes -->
                     <div style="display: inline-block; width: 100%;">
-                        <h4 style="display: inherit; margin-right: 90%;">
+                        <h4 id="artwork-name" style="display: inherit; margin-right: 90%;">
                             <% if (artwork.name.length == 0) { %>
                                 <i>No Name..</i>
                             <% } else { %>
@@ -23,39 +23,60 @@
                             <% } %>
                         </h4>
                         
-                        <% if (currentUser && artwork.likes.some((likedBy) => likedBy.equals(currentUser._id))) { %>
-                            <form action="/artwork/<%= artwork._id%>/unlike?_method=PUT" method="POST" style="display: inherit;">
-                                <button type="submit">Unlike</button>
-                            </form>
-                        <% } else { %>
-                            <form action="/artwork/<%= artwork._id%>/like?_method=PUT" method="POST" style="display: inherit;">
-                                <button type="submit">Like</button>
-                            </form>
-                        <% } %>
 
-                        <% if (currentUser && artwork.favorites.some((favoritedBy) => favoritedBy.equals(currentUser._id))) { %>
-                            <form action="/artwork/<%= artwork._id%>/unfavorite?_method=PUT" method="POST" style="display: inherit;">
-                                <button type="submit">Unfavorite</button>
-                            </form>
-                        <% } else { %>
-                            <form action="/artwork/<%= artwork._id%>/favorite?_method=PUT" method="POST" style="display: inherit;">
-                                <button type="submit">Favorite</button>
-                            </form>
-                        <% } %>
 
+                        <div id="artwork-interaction">
+                            <h5> <%= artwork.likes.length %> </h5>
+                            <% if (currentUser && artwork.likes.some((likedBy) => likedBy.equals(currentUser._id))) { %>
+                                <!-- Unlike -->
+                                <form class="interaction-form" action="/artwork/<%= artwork._id%>/unlike?_method=PUT" method="POST">
+                                    <button id="unlike-btn" type="submit" class="btn btn-light">
+                                        <i class="fas fa-thumbs-up" style="color: lightblue;"></i>
+                                    </button>
+                                </form>
+                            <% } else { %>
+                                <!-- Like -->
+                                <form class="interaction-form" action="/artwork/<%= artwork._id%>/like?_method=PUT" method="POST">
+                                    <button id="like-btn" type="submit" class="btn btn-light">
+                                        <i class="far fa-thumbs-up"></i>
+                                    </button>
+                                </form>
+                            <% } %>
+
+                            <h5> <%= artwork.favorites.length %> </h5>
+                            <% if (currentUser && artwork.favorites.some((favoritedBy) => favoritedBy.equals(currentUser._id))) { %>
+                                <!-- Unfavorite -->
+                                <form class="interaction-form" action="/artwork/<%= artwork._id%>/unfavorite?_method=PUT" method="POST">
+                                    <button id="unfavorite-btn" type="submit" class="btn btn-light">
+                                        <i class="fas fa-heart" style="color: red;"></i>
+                                    </button>
+                                </form>
+                            <% } else { %>
+                                <!-- Favorite -->
+                                <form class="interaction-form" action="/artwork/<%= artwork._id%>/favorite?_method=PUT" method="POST">
+                                    <button id="favorite-btn" type="submit" class="btn btn-light">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </form>
+                            <% } %>
+                        </div>
                     </div>
 
                     <!-- Description of the Artwork -->
-                    <p>
-                        <% if (artwork.description.length == 0) { %>
-                            <i>No Description</i>
-                        <% } else { %>
-                            <%= artwork.description %>
-                        <% } %>
-                    </p>
+                    <div id="artwork-caption">
+                        <p>
+                            <% if (artwork.description.length == 0) { %>
+                                <i>No Description</i>
+                            <% } else { %>
+                                <%= artwork.description %>
+                            <% } %>
+                        </p>
+                    </div>
 
-                    <h4>Created by <a href="/profile/<%=artwork.author.username%>"><%= artwork.author.username %></a> on <%= artwork.createdAt.toISOString().replace(/T/, ' ').replace(/\..+/, '')  %></h4>
-                    
+                    <div id="date-created">
+                        <h4>Created by <a href="/profile/<%=artwork.author.username%>"><%= artwork.author.username %></a> on <%= artwork.createdAt.toISOString().replace(/T/, ' ').replace(/\..+/, '')  %></h4>
+                    </div>
+
                     <!-- Edit/Delete Button for Artwork -->
                     <% if (currentUser && artwork.author.id == currentUser.id) { %> 
                         <a class="btn btn-warning" href="<%= artwork._id %>/edit">Edit</a>
@@ -64,8 +85,7 @@
                         </form>
                     <% } %>
                     
-                    <h1> <%= artwork.likes.length %> likes</h1>
-                    <h1> <%= artwork.favorites.length %> favorites</h1>
+
                 </div>
                 
                 <!-- Comment Section -->
@@ -74,7 +94,7 @@
                     <div class="text-right">
                         <form action="<%=artwork._id%>/comment" method="POST">
                             <div class="form-group">
-                                <textarea class="form-control" name="comment[text]" placeholder="text" maxlength="1000" rows="3"></textarea>
+                                <textarea class="form-control" name="comment[text]" placeholder="text" maxlength="1000" rows="3" required></textarea>
                             </div>
                             
                             <div class="form-group">
@@ -86,30 +106,54 @@
 
                     <hr>
                     
-                    <% artwork.comments.reverse().forEach(function(comment) { %>
-                        <!-- Comment Box -->
-                        <div class="col-md-12">
-                            <!-- Comment Username -->
-                            <a href="/profile/<%=comment.author.username%>"><strong><%= comment.author.username %></strong></a>
-                            <!-- Comment Date -->
-                            <span class="pull-right"><%= comment.createdAt.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></span>
+                    <% 
+                        var limitTracker = 0;
+                        var i = (page - 1) * limit;
 
-                            <!-- Delete Button -->
-                            <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
-                                <form class="delete-form" action="/artwork/<%= artwork._id %>/comment/<%= comment._id %>?_method=DELETE" method="POST" style="float: right;">
-                                    <input type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete this item?');" value="Delete">
-                                </form>
-                            <% } %>
-                            <!-- Comment Text -->
-                            <p>
-                                <%= comment.text %>
-                            </p>
-                        </div>
-                    <% }) %>
+                        for (i; i < artwork.comments.length && limitTracker < limit; i++, limitTracker++) { %>
+                            <% var comment = artwork.comments[i]; %>
+                            
+                            <!-- Comment Box -->
+                            <div class="col-md-12 comment-column">
+                                <% /* Comment Username */ %>
+                                <a href="/profile/<%=comment.author.username%>" class="commenter-username"><span><%= comment.author.username %></span></a>
+                                <% /* Comment Date */ %>
+                                <span class="pull-right"><%= comment.createdAt.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></span>
+
+                                <% /* Delete Button */ %>
+                                <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
+                                    <form class="delete-form" action="/artwork/<%= artwork._id %>/comment/<%= comment._id %>?_method=DELETE" method="POST" style="float: right;">
+                                        <input type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete this item?');" value="Delete">
+                                    </form>
+                                <% } %>
+                                <% /* Comment Text */ %>
+                                <p> <%= comment.text %> </p>
+                            </div>
+                    <% } %>
                 </div>
 
+                <div class="row comment-navigation-row">
+                    <div class="col-sm-6 mb-3">
+                      <% if (parseInt(page) !== 1) { %>
+                        <a href="/artwork/<%= artwork._id %>?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light comment-back">Back</button></a>
+                      <% } else { %>
+                        <a href="/artwork/<%= artwork._id %>?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light comment-back" disabled>Back</button></a>
+                        <% } %>
+                    </div>
+            
+                    <div class="col-sm-6 mb-3">
+                        <% if (i < artwork.comments.length) { %>
+                            <a href="/artwork/<%= artwork._id %>?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark comment-next">Next</button></a>
+                        <% } else { %>
+                            <a href="/artwork/<%= artwork._id %>?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark comment-next" disabled>Next</button></a>
+                        <% } %>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
+
+
+<%- include("../partials/footer") %>
+

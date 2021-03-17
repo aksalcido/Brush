@@ -1,10 +1,26 @@
+.container-fluid {
+    width: 60%;
+}
+
+.container {
+    background: #fff;
+}
+
 #profile-picture {
     border: 1px solid black;
     width: 300px;
 }
 
-.artwork-title {
+.row a {
+    text-decoration: none;
+}
+
+.artwork-navigate {
     color: inherit;
+}
+
+.artwork-title {
+    font-weight: bold;  
 }
 
 .missing-attr {
@@ -12,12 +28,35 @@
     font-style: italic;
 }
 
+.col-md-8 {
+    font-family: 'Raleway', sans-serif;
+}
+
+.artwork-display-img {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 .card-text {
+    margin-top: 5px;
     text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.card {
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    z-index: 20;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
 }
 
 .well {
     margin-top: 10px;
+    margin-bottom: 25px;
 }
 
 .form-group p {
@@ -25,7 +64,7 @@
 }
 
 .comment-column {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     margin-top: 10px;
 }
 
@@ -33,3 +72,24 @@
     font-weight: bold;
 }
 
+.gutters-sm .mt-3 {
+    font-family: 'Raleway', sans-serif;
+}
+
+@media (max-width: 570px) {
+    .comment-navigation-row {
+        margin-bottom:200px;
+    }
+
+    .comment-next {
+        float: right;
+    }
+}
+  
+@media (min-width: 571px) {
+    .comment-back {
+        float: right;
+    }
+}
+  
+  
