@@ -1,3 +1,7 @@
+body {
+    background: #fff !important;
+}
+
 #login-container {
     margin-top: 10%;
     text-align: center;

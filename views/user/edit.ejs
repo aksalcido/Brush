@@ -5,7 +5,6 @@
    <!-- Bootstrap Navbar -->
    <%- include ("../partials/default") %>
 
-
 <div class="container" id="edit-wrapper">
     <div class="container">
         <h1>Profile Edit Page</h1>
@@ -44,7 +43,10 @@
             </div>
         </form>
 
-        <a href="/profile/<%= user.username %>"><button type="button" class="btn btn-light">Back</button></a>
+        <!-- Back Button -->
+        <div class="back-btn-container">
+            <a href="/profile/<%= user.username %>"><button type="button" class="btn btn-light">Back</button></a>
+        </div>
     </div>
 
 

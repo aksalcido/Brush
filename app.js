@@ -16,32 +16,53 @@ var authRoutes = require("./routes/auth"),
 
 // Imported Models
 var User = require("./models/user.js");
-var Artwork = require("./models/artwork.js");
-var Comment = require("./models/comment.js");
 
-// Global Variables
-var BASE_PORT = 3000;
-var DROP_DATABASE = false;
+// ENVIRONMENT VARIABLES
+const BRUSH_DATABASE_PASSWORD = process.env.BrushMongoosePassword;
+const BRUSH_DATABASE_URL1     = process.env.BrushDatabaseURL1;
+const BRUSH_DATABASE_URL2     = process.env.BrushDatabaseURL2;
 
-if (!DROP_DATABASE) {
-    // Setup (if not created already) and Connect the Mongoose Database
-    mongoose.connect("mongodb://localhost:27017/brush_database", {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
+// Global Host Variables
+const BASE_PORT = 3000;
+
+// Global Database Variables
+const usingLocalDatabase = true;
+const connectionParams = {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true 
+}
+
+if (usingLocalDatabase) {
+    var DROP_DATABASE = false;
+    var DATABASE_URL = "mongodb://localhost:27017/brush_database";
+
+    if (!DROP_DATABASE) {
+        // Setup (if not created already) and Connect the Mongoose Database
+        mongoose.connect(DATABASE_URL, connectionParams)
+        .then( () => console.log("Connected to Local database") )
+        .catch(error => console.log(error.message));      
+    } else {
+        mongoose.connect(DATABASE_URL, connectionParams)
+        .then(() => { db.dropDatabase(function(err, result) {
+            if (err) throw err;
+            console.log("Operation Success ? " + result);
+            db.close();
+        })})
+        .catch(error => console.log(error.message));
+    }
+}
+// Using Mongod Atlas Database
+else {
+    var DATABASE_URL = BRUSH_DATABASE_URL1 + BRUSH_DATABASE_PASSWORD + BRUSH_DATABASE_URL2;
+    
+    mongoose.connect(DATABASE_URL,connectionParams)
+        .then( () => {
+            console.log('Connected to Atlas database ')
+        })
+        .catch( (err) => {
+            console.error(`Error connecting to the database. \n${err}`);
     })
-    .then( () => console.log("Connected to DB!") )
-    .catch(error => console.log(error.message));      
-} else {
-    mongoose.connect("mongodb://localhost:27017/brush_database", {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    })
-    .then(() => { db.dropDatabase(function(err, result) {
-        if (err) throw err;
-        console.log("Operation Success ? " + result);
-        db.close();
-    })})
-    .catch(error => console.log(error.message));
 }
 
 // Set up BodyParser to handle HTTP POST reqs
@@ -64,8 +85,6 @@ app.use(flash());
 
 // Set up Session and Passport Authentication with Users
 var session = require("express-session");
-const artwork = require("./models/artwork.js");
-const e = require("express");
 
 app.use(session({
     secret: "Once again another passowrd",

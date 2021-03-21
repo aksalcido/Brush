@@ -59,6 +59,10 @@
     margin-bottom: 25px;
 }
 
+.delete-form {
+    float: right;
+}
+
 .form-group p {
     float: left;
 }

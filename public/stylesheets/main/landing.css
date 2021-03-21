@@ -1,6 +1,6 @@
 body {
     background-color: lightblue;
-    font-family: Arial, sans-serif;
+    font-family: 'Raleway', sans-serif;
 }
 
 #display {
@@ -80,31 +80,31 @@ a:hover {
 }
 
 .slideshow li:nth-child(1) {
-    background-image: url("../images/kelli.jpg");
+    background-image: url("../../images/kelli.jpg");
 }
 
 .slideshow li:nth-child(2) {
-    background-image: url("../images/debby-hudson.jpg");
+    background-image: url("../../images/debby-hudson.jpg");
     animation-delay: 5s;
 }
 
 .slideshow li:nth-child(3) {
-    background-image: url("../images/jen-theodore-fox.jpg");
+    background-image: url("../../images/jen-theodore-fox.jpg");
     animation-delay: 10s; 
 }
 
 .slideshow li:nth-child(4) {
-    background-image: url("../images/kira_liya.jpg");
+    background-image: url("../../images/kira_liya.jpg");
     animation-delay: 15s; 
 }
 
 .slideshow li:nth-child(5) {
-    background-image: url("../images/moran.jpg");
+    background-image: url("../../images/moran.jpg");
     animation-delay: 20s; 
 }
 
 .slideshow li:nth-child(6) {
-    background-image: url("../images/hello-i-m-nik.jpg");
+    background-image: url("../../images/hello-i-m-nik.jpg");
     animation-delay: 25s; 
 }
 

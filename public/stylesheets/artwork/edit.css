@@ -12,3 +12,13 @@ h1 {
     height: 100%;
     padding: 25px;
 }
+
+.back-btn-container {
+    padding-bottom: 50px;
+}
+
+.container {
+    background: #fff;
+    width: 80%;
+    overflow-y:auto;
+}

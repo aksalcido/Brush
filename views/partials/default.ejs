@@ -1,5 +1,4 @@
 <div class="container-fluid">
-
     <!-- Bootstrap Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light" style="z-index: 20; background-color: transparent;">
         <!-- Logo & Return to Landing Page -->
@@ -58,14 +57,15 @@
             <% } %>
         </ul>
         
+        <!-- Occurs on Lower Resolution Screens -->
         <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarMenu"> 
             <span class="navbar-toggler-icon"></span>
         </button>
-
     </nav>
 
 </div>
 
+<!-- Error Message Container -->
 <div class="container">
     <% if(error && error.length > 0){ %>
     <div class="alert alert-danger" role="alert">

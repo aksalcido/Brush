@@ -21,7 +21,16 @@ h1 {
     text-align: center;
 }
 
+
 .container {
     background: #fff;
     width: 80%;
+    overflow-y:auto;
+}
+
+
+@media (max-width: 526px) {
+    .back-btn-container {
+        padding-bottom: 200px;
+    }
 }

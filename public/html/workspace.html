@@ -25,9 +25,9 @@
             
             <div class="dropdown-background"><span class="arrow"></span></div>
 
-            <div class="tool-content-row" style="display: flex; ">
+            <div class="tool-content-row">
                     <!-- Colors Picker Container -->
-                    <div class="colors-container" style="display: flex; flex-direction: column;">
+                    <div class="colors-container">
                         <!-- Top Colors -->
                         <div class="color-row d-inline-flex">
                             <!-- Default Colors - Top Row -->
@@ -59,57 +59,68 @@
                     </div>
                 
                     <div class="tools d-inline-flex">
-                        <div class="tool-options-container" style="height: 20%;">
+                        <div class="tool-options-container">
                             <!-- Brush has multiple brush options to choose for so it is a dropdown s -->
                             <button type="button" class="btn btn-primary btn-responsive current-tool" data-tool="paint" data-toggle="collapse" data-target="#brush-stroke-collapse"  aria-expanded="false" aria-controls="brush-stroke-collapse" id="paint-brush">🖌️Brush</button>
-                            <button type="button" class="btn btn-primary btn-responsive" data-tool="eraser" id="eraser">🧱Eraser</button>
+                            <!-- <button type="button" class="btn btn-primary btn-responsive" data-tool="eraser" id="eraser">🧱Eraser</button> -->
+
+                            <button type="button" class="btn btn-primary btn-responsive" data-tool="eraser" data-toggle="collapse" data-target="#brush-stroke-collapse"  aria-expanded="false" aria-controls="brush-stroke-collapse" id="eraser">🧱Eraser</button>
+
                             <button type="button" class="btn btn-primary btn-responsive" data-tool="fill" id="fill-bucket">💧Fill Bucket</button>
                             <button type="button" class="btn btn-primary btn-responsive" data-tool="pick" id="color-picker">💧Color Picker</button>
                             <button type="button" class="btn btn-primary btn-responsive mr-5" data-tool="filledRectangle" id="shape-picker" data-toggle="collapse" data-target="#shape-picker-collapse"  aria-expanded="false" aria-controls="shape-picker-collapse">💠Shape Picker</button>
 
                             <!-- Collapse for Brush Button -->
-                            <div class="collapse" id="brush-stroke-collapse">
-                                <ul class="d-inline-flex">
-                                    <li class="trigger-enter trigger-enter-active">
-                                        <label class="brush-checkbox" data-linecap="round">Round
-                                            <input  type="checkbox" checked>
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </li>
-        
-                                    <li>
-                                        <label class="brush-checkbox" data-linecap="butt">Butt
-                                            <input type="checkbox">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </li>
-        
-                                    <li>
-                                        <label class="brush-checkbox" data-linecap="square">Square
-                                            <input type="checkbox">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </li>
+                            <div class="collapse-container">
+                                <div class="collapse" id="brush-stroke-collapse">
+                                    <ul class="collapse-list d-inline-flex">
+                                        <!-- Check Boxes -->
+                                        <li class="trigger-enter trigger-enter-active">
+                                            <label class="brush-checkbox" data-linecap="round">Round
+                                                <input  type="checkbox" checked>
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </li>
+            
+                                        <li>
+                                            <label class="brush-checkbox" data-linecap="butt">Butt
+                                                <input type="checkbox">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </li>
+            
+                                        <li>
+                                            <label class="brush-checkbox" data-linecap="square">Square
+                                                <input type="checkbox">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </li>
+                                        <!-- End of Checkboxes -->
 
-                                    <li>
-                                        <div class="slider-container">
-                                            <div class="tool-slider">
-                                                <label for="Transparency"><span class="brush-label">Transparency: 1</span></label>
-                                                <input id="transparency" type="range" name="transparency" min="1" max="10" value="10" data-sizing="px">
+                                        <!-- Width/Transparency Sliders -->
+                                        <li id="slider-container-li">
+                                            <div class="slider-container">
+                                                <div class="tool-slider" id="transparency-slider">
+                                                    <label for="Transparency"><span class="brush-label">Transparency: <span id="transparency-value-display">1</span></span></label>
+                                                    <input id="transparency" type="range" name="transparency" min="1" max="10" value="10" data-sizing="px">
+                                                </div>
+                                                
+                                                <div class="tool-slider" id="width-slider">
+                                                    <label for="Line-Width"><span class="brush-label">Line-Width: <span id="width-value-display">10</span></span></label>
+                                                    <input id="line-width" type="range" name="line-width" min="1" max="128" value="10" data-sizing="px">
+                                                </div>
                                             </div>
-                                            
-                                            <div class="tool-slider">
-                                                <label for="Line-Width"><span class="brush-label">Line-Width: 10</span></label>
-                                                <input id="line-width" type="range" name="line-width" min="1" max="128" value="10" data-sizing="px">
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
+                                        </li>
+                                        <!-- End of Sliders -->
+                                    </ul>
+                                    
+                                    <div class="hide-collapse-btn-container"><button type="button" class="btn btn-info hide-collapse-btn" data-collapse="brush">Hide Collapse</button></div>
+                                </div>
                             </div>
-
+                            
                             <!-- Collapse for Shape Button -->
                             <div class="collapse" id="shape-picker-collapse">
-                                <ul class="d-inline-flex" style="list-style: none; float: right;">
+                                <ul class="collapse-list d-inline-flex">
                                     <li>
                                         <button type="button" class="btn btn-light" data-tool="filledRectangle" id="filledRectangle">Filled Rectangle</button>
                                     </li>
@@ -117,6 +128,8 @@
                                         <button type="button" class="btn btn-light" data-tool="strokedRectangle" id="strokedRectangle">Stroke Rectangle</button>
                                     </li>
                                 </ul>
+
+                                <div class="hide-collapse-btn-container"><button type="button" class="btn btn-info hide-collapse-btn" data-collapse="shape">Hide Collapse</button></div>
                             </div>
 
                         </div>
@@ -124,7 +137,7 @@
 
                     <!-- Contains the Custom Effect Buttons -->
                     <div class="custom-effects-container">
-                        <div style="display: flex; ">
+                        <div id="inner-custom-effects-container">
             
                             <!-- Brush Effect Bootstrap Dropdown -->
                             <div class="dropdown">
@@ -157,7 +170,7 @@
                 
                     <!-- Contains the Option Buttons -->
                     <div class="options-container">
-                        <div style="display: flex; ">
+                        <div id="inner-options-container">
                             <button type="button" class="btn btn-dark btn-responsive mr-1 disabled" id="undo">↩️Undo</button>
                             <button type="button" class="btn btn-dark btn-responsive mr-1 disabled" id="redo">🔁Redo</button>
                             <button type="button" class="btn btn-dark btn-responsive mr-1" id="save">💾Save</button>
@@ -177,6 +190,7 @@
         </div>
     </div>
 
+    <!-- Onload Loader Animation -->
     <div class="loader-wrapper">
         <span class="loader"></span><span></span>
     </div>

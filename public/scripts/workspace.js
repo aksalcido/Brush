@@ -1,9 +1,8 @@
+// Canvas and Page Utilities
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-const colors = document.querySelectorAll(".paint");
 const toolContainer = document.querySelector(".tools-container");
-
-// Represents the current color the brush has equipped
+const colors = document.querySelectorAll(".paint");
 const colorDisplay = document.querySelector("#color-display");
 
 // Input Sliders
@@ -22,8 +21,10 @@ const eraserButton      = document.querySelector("#eraser");
 const colorPickerButton = document.querySelector("#color-picker");
 const shapePickerButton = document.querySelector("#shape-picker");
 
-// Dropdown and Content
+// Dropdown and Collapse
 const brushEffectOptions = document.querySelectorAll(".dropdown-menu a");
+const brushStrokeCollapse = document.querySelector("#brush-stroke-collapse");
+const shapePickerCollapse = document.querySelector("#shape-picker-collapse");
 
 // Custom Effects
 const rainbowButton = document.querySelector("#rainbow");
@@ -85,7 +86,6 @@ let direction = true;
 
 // Initialize the Program
 init();
-
 
 /* ============================== User Tool Methods ============================== */
 function draw(event) {
@@ -356,7 +356,7 @@ function drawShape(ex, ey, c, r) {
         clickPoint.style.top = `${ey}px`;
         clickPoint.style.left = `${ex}px`;
         clickPoint.classList.remove('hidden');
-    } 
+    }
     else {
         if (currentTool.dataset.tool === 'filledRectangle') {
             ctx.beginPath();
@@ -383,8 +383,7 @@ function handleCustomEffects() {
     customEffects.forEach(effect => {
         if (effect === directionalButton.dataset.effect) {
             dynamicWidth();
-        }
-        else if (effect === rainbowButton.dataset.effect) {
+        } else if (effect === rainbowButton.dataset.effect) {
             rainbow();
         }
     });
@@ -625,6 +624,8 @@ function loadCanvas(dataURL) {
     img.src = dataURL;
     img.onload = function() {
         ctx.drawImage(img, 0, 0);
+        // Store Current Canvas to Local Storage in case page is refreshed
+        localStorage.setItem(storageKeys.canvasName, canvas.toDataURL());
     };
 }
 
@@ -678,19 +679,21 @@ function changeColor(color, colorButton = null) {
     removeCustomColorEffects();
 }
 
-
 /* Initializes the Slider Listener functionality for the Checkboxes in the Tool Container */
 function initSliders() {
     // Width Event Listener
     widthSlider.addEventListener('change', () => {
         ctx.lineWidth = widthSlider.value;
-        
+        document.querySelector("#width-value-display").textContent = ctx.lineWidth;
         // Remove Directional Custom Effect on Width Change
         removeDirectionalEffect();
     });
 
     // Transparency Event Listener
-    transparencySlider.addEventListener('change', () => ctx.globalAlpha = transparencySlider.value / 10);
+    transparencySlider.addEventListener('change', () => {
+        ctx.globalAlpha = transparencySlider.value / 10;
+        document.querySelector("#transparency-value-display").textContent = ctx.globalAlpha;
+    });
 }
 
 
@@ -716,7 +719,10 @@ const background = document.querySelector('.dropdown-background');
 /* ============================== Tool Initializations ============================== */
 function initTools() {
     // User Tools -- Paint Brush, Fill-Bucket, ColorPicker, and Shape Picker 
-    paintBrushButton.addEventListener("click", () => toolTransition(paintBrushButton));
+    paintBrushButton.addEventListener("click", () => {
+        toolTransition(paintBrushButton);
+        shapePickerCollapse.classList.remove("show");
+    });
     
     fillButton.addEventListener("click", () => toolTransition(fillButton));
 
@@ -724,7 +730,10 @@ function initTools() {
 
     colorPickerButton.addEventListener("click", () => toolTransition(colorPickerButton));
 
-    shapePickerButton.addEventListener("click", () => toolTransition(shapePickerButton));
+    shapePickerButton.addEventListener("click", () => {
+        toolTransition(shapePickerButton);
+        brushStrokeCollapse.classList.remove("show");
+    });
 
     // Shape Button Event Listeners
     fRectangleButton.addEventListener("click", () => shapePickerButton.dataset.tool = fRectangleButton.dataset.tool);
@@ -746,6 +755,9 @@ function toolTransition(newTool) {
 
     // Displays the newTool as the Current Tool in Use
     currentTool.classList.add("current-tool");
+
+    brushStrokeCollapse.classList.remove("show");
+    shapePickerCollapse.classList.remove("show");
 
     // Remove Click Points from previous tools
     if (!clickPoint.classList.contains('hidden')) {
@@ -890,6 +902,18 @@ function initDropdowns() {
     }
 }
 
+function initCollapses() {
+    document.querySelectorAll(".hide-collapse-btn").forEach(function(collapseButton) {
+        collapseButton.addEventListener("click", function(event) {
+           if (collapseButton.dataset.collapse === "brush") {
+                brushStrokeCollapse.classList.remove("show");
+           } else {
+                shapePickerCollapse.classList.remove("show");
+           }
+        });
+    });
+}
+
 /* Initializes the Custom Effects Buttons. */
 function initCustoms() {
     // Event Listener for the Custom Rainbow StrokeStyle
@@ -957,16 +981,26 @@ function init() {
     // Initialize the Dropdowns
     initDropdowns();
 
+    initCollapses();
+
     // Initializes the Event Listeners for the Custom Effects
     initCustoms();
 
     // Loads the Canvas from Local Storage
     loadCanvas(localStorage.getItem(storageKeys.canvasName));
 
-    setTimeout(() => {
+    var debug = false;
+
+    if (!debug) {
+        setTimeout(() => {
+            document.querySelector(".loader-wrapper").style.display = 'none';
+            document.querySelector(".loader").style.display = 'none';
+            document.querySelector(".brush-wrapper").style.display = "block";
+        }, 2000);
+    } else {
         document.querySelector(".loader-wrapper").style.display = 'none';
         document.querySelector(".loader").style.display = 'none';
         document.querySelector(".brush-wrapper").style.display = "block";
-    }, 2000);
+    }
 }
 

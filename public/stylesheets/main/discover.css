@@ -18,3 +18,26 @@ tbody {
 .table-striped tbody tr:nth-of-type(2n) {
     background: rgb(219, 219, 219);
 }
+
+
+@media (max-width: 570px) {
+    .page-navigation-row {
+        margin-bottom:200px;
+    }
+
+    .page-back {
+        float: left;
+    }
+
+    .page-next {
+        float: right;
+    }
+}
+  
+@media (min-width: 571px) {
+    .page-back {
+        float: right;
+    }
+}
+  
+  

@@ -112,7 +112,6 @@ router.put("/:id/like", middlewareObj.isLoggedIn, function(req, res) {
             req.flash("error", err.message);
             res.redirect("/home");
         } else {
-            console.log("Saving");
             req.user.likes.push(updatedArtwork);
             req.user.save();
             res.redirect("/artwork/" + updatedArtwork._id);
@@ -195,7 +194,8 @@ router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
             // Create New Comment
             Comment.create(req.body.comment, function(err, comment) {
                 if (err) {
-                    console.log(err);
+                    req.flash("error", err.message);
+                    res.redirect("/home");
                 } else {
                     // Update info concerning the new comment
                     comment.author.id = req.user._id;

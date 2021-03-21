@@ -131,7 +131,7 @@
             <div class="row gutters-sm mt-3">
                 <% user.artworks.forEach(function(artwork) { %>
                     <p><a class="artwork-navigate" href="/artwork/<%= artwork._id %>">
-                        <div class="col-lg-4 col-md-6 col-sm-6 mb-3" style="padding-bottom: 10px;">
+                        <div class="col-lg-4 col-md-6 col-sm-6 mb-3">
                             
                             <!-- Beginning of Each Artwork Card -->
                             <div class="card text-center h-100">
@@ -192,7 +192,7 @@
             for (i; i < user.profileComments.length && limitTracker < limit; i++, limitTracker++) { %>
                 <% var comment = user.profileComments[i]; %>
 
-                <!-- Comment Box -->
+                <% /* Comment Box */ %>
                 <div class="col-md-12 comment-column">
                     <% /* Comment Username */ %>
                     <a href="/profile/<%=comment.author.username%>" class="commenter-username"><span><%= comment.author.username %></span></a>
@@ -202,7 +202,7 @@
 
                     <% /* Delete Button */ %>
                     <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
-                        <form class="delete-form" action="/profile/<%= user._id %>/comment/<%= comment._id %>?_method=DELETE" method="POST" style="float: right;">
+                        <form class="delete-form" action="/profile/<%= user._id %>/comment/<%= comment._id %>?_method=DELETE" method="POST">
                             <input type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete this item?');" value="Delete">
                         </form>
                     <% } %>

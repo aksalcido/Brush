@@ -10,28 +10,28 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="thumbnail">
-                <img class="rounded mx-auto d-block" src="<%= artwork.img.data %>" style="border: 1px solid black;">
+                <!-- Artwork Image -->
+                <img class="rounded mx-auto d-block" src="<%= artwork.img.data %>">
                 
-                <div class="caption-full" style="border: 1px solid black;">
+                <!-- Artwork Details -->
+                <div class="caption-full">
                     <!-- Name of the Artwork && Favorites/Likes -->
-                    <div style="display: inline-block; width: 100%;">
-                        <h4 id="artwork-name" style="display: inherit; margin-right: 90%;">
+                    <div id="artwork-caption-full-top">
+                        <h4 id="artwork-name">
                             <% if (artwork.name.length == 0) { %>
                                 <i>No Name..</i>
                             <% } else { %>
                                 <%= artwork.name %>
                             <% } %>
                         </h4>
-                        
-
-
+                    
                         <div id="artwork-interaction">
                             <h5> <%= artwork.likes.length %> </h5>
                             <% if (currentUser && artwork.likes.some((likedBy) => likedBy.equals(currentUser._id))) { %>
                                 <!-- Unlike -->
                                 <form class="interaction-form" action="/artwork/<%= artwork._id%>/unlike?_method=PUT" method="POST">
                                     <button id="unlike-btn" type="submit" class="btn btn-light">
-                                        <i class="fas fa-thumbs-up" style="color: lightblue;"></i>
+                                        <i class="fas fa-thumbs-up" id="thumbs-up-liked"></i>
                                     </button>
                                 </form>
                             <% } else { %>
@@ -48,7 +48,7 @@
                                 <!-- Unfavorite -->
                                 <form class="interaction-form" action="/artwork/<%= artwork._id%>/unfavorite?_method=PUT" method="POST">
                                     <button id="unfavorite-btn" type="submit" class="btn btn-light">
-                                        <i class="fas fa-heart" style="color: red;"></i>
+                                        <i class="fas fa-heart" id="heart-favorited"></i>
                                     </button>
                                 </form>
                             <% } else { %>
@@ -80,7 +80,7 @@
                     <!-- Edit/Delete Button for Artwork -->
                     <% if (currentUser && artwork.author.id == currentUser.id) { %> 
                         <a class="btn btn-warning" href="<%= artwork._id %>/edit">Edit</a>
-                        <form action="/artwork/<%= artwork._id %>?_method=DELETE"  method="POST" class="delete-form" style="float: right;">
+                        <form action="/artwork/<%= artwork._id %>?_method=DELETE"  method="POST" class="delete-form">
                             <input type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete this item?');" value="Delete">
                         </form>
                     <% } %>
@@ -122,7 +122,7 @@
 
                                 <% /* Delete Button */ %>
                                 <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
-                                    <form class="delete-form" action="/artwork/<%= artwork._id %>/comment/<%= comment._id %>?_method=DELETE" method="POST" style="float: right;">
+                                    <form class="delete-form" action="/artwork/<%= artwork._id %>/comment/<%= comment._id %>?_method=DELETE" method="POST">
                                         <input type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete this item?');" value="Delete">
                                     </form>
                                 <% } %>

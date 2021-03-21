@@ -2,32 +2,33 @@
 var Artwork = require("../models/artwork");
 var Comment = require("../models/comment");
 
-//const url = require('url');
-
 // Export Middleware
 var middlewareObj = {};
 
-
+// Validates if there is a current user logged in, otherwise redirects to Login Page
 middlewareObj.isLoggedIn = function(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    
-    /*
-    // Want to avoid calling back a put request
-    if (req.originalMethod  === 'GET')
-        req.session.returnTo = req._parsedOriginalUrl.path
-    else if (req.originalMethod === "POST")
-        req.session.returnTo = req.originalUrl.substring(0, req.originalUrl.lastIndexOf('/'));
-    else
-        req.session.returnTo = '/home'
-    console.log(req.session.returnTo);
-    */
 
     res.redirect("../../login");
 }
 
+// Validates if the User is currently trying to edit their own profile
+middlewareObj.validateUserEdit = function(req, res, next) {
+    if (req.isAuthenticated()) {
+        if (req.params.id != res.locals.currentUser._id) {
+            req.flash("error", "You do not have permission to do that");
+            res.redirect("/home");
+        } else {
+            next(); 
+        }
+    } else {
+        res.redirect("../../login");
+    }
+}
 
+// Validates if the Current User owns the current Artwork upon edit or deletion
 middlewareObj.validateArtworkOwnership = function(req, res, next) {
     Artwork.findById(req.params.id, function(err, foundArtwork) {
         if (err) {
@@ -44,6 +45,7 @@ middlewareObj.validateArtworkOwnership = function(req, res, next) {
     });
 }
 
+// Validates if the Current User owns the Comment that was created when trying to edit (not implemented) or delete
 middlewareObj.validateCommentOwnership = function(req, res, next) {
     Comment.findById(req.params.comment_id, function(err, foundComment) {
         if (err) {
@@ -60,7 +62,7 @@ middlewareObj.validateCommentOwnership = function(req, res, next) {
     });
 }
 
-
+// Validates if the Current User has reached the Maximum Artwork Slots for their Profile (Each User has 21 Free Splots)
 middlewareObj.hasAvailableArtworkSlots = function(req, res, next) {
     console.log(req.user.artworks.length);
     
@@ -72,12 +74,13 @@ middlewareObj.hasAvailableArtworkSlots = function(req, res, next) {
     }
 }
 
-
+// Alters the Username and changes to Lowercase so that Users can not register with the same Username in different cases
 middlewareObj.usernameToLowerCase = function(req, res, next) {
     req.body.username = req.body.username.toLowerCase();
     next();
 }
 
+// Validates the Username and ensures it is at least 2 characters long and not greater than 20
 middlewareObj.validateUsername = function(req, res, next) {
     if (req.body.username.length <= 2 || req.body.username.length > 20) {
         req.flash("error", "Username must be greater than 2 and not exceed length 20");
@@ -87,6 +90,7 @@ middlewareObj.validateUsername = function(req, res, next) {
     }
 }
 
+// Vaguely Validates the Password (Not Implemented Completely)
 middlewareObj.validatePassword = function(req, res, next) {
     let re = new RegExp("^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$");
     

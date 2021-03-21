@@ -67,9 +67,6 @@ router.get("/discover", function(req, res) {
             if (req.query.type === "random")
                 result = shuffle(result);
 
-                console.log("Page: " + page);
-                console.log("result.length: " + result.length);
-
             res.render("main/discover", {artworks: result, page: page, limit: limit});
         }
     });
@@ -107,23 +104,12 @@ router.get("/login", function(req, res) {
     res.render("auth/login");
 });
 
-/*
-router.post("/login", passport.authenticate("local"), function(req, res) {
-    res.redirect(req.session.returnTo || '/home');
-    delete req.session.returnTo;
-
-});
-*/
-
 router.post("/login", middlewareObj.usernameToLowerCase, passport.authenticate("local", {
     successRedirect: "/home",
     failureRedirect: "/login",
     failureFlash: 'Invalid username or password.' 
 }), function(req, res) { 
 });
-
-
-
 
 router.get("/logout", function(req, res) {
     req.logout();

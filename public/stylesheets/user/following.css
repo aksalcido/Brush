@@ -40,17 +40,17 @@ h6 {
 }
 
 @media (max-width: 545px) {
-    .comment-navigation-row {
+    .page-navigation-row {
         margin-bottom: 200px;
     }
 
-    .comment-next {
+    .page-next {
         float: right;
     }
 }
   
 @media (min-width: 546px) {
-    .comment-back {
+    .page-back {
         float: right;
     }
 }

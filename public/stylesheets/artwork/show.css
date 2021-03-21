@@ -34,6 +34,12 @@ img {
     display: inherit;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+#artwork-caption-full-top {
+    display: inline-block;
+    width: 100%;
 }
 
 #artwork-interaction h5 {
@@ -45,6 +51,14 @@ img {
     display: inherit;
 }
 
+#thumbs-up-liked {
+    color: lightblue;
+}
+
+#heart-favorited {
+    color: red;
+}
+
 /* Caption */
 #artwork-caption {
     font-size: 24px;
@@ -54,6 +68,10 @@ img {
 #date-created h4 {
     margin-top: 10px;
     font-weight: bold;
+}
+
+.delete-form {
+    float: right;
 }
 
 /* Comment Section */

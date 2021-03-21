@@ -2,79 +2,85 @@
 <link rel="stylesheet" href="/stylesheets/main/discover.css">
 </head>
 <body>
-   <!-- Bootstrap Navbar -->
-   <%- include ("../partials/default") %>
-
+  <!-- Bootstrap Navbar -->
+  <%- include ("../partials/default") %>
 
   <div class="container-fluid">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/discover?type=likes"> Likes </a></li>
-            <li class="breadcrumb-item"><a href="/discover?type=favorites"> Favorites </a></li>
-            <li class="breadcrumb-item"><a href="/discover?type=random"> Random </a></li>
-        </ol>
-      </nav>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/discover?type=likes"> Likes </a></li>
+          <li class="breadcrumb-item"><a href="/discover?type=favorites"> Favorites </a></li>
+          <li class="breadcrumb-item"><a href="/discover?type=random"> Random </a></li>
+      </ol>
+    </nav>
+    
+    <!-- Artwork Displayed By Table -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Rank</th>
+          <th scope="col">Image</th>
+          <th scope="col" style="width: 10%;">Name</th>
+          <th scope="col">Description</th>
+          <th scope="col">Author</th>
+        </tr>
+      </thead>
 
-       <table class="table table-striped">
-         <thead>
-           <tr>
-             <th scope="col">Rank</th>
-             <th scope="col">Image</th>
-             <th scope="col" style="width: 10%;">Name</th>
-             <th scope="col">Description</th>
-             <th scope="col">Author</th>
-           </tr>
-         </thead>
+      <tbody>
+      <% 
+        var count = (page - 1) * 10;
+        artworks.forEach( (artwork) => { %>
 
-         <tbody>
-          <% 
-            var count = (page - 1) * 10;
-            artworks.forEach( (artwork) => { %>
+        <tr>
+          <% // Artwork Rank %>
+          <th scope="row"><%= ++count %></th>
 
-            <tr>
-              <th scope="row"><%= ++count %></th>
-              <td><a href="/artwork/<%= artwork._id %>"><img src="<%= artwork.img.data %>" style="height: 150px; border: 1px solid black;"></a></td>
-              <!-- Artwork Name -->
-              <td><a href="/artwork/<%= artwork._id %>">
-                <% if (artwork.name && artwork.name.length > 0) { %>
-                  <%= artwork.name %>
-                <% } else { %>
-                  Nameless..
-                <% } %>
-              </a></td>
-              <!-- Artwork Description -->
-              <td>
-              <% if (artwork.description && artwork.description.length > 0) { %>
-                <%= artwork.description.substr(0, 1500) %>..
-              <% } else { %>
-                No Description...
-              <% } %>
-              </td>
-              <!-- Artwork Author -->
-              <td><a href="/profile/<%= artwork.author.username %>"><%= artwork.author.username %></a></td>
-            </tr>
-          <% }) %>
-         </tbody>
-       </table>
+          <% // Artwork Image & Anchor Link to Artwork Profile %>
+          <td><a href="/artwork/<%= artwork._id %>"><img src="<%= artwork.img.data %>" style="height: 150px; border: 1px solid black;"></a></td>
+          
+          <% // Artwork Name %>
+          <td><a href="/artwork/<%= artwork._id %>">
+            <% if (artwork.name && artwork.name.length > 0) { %>
+              <%= artwork.name %>
+            <% } else { %>
+              Nameless..
+            <% } %>
+          </a></td>
 
-    <div class="row">
-        <div class="col-sm-3 mb-3"></div>
-
-        <div class="col-sm-3 mb-3">
-          <% if (parseInt(page) !== 1) { %>
-            <a href="/discover/?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light" style="float: right;">Back</button></a>
+          <% // Artwork Description %>
+          <td>
+          <% if (artwork.description && artwork.description.length > 0) { %>
+            <%= artwork.description.substr(0, 1500) %>..
+          <% } else { %>
+            No Description...
           <% } %>
-        </div>
+          </td>
 
-        <div class="col-sm-3 mb-3">
-          <% if (artworks.length === limit) { %>
-          <a href="/discover/?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark">Next</button></a>
-          <% } %>
-        </div>
+          <% // Artwork Author %>
+          <td><a href="/profile/<%= artwork.author.username %>"><%= artwork.author.username %></a></td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
 
-        <div class="col-sm-3 mb-3"></div>
+    <div class="row page-navigation-row">
+      <div class="col-sm-6 mb-3">
+        <% if (parseInt(page) !== 1) { %>
+          <a href="/discover/?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light page-back">Back</button></a>
+        <% } else { %>
+          <a href="/discover/?page=<%= parseInt(page) - 1 %>"><button type="button" class="btn btn-light page-back" disabled>Back</button></a>
+        <% } %>
+      </div>
+
+      <div class="col-sm-6 mb-3">
+        <% if (artworks.length === limit) { %>
+        <a href="/discover/?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark page-next">Next</button></a>
+        <% } else { %>
+          <a href="/discover/?page=<%= parseInt(page) + 1 %>"><button type="button" class="btn btn-dark page-next" disabled>Next</button></a>
+        <% } %>
+      </div>
     </div>
-  </div>  
+</div>  
 
 
 <%- include("../partials/footer") %>

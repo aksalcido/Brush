@@ -112,8 +112,6 @@ router.get("/:username/following", function(req, res) {
     });
 })
 
-
-
 router.get("/:username/favorites", function(req, res) {
     var page = req.query.page ? (req.query.page >= 1 ? req.query.page : 1) : 1;
     const limit = 12;
@@ -139,9 +137,8 @@ router.get("/:username/favorites", function(req, res) {
     });
 })
 
-
 // EDIT - Edit User Profile Information
-router.get("/:id/edit", function(req, res) {
+router.get("/:id/edit", middlewareObj.validateUserEdit, function(req, res) {
     User.findById(req.params.id, function(err, foundUser) {
         if (err) {
             req.flash("error", err.message);
@@ -152,6 +149,21 @@ router.get("/:id/edit", function(req, res) {
     });
 });
 
+// PUT - Edits the User Profile Information
+router.put("/:id", middlewareObj.validateUserEdit, upload.single('file'), function(req, res, next) {
+    // If User uploading a profile picture
+    if (req.file)
+        req.body.user.profilePicture = req.file.filename;
+    
+    User.findByIdAndUpdate(req.params.id, req.body.user, function(err, updatedUser) {
+        if (err) {
+            req.flash("error", err.message);
+            res.redirect("/home");
+        } else {
+            res.redirect("/profile/" + updatedUser.username);
+        }
+    });
+});
 
 // Follow
 router.get("/:username/follow", middlewareObj.isLoggedIn, function(req, res) {
@@ -176,7 +188,6 @@ router.get("/:username/follow", middlewareObj.isLoggedIn, function(req, res) {
         }
     });
 });
-
 
 router.get("/:username/unfollow", middlewareObj.isLoggedIn, function(req, res) {
     // Verify that User trying to be unfollowed is a real user
@@ -205,27 +216,6 @@ router.get("/:username/unfollow", middlewareObj.isLoggedIn, function(req, res) {
         }
     });
 });
-
-
-
-// PUT - Edits the User Profile Information
-router.put("/:id", upload.single('file'), function(req, res, next) {
-    // If User uploading a profile picture
-    if (req.file)
-        req.body.user.profilePicture = req.file.filename;
-    
-    User.findByIdAndUpdate(req.params.id, req.body.user, function(err, updatedUser) {
-        if (err) {
-            req.flash("error", err.message);
-            res.redirect("/home");
-        } else {
-            res.redirect("/profile/" + updatedUser.username);
-        }
-    });
-});
-
-
-
 
 router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
     User.findById(req.params.id, function(err, foundUser) {
@@ -266,9 +256,7 @@ router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
 
 });
 
-
-
-router.delete("/:id/comment/:comment_id", function(req, res) {
+router.delete("/:id/comment/:comment_id", middlewareObj.isLoggedIn, middlewareObj.validateCommentOwnership, function(req, res) {
     Comment.findByIdAndDelete(req.params.comment_id, function(err) {
         if (err) {
             req.flash("error", err.message);
