@@ -23,7 +23,7 @@ const BRUSH_DATABASE_URL1     = process.env.BrushDatabaseURL1;
 const BRUSH_DATABASE_URL2     = process.env.BrushDatabaseURL2;
 
 // Global Host Variables
-const BASE_PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Global Database Variables
 const usingLocalDatabase = true;
@@ -67,51 +67,6 @@ else {
             console.error(`Error connecting to the database. \n${err}`);
     })
 }
-
-/*
-// ===== Video ===== 
-const path   = require("path");
-const crypto = require("crypto");
-const multer = require("multer");
-const GridFsStorage = require("multer-gridfs-storage");
-const Grid = require("gridfs-stream");
-
-// Init gfs
-let gfs;
-
-// Create Storage Engine
-const storage = new GridFsStorage({
-    url: DATABASE_URL,
-    file: (req, file) => {
-      return new Promise((resolve, reject) => {
-        crypto.randomBytes(16, (err, buf) => {
-          if (err) {
-            return reject(err);
-          }
-          const filename = buf.toString('hex') + path.extname(file.originalname);
-          const fileInfo = {
-            filename: filename,
-            bucketName: 'uploads'
-          };
-          resolve(fileInfo);
-        });
-      });
-    }
-});
-
-const upload = multer({ storage });
-
-/*
-    https://www.npmjs.com/package/multer-gridfs-storage
-    https://www.npmjs.com/package/gridfs-stream
-
-    https://www.youtube.com/watch?v=3f5Q9wDePzY&list=WL&index=56
-*/
-
-
-
-
-
 
 // Set up BodyParser to handle HTTP POST reqs
 app.use(bodyParser.urlencoded({extended: true}));
@@ -168,6 +123,6 @@ app.use("/artwork", artworkRoutes);
 app.use("/profile", userRoutes);
 
 
-app.listen(BASE_PORT, '127.0.0.1', function() {
+app.listen(PORT, '127.0.0.1', function() {
     console.log("Brush Server started");
 });
