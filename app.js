@@ -7,7 +7,7 @@ var express = require("express"),
     passport = require("passport"),
     LocalStrategy = require("passport-local"),
     methodOverride = require('method-override');
-    
+
 // Routes
 var authRoutes = require("./routes/auth"),
     userRoutes = require("./routes/user"),
@@ -33,9 +33,12 @@ const connectionParams = {
     useUnifiedTopology: true 
 }
 
+// for now local database
+var DATABASE_URL = "mongodb://localhost:27017/brush_database";
+
+// ===== END VIDEO ===== // 
 if (usingLocalDatabase) {
     var DROP_DATABASE = false;
-    var DATABASE_URL = "mongodb://localhost:27017/brush_database";
 
     if (!DROP_DATABASE) {
         // Setup (if not created already) and Connect the Mongoose Database
@@ -54,7 +57,7 @@ if (usingLocalDatabase) {
 }
 // Using Mongod Atlas Database
 else {
-    var DATABASE_URL = BRUSH_DATABASE_URL1 + BRUSH_DATABASE_PASSWORD + BRUSH_DATABASE_URL2;
+    DATABASE_URL = BRUSH_DATABASE_URL1 + BRUSH_DATABASE_PASSWORD + BRUSH_DATABASE_URL2;
     
     mongoose.connect(DATABASE_URL,connectionParams)
         .then( () => {
@@ -64,6 +67,51 @@ else {
             console.error(`Error connecting to the database. \n${err}`);
     })
 }
+
+/*
+// ===== Video ===== 
+const path   = require("path");
+const crypto = require("crypto");
+const multer = require("multer");
+const GridFsStorage = require("multer-gridfs-storage");
+const Grid = require("gridfs-stream");
+
+// Init gfs
+let gfs;
+
+// Create Storage Engine
+const storage = new GridFsStorage({
+    url: DATABASE_URL,
+    file: (req, file) => {
+      return new Promise((resolve, reject) => {
+        crypto.randomBytes(16, (err, buf) => {
+          if (err) {
+            return reject(err);
+          }
+          const filename = buf.toString('hex') + path.extname(file.originalname);
+          const fileInfo = {
+            filename: filename,
+            bucketName: 'uploads'
+          };
+          resolve(fileInfo);
+        });
+      });
+    }
+});
+
+const upload = multer({ storage });
+
+/*
+    https://www.npmjs.com/package/multer-gridfs-storage
+    https://www.npmjs.com/package/gridfs-stream
+
+    https://www.youtube.com/watch?v=3f5Q9wDePzY&list=WL&index=56
+*/
+
+
+
+
+
 
 // Set up BodyParser to handle HTTP POST reqs
 app.use(bodyParser.urlencoded({extended: true}));
@@ -101,14 +149,14 @@ passport.deserializeUser(User.deserializeUser());
 
 // Middleware
 var middlewareObj = require("./middleware/index.js");
-const { db } = require("./models/user.js");
+const { config } = require("process");
+
 
 // MIDDLEWARE that will run for every single route
 app.use(function(req, res, next) {
     res.locals.currentUser = req.user;
     res.locals.error = req.flash("error");
     res.locals.success = req.flash("success");
-    
     // Middleware is ran and then next route
     next();
 });

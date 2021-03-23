@@ -84,7 +84,7 @@ router.post("/register", middlewareObj.usernameToLowerCase, middlewareObj.valida
         res.redirect("register");
     } else {
         // plug in default profileImage
-        var newUser = new User({username: req.body.username, profileImage: "", description: "Test", age:"", location:""});
+        var newUser = new User({username: req.body.username, description: "Test", age:"", location:""});
 
         User.register(newUser, req.body.password, function(err, user) {
             if (err) {
