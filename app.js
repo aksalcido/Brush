@@ -124,7 +124,12 @@ app.use("/create", createRoutes);
 app.use("/artwork", artworkRoutes);
 app.use("/profile", userRoutes);
 
+app.listen(PORT, function() {
+    console.log("Brush Server started");
+});
 
+/*
 app.listen(PORT, '127.0.0.1', function() {
     console.log("Brush Server started");
 });
+*/
