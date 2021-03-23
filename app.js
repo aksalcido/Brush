@@ -25,10 +25,9 @@ const BRUSH_DATABASE_URL2     = process.env.BrushDatabaseURL2;
 // Global Host Variables
 const PORT = process.env.PORT || 3000;
 
-console.log("PORT: " + PORT);
-
 // Global Database Variables
-const usingLocalDatabase = true;
+const usingLocalDatabase = false;
+
 const connectionParams = {
     useNewUrlParser: true,
     useCreateIndex: true,
