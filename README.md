@@ -37,4 +37,4 @@
   - [ ] Friends/Messaging
   - [ ] News Feed
   - [ ] User Search via Searchbar
-  - [ ] Profile Picture Update via multer-gridfs-storage (Requires More GB on Atlas since Artwork takes a bit of memory)
+  - [ ] Profile Picture Update via [multer-gridfs-storage](https://www.npmjs.com/package/multer-gridfs-storage) (Requires More GB on Atlas since Artwork takes a bit of memory)
