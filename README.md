@@ -9,7 +9,7 @@
   
 # Technologies Used
 <h4> Programming Languages </h4> 
-    <h6> HTML/CSS, Javascript </h6>
+    - <h6> HTML/CSS, Javascript </h6>
 <h4> Tools and Frameworks </h4> 
     <h6> Git, NPM, Node.JS </h6>
   
