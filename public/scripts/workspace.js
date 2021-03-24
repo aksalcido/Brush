@@ -515,6 +515,14 @@ function initCanvasEventListeners() {
     // This handles the case where the User simply clicks to add small a single stroke
     canvas.addEventListener('click', (event) => singleClickDown(event));
 
+    /* Pen */
+    canvas.addEventListener('touchstart', () => (isDrawing = true));
+
+    canvas.addEventListener('touchmove', draw);
+
+    canvas.addEventListener('touchend', () => (isDrawing = false));
+
+
     // When the Mouse is released while painting/erasing, we want to save the canvas to local storage and to State
     canvas.addEventListener('mouseup', () => {
         if (currentTool.dataset.tool === 'paint' || currentTool.dataset.tool === 'eraser') 
