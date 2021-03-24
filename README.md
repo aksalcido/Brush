@@ -9,12 +9,12 @@
   
 # Technologies Used
 <h4> Programming Languages </h4> 
-    HTML/CSS, Javascript
+    <h6> HTML/CSS, Javascript </h6>
 <h4> Tools and Frameworks </h4> 
-    Git, NPM, Node.JS
+    <h6> Git, NPM, Node.JS </h6>
   
 <h4> Databases/Other </h4> 
-    MongoDB, MongoDB Atlas, REST API, Heroku
+    <h6> MongoDB, MongoDB Atlas, REST API, Heroku </h6> 
 
 <h2> Deployment <h2>
   - Deployed using Heroku: https://brush-paint-app.herokuapp.com/
