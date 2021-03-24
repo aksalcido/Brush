@@ -19,7 +19,7 @@
 
 # Deployment
   - <h6> Deployed using Heroku: https://brush-paint-app.herokuapp.com/ <h6>
-  - <h6> MongoDB Atlas is used for the Database after transitioning from Localhost </h6>
+  - <h6> [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) is used for the Database after transitioning from Localhost </h6>
 
 
 # Demonstration #
