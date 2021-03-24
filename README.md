@@ -8,17 +8,18 @@
     - like/favorite Artwork
   
 # Technologies Used
-<h4> Programming Languages </h4> 
-    - <h6> HTML/CSS, Javascript </h6>
-<h4> Tools and Frameworks </h4> 
+- <h4> Programming Languages </h4> 
+    <h6> HTML/CSS, Javascript </h6>
+- <h4> Tools and Frameworks </h4> 
     <h6> Git, NPM, Node.JS </h6>
   
-<h4> Databases/Other </h4> 
+- <h4> Databases/Other </h4> 
     <h6> MongoDB, MongoDB Atlas, REST API, Heroku </h6> 
 
-<h2> Deployment <h2>
-  - Deployed using Heroku: https://brush-paint-app.herokuapp.com/
-  - MongoDB Atlas is used for the Database after transitioning from Localhost
+
+# Deployment
+  - <h6> Deployed using Heroku: https://brush-paint-app.herokuapp.com/ <h6>
+  - <h6> MongoDB Atlas is used for the Database after transitioning from Localhost </h6>
 
 
 # Demonstration #
