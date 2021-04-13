@@ -25,11 +25,31 @@
 
 # Demonstration #
   <h2> Homepage <h2>
+  <img src='public/images/demo/homepage.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+  
   <h2> Discover <h2>
+  <img src='public/images/demo/discover.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
   <h2> Search <h2>
+  <img src='public/images/demo/search_demo.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+  
   <h2> Create <h2>
+  <img src='public/images/demo/create_demo.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+  
   <h2> Profile </h2>
+  <img src='public/images/demo/user_profile.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+   
+  <h4> User Tabs </h4>
+  <img src='public/images/demo/user_tabs.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+  
+  <h4> Followers </h4>
+  <img src='public/images/demo/followers.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+  
+  <h4> Follow User </h4>
+  <img src='public/images/demo/follow_demo.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+  
   <h2> Artwork Profile </h2>
+  <img src='public/images/demo/artwork_profile.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 # Future Updates #
   - [ ] Additional Paint Application features such as Layers, Custom Effects, etc.
