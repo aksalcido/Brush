@@ -36,6 +36,9 @@
   <h2> Create <h2>
   <img src='public/images/demo/create_demo.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
   
+  <h2> Artwork Profile </h2>
+  <img src='public/images/demo/artwork_profile.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+  
   <h2> Profile </h2>
   <img src='public/images/demo/user_profile.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
    
@@ -47,9 +50,7 @@
   
   <h4> Follow User </h4>
   <img src='public/images/demo/follow_demo.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
-  
-  <h2> Artwork Profile </h2>
-  <img src='public/images/demo/artwork_profile.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
 
 # Future Updates #
   - [ ] Additional Paint Application features such as Layers, Custom Effects, etc.
