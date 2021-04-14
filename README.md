@@ -24,6 +24,8 @@
   - [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) is used for the Database after transitioning from Localhost
 
 # Demonstration #
+  Note: Quality dropped in Gifs 
+  
   <h2> Homepage <h2>
   <img src='public/images/demo/homepage.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
   
