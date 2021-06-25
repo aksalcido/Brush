@@ -63,9 +63,7 @@ middlewareObj.validateCommentOwnership = function(req, res, next) {
 }
 
 // Validates if the Current User has reached the Maximum Artwork Slots for their Profile (Each User has 21 Free Splots)
-middlewareObj.hasAvailableArtworkSlots = function(req, res, next) {
-    console.log(req.user.artworks.length);
-    
+middlewareObj.hasAvailableArtworkSlots = function(req, res, next) {    
     if (req.user.artworks.length < 21) {
         return next();
     } else { 

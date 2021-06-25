@@ -38,10 +38,14 @@
 
                         <!-- Follow Button -->
                         <% if (currentUser && currentUser.username !== user.username) { %>
-                            <% if (user.followers.some((follower) => follower._id.equals(currentUser._id))) { %>
-                                <a class="btn btn-danger" href="<%= user.username %>/unfollow">Unfollow</a>
+                            <% if (user.followers.some((follower) => follower.equals(currentUser._id))) { %>
+                                <form action="/profile/<%= user.username %>/unfollow?_method=PUT" method="POST">
+                                    <button type="submit" class="btn btn-danger">Unfollow</button>
+                                </form>
                             <% } else { %>
-                                <a class="btn btn-primary" href="<%= user.username %>/follow">Follow</a>
+                                <form action="/profile/<%= user.username %>/follow?_method=PUT" method="POST">
+                                    <button type="submit" class="btn btn-primary">Follow</button>
+                                </form>
                             <% } %>
                         <% } %>
                     </div>

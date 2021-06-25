@@ -1,24 +1,22 @@
-var express = require("express"),
-    passport = require("passport");
-
-// Models 
-var User = require("../models/user.js");
-var Artwork = require("../models/artwork.js");
+const passport = require("passport");
 
 // Router 
-var router = express.Router();
+const router = require('express').Router();
+
+// Models 
+const User = require("../models/user.js");
+const Artwork = require("../models/artwork.js");
 
 // Middleware
-var middlewareObj = require("../middleware/index.js");
+const middlewareObj = require("../middleware/index.js");
 
 // ===== Main Pages =====
-router.get('/', function(req, res) {
+router.get('/', (req, res) => {
     res.render("main/landing.ejs");
 });
 
-router.get("/home", function(req, res) {
-    Artwork.find({likesTotal: { $gt: 4 }},
-        function(err, artworks) {
+router.get("/home", (req, res) => {
+    Artwork.find({likesTotal: { $gt: 4 }}, (err, artworks) => {
         if (err) {
             req.flash("error", err.message);
         } else {
@@ -28,7 +26,7 @@ router.get("/home", function(req, res) {
 });
 
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    let currentIndex = array.length, temporaryValue, randomIndex;
   
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
@@ -46,10 +44,11 @@ function shuffle(array) {
     return array;
 }
 
-router.get("/discover", function(req, res) {
-    var page = req.query.page ? (req.query.page >= 1 ? req.query.page : 1) : 1;
-    var sortType = {likesTotal: -1, _id: 1};
-    const limit = 10;
+router.get("/discover", (req, res) => {
+    // Page, sortType, limit for pagination
+    let page = req.query.page ? (req.query.page >= 1 ? req.query.page : 1) : 1;
+    let sortType = {likesTotal: -1, _id: 1};
+    let limit = 10;
 
     if (req.query.type) {
         if (req.query.type === "favorites") {
@@ -60,7 +59,7 @@ router.get("/discover", function(req, res) {
         }
     }
 
-    Artwork.find({}).sort(sortType).skip((page - 1) * limit).limit(limit).exec(function(err, result) {
+    Artwork.find({}).sort(sortType).skip((page - 1) * limit).limit(limit).exec((err, result) => {
         if (err) {
             req.flash("error", err.message);
         } else {
@@ -73,34 +72,35 @@ router.get("/discover", function(req, res) {
 });
 
 // ===== Authorization =====
-router.get("/register", function(req, res) {
+router.get("/register", (req, res) => {
     res.render("auth/register");
 });
 
-router.post("/register", middlewareObj.usernameToLowerCase, middlewareObj.validateUsername, function(req, res) {
+router.post("/register", middlewareObj.usernameToLowerCase, middlewareObj.validateUsername, (req, res) => {
     // Ensure that the User chose a correct password and not mistyped
     if (req.body.password != req.body.confirm_password) {
         req.flash("error", "Password confirmation does not match");
         res.redirect("register");
     } else {
-        // plug in default profileImage
-        var newUser = new User({username: req.body.username, description: "Test", age:"", location:""});
+        // Create new User to be registered with username and default description
+        var newUser = new User({username: req.body.username, description: "Hello, I just joined Brush!", age:"", location:""});
 
-        User.register(newUser, req.body.password, function(err, user) {
+        User.register(newUser, req.body.password, (err, user) => {
             if (err) {
                 req.flash("error", err.message);
                 return res.redirect("register");
             }
             
-            passport.authenticate("local")(req, res, function() {
-                req.flash("success", "Welcome to YelpCamp " + user.username);
+            // After successful registration, sign in the user
+            passport.authenticate("local")(req, res, () => {
+                req.flash("success", "Welcome to Brush " + user.username);
                 res.redirect("/home");
             });
         });
     }
 });
 
-router.get("/login", function(req, res) {
+router.get("/login", (req, res) => {
     res.render("auth/login");
 });
 
@@ -108,10 +108,10 @@ router.post("/login", middlewareObj.usernameToLowerCase, passport.authenticate("
     successRedirect: "/home",
     failureRedirect: "/login",
     failureFlash: 'Invalid username or password.' 
-}), function(req, res) { 
+}), (req, res) => { 
 });
 
-router.get("/logout", function(req, res) {
+router.get("/logout", (req, res) => {
     req.logout();
     req.flash("success", "Logged out!");
     res.redirect("/home");

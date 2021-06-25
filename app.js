@@ -1,21 +1,21 @@
 // Imported Libraries
-var express = require("express"),
-    app = express(),
-    flash = require("connect-flash"),
-    bodyParser = require("body-parser"),
-    mongoose = require("mongoose"),
-    passport = require("passport"),
-    LocalStrategy = require("passport-local"),
-    methodOverride = require('method-override');
+const express = require("express"),
+      app = express(),
+      flash = require("connect-flash"),
+      bodyParser = require("body-parser"),
+      mongoose = require("mongoose"),
+      passport = require("passport"),
+      LocalStrategy = require("passport-local"),
+      methodOverride = require('method-override');
 
 // Routes
-var authRoutes = require("./routes/auth"),
-    userRoutes = require("./routes/user"),
-    createRoutes = require("./routes/create");
-    artworkRoutes = require("./routes/artwork");
+const authRoutes = require("./routes/auth"),
+      userRoutes = require("./routes/user"),
+      createRoutes = require("./routes/create");
+      artworkRoutes = require("./routes/artwork");
 
 // Imported Models
-var User = require("./models/user.js");
+const User = require("./models/user.js");
 
 // ENVIRONMENT VARIABLES
 const BRUSH_DATABASE_PASSWORD = process.env.BrushMongoosePassword;
@@ -25,22 +25,22 @@ const BRUSH_DATABASE_URL2     = process.env.BrushDatabaseURL2;
 // Global Host Variables
 const PORT = process.env.PORT || 3000;
 
-// Global Database Variables
-const usingLocalDatabase = false;
-
 const connectionParams = {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true 
 }
 
-// for now local database
-var DATABASE_URL = "mongodb://localhost:27017/brush_database";
+// Global Database Variables
+const usingLocalDatabase = false;
 
-// ===== END VIDEO ===== // 
+// Default URL Set to Local DB -- Updated if usingLocalDatabase is false
+let DATABASE_URL = "mongodb://localhost:27017/brush_database";
+
+// Using Local Database 
 if (usingLocalDatabase) {
-    var DROP_DATABASE = false;
-
+    let DROP_DATABASE = false;
+    
     if (!DROP_DATABASE) {
         // Setup (if not created already) and Connect the Mongoose Database
         mongoose.connect(DATABASE_URL, connectionParams)
@@ -58,6 +58,7 @@ if (usingLocalDatabase) {
 }
 // Using Mongod Atlas Database
 else {
+    // Cloud DB updates URL
     DATABASE_URL = BRUSH_DATABASE_URL1 + BRUSH_DATABASE_PASSWORD + BRUSH_DATABASE_URL2;
     
     mongoose.connect(DATABASE_URL,connectionParams)
@@ -107,16 +108,14 @@ passport.deserializeUser(User.deserializeUser());
 var middlewareObj = require("./middleware/index.js");
 const { config } = require("process");
 
-
 // MIDDLEWARE that will run for every single route
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
     res.locals.currentUser = req.user;
     res.locals.error = req.flash("error");
     res.locals.success = req.flash("success");
     // Middleware is ran and then next route
     next();
 });
-
 
 app.use("/", authRoutes);
 app.use("/create", createRoutes);
