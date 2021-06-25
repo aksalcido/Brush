@@ -1,5 +1,5 @@
 // Imported Libraries
-var express = require("express"),
+const express = require("express"),
     app = express(),
     flash = require("connect-flash"),
     bodyParser = require("body-parser"),
@@ -9,13 +9,13 @@ var express = require("express"),
     methodOverride = require('method-override');
 
 // Routes
-var authRoutes = require("./routes/auth"),
+const authRoutes = require("./routes/auth"),
     userRoutes = require("./routes/user"),
     createRoutes = require("./routes/create");
     artworkRoutes = require("./routes/artwork");
 
 // Imported Models
-var User = require("./models/user.js");
+const User = require("./models/user.js");
 
 // ENVIRONMENT VARIABLES
 const BRUSH_DATABASE_PASSWORD = process.env.BrushMongoosePassword;
@@ -35,11 +35,11 @@ const connectionParams = {
 }
 
 // for now local database
-var DATABASE_URL = "mongodb://localhost:27017/brush_database";
+let DATABASE_URL = "mongodb://localhost:27017/brush_database";
 
 // ===== END VIDEO ===== // 
 if (usingLocalDatabase) {
-    var DROP_DATABASE = false;
+    let DROP_DATABASE = false;
 
     if (!DROP_DATABASE) {
         // Setup (if not created already) and Connect the Mongoose Database

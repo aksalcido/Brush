@@ -93,7 +93,7 @@ router.post("/register", middlewareObj.usernameToLowerCase, middlewareObj.valida
             
             // After successful registration, sign in the user
             passport.authenticate("local")(req, res, () => {
-                req.flash("success", "Welcome to YelpCamp " + user.username);
+                req.flash("success", "Welcome to Brush " + user.username);
                 res.redirect("/home");
             });
         });
