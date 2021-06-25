@@ -3,46 +3,46 @@ const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const toolContainer = document.querySelector(".tools-container");
 const colors = document.querySelectorAll(".paint");
-const colorDisplay = document.querySelector("#color-display");
+const colorDisplay = document.getElementById("color-display");
 
 // Input Sliders
 const toolSliders = document.querySelectorAll(".tool-slider");
-const widthSlider = document.querySelector("#line-width");
-const transparencySlider = document.querySelector("#transparency");
+const widthSlider = document.getElementById("line-width");
+const transparencySlider = document.getElementById("transparency");
 const customRGBSliders = document.querySelectorAll(".custom-rgb");
 
 // Check boxes
 const lineCheckboxes = document.querySelectorAll(".brush-checkbox");
 
 // Tools
-const paintBrushButton  = document.querySelector("#paint-brush");
-const fillButton        = document.querySelector("#fill-bucket");
-const eraserButton      = document.querySelector("#eraser");
-const colorPickerButton = document.querySelector("#color-picker");
-const shapePickerButton = document.querySelector("#shape-picker");
+const paintBrushButton  = document.getElementById("paint-brush");
+const fillButton        = document.getElementById("fill-bucket");
+const eraserButton      = document.getElementById("eraser");
+const colorPickerButton = document.getElementById("color-picker");
+const shapePickerButton = document.getElementById("shape-picker");
 
 // Dropdown and Collapse
 const brushEffectOptions = document.querySelectorAll(".dropdown-menu a");
-const brushStrokeCollapse = document.querySelector("#brush-stroke-collapse");
-const shapePickerCollapse = document.querySelector("#shape-picker-collapse");
+const brushStrokeCollapse = document.getElementById("brush-stroke-collapse");
+const shapePickerCollapse = document.getElementById("shape-picker-collapse");
 
 // Custom Effects
-const rainbowButton = document.querySelector("#rainbow");
-const directionalButton = document.querySelector("#directional");
-const invertButton = document.querySelector("#invert");
-const grayscaleButton = document.querySelector("#grayscale");
+const rainbowButton = document.getElementById("rainbow");
+const directionalButton = document.getElementById("directional");
+const invertButton = document.getElementById("invert");
+const grayscaleButton = document.getElementById("grayscale");
 
 // Canvas Buttons 
-const saveButton  = document.querySelector('#save');
-const undoButton  = document.querySelector("#undo");
-const redoButton  = document.querySelector("#redo");
-const clearButton = document.querySelector('#clear');
-const hideButton  = document.querySelector("#hide");
-const showButton  = document.querySelector("#show");
+const saveButton  = document.getElementById('save');
+const undoButton  = document.getElementById("undo");
+const redoButton  = document.getElementById("redo");
+const clearButton = document.getElementById('clear');
+const hideButton  = document.getElementById("hide");
+const showButton  = document.getElementById("show");
 
 // Shape Related 
-const fRectangleButton  = document.querySelector("#filledRectangle");
-const sRectangleButton  = document.querySelector("#strokedRectangle");
+const fRectangleButton  = document.getElementById("filledRectangle");
+const sRectangleButton  = document.getElementById("strokedRectangle");
 const clickPoint = document.querySelector(".shape-click");
 
 // Local Storage Keys Names for Access
@@ -516,11 +516,9 @@ function initCanvasEventListeners() {
     canvas.addEventListener('click', (event) => singleClickDown(event));
 
     /* Pen */
-    canvas.addEventListener('touchstart', () => (isDrawing = true));
-
-    canvas.addEventListener('touchmove', draw);
-
-    canvas.addEventListener('touchend', () => (isDrawing = false));
+    // canvas.addEventListener('touchstart', () => (isDrawing = true));
+    // canvas.addEventListener('touchmove', draw);
+    // canvas.addEventListener('touchend', () => (isDrawing = false));
 
 
     // When the Mouse is released while painting/erasing, we want to save the canvas to local storage and to State
@@ -796,12 +794,12 @@ function initCanvasButtons() {
 
 /* Save the Canvas and Upload to backend as a fetch request */
 function save() {
-    var confirmation = confirm("Do you want to save this? You will not be able to edit any further?");
+    let confirmation = confirm("Do you want to save this? You will not be able to edit any further?");
 
     if (confirmation) {
         // Save contents of the Canvas
-        var img    = canvas.toDataURL("image/png");
-        var data   = JSON.stringify({image: img});
+        let img    = canvas.toDataURL("image/png");
+        let data   = JSON.stringify({image: img});
 
         // Mark Canvas as blank for future use
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -823,7 +821,7 @@ function save() {
 
 /* Clear the entire Canvas */
 function clear() {
-    var confirmation = confirm("Are you sure you want to clear the entire Canvas?");
+    let confirmation = confirm("Are you sure you want to clear the entire Canvas?");
 
     if (confirmation) {
         ctx.fillStyle='white';

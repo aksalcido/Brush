@@ -1,43 +1,37 @@
-var express = require("express"),
-    path = require('path')
-
-// Models
-var User    = require("../models/user.js");
-var Artwork = require("../models/artwork.js");
+const path = require('path');
 
 // Router
-var router = express.Router();
+const router = require('express').Router();
+
+// Models
+const Artwork = require("../models/artwork.js");
 
 // Middleware
-var middlewareObj = require("../middleware/index.js");
+const middlewareObj = require("../middleware/index.js");
 
-router.get("/", middlewareObj.isLoggedIn, middlewareObj.hasAvailableArtworkSlots, function(req, res) {
+router.get("/", middlewareObj.isLoggedIn, middlewareObj.hasAvailableArtworkSlots, (req, res) => {
     let reqPath = path.join(__dirname, '../') + '/public/html';
     
     res.sendFile('workspace.html', {root : reqPath});
 });
 
-router.post("/", function(req, res) {
-    var author = {
-        id: req.user._id,
-        username: req.user.username
-    };
+router.post("/", (req, res) => {
+    // author is set to the current user
+    let author = { id: req.user._id, username: req.user.username };
+    // image is set to the image data of the body request
+    let image = { data: req.body.image };
+    // newArtwork object is created with empty name/description and author/image
+    let newArtwork = {name: "", img: image, description: "", author: author};
 
-    var image = {
-        data: req.body.image,
-    };
-
-    var newArtwork = {name: "", img: image, description: "", author: author, test: req.body.image};
-
-    Artwork.create(newArtwork, function(err, newlyCreated) {
+    Artwork.create(newArtwork, (err, newlyCreated) => {
         if (err) {
             req.flash("error", err.message);
             res.redirect("/home");
         } else {
+            // Push newlyCreated artwork to the current User's Artworks
             req.user.artworks.push(newlyCreated);
             req.user.save();
 
-            // ID Will be replaced with artwork id  http://localhost:3000/artwork/6012715edac7df16fc37facc
             res.redirect("/artwork/" + newlyCreated._id);
         }
     });

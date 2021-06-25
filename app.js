@@ -26,7 +26,7 @@ const BRUSH_DATABASE_URL2     = process.env.BrushDatabaseURL2;
 const PORT = process.env.PORT || 3000;
 
 // Global Database Variables
-const usingLocalDatabase = false;
+const usingLocalDatabase = true;
 
 const connectionParams = {
     useNewUrlParser: true,
@@ -107,16 +107,14 @@ passport.deserializeUser(User.deserializeUser());
 var middlewareObj = require("./middleware/index.js");
 const { config } = require("process");
 
-
 // MIDDLEWARE that will run for every single route
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
     res.locals.currentUser = req.user;
     res.locals.error = req.flash("error");
     res.locals.success = req.flash("success");
     // Middleware is ran and then next route
     next();
 });
-
 
 app.use("/", authRoutes);
 app.use("/create", createRoutes);

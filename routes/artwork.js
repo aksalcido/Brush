@@ -1,25 +1,23 @@
-var express = require("express");
+// Router
+const router = require("express").Router();
 
 // Models
-var Artwork = require("../models/artwork.js");
-var User    = require("../models/user.js");
-var Comment = require("../models/comment.js");
-var Rating  = require("../models/rating.js");
-
-// Router
-var router = express.Router();
+const Artwork = require("../models/artwork.js");
+const User    = require("../models/user.js");
+const Comment = require("../models/comment.js");
 
 // Middleware
-var middlewareObj = require("../middleware/index.js");
+const middlewareObj = require("../middleware/index.js");
 
 // Searchbar on Navbar by search query and relevance 
-router.get("/search", function(req, res) {
+router.get("/search", (req, res) => {
     if (req.query.q) {
-        const regex = new RegExp(escapeRegex(req.query.q), 'gi');
-        const limit = 20;
-        const sortType = {likesTotal: -1};
+        let regex = new RegExp(escapeRegex(req.query.q), 'gi');
+        let limit = 20;
+        let sortType = {likesTotal: -1};
 
-        Artwork.find({"name": regex}).sort(sortType).limit(limit).exec(function(err, foundArtworks) {
+        // Search for Artwork by regex, sortType, and limit
+        Artwork.find({"name": regex}).sort(sortType).limit(limit).exec((err, foundArtworks) => {
             if (err) {
                 req.flash("error", err.message);
                 res.redirect("/home");
@@ -38,15 +36,15 @@ function escapeRegex(text) {
 
 
 // Get Artwork Profile
-router.get("/:id", function(req, res) {
-    var page = req.query.page ? (req.query.page >= 1 ? req.query.page : 1) : 1;
-    const limit = 10;
+router.get("/:id", (req, res) => {
+    let page = req.query.page ? (req.query.page >= 1 ? req.query.page : 1) : 1;
+    let limit = 10;
 
     Artwork.findById(req.params.id).populate({
         path: "comments",
         options: {
             sort: { createdAt: -1, _id: 1 },
-        }}).populate("likes").exec(function(err, foundArtwork) {
+        }}).populate("likes").exec((err, foundArtwork) => {
             if (err) {
                 req.flash("error", err.message);
                 res.redirect("/home");
@@ -57,8 +55,8 @@ router.get("/:id", function(req, res) {
 });
 
 // Edit Artwork
-router.get("/:id/edit", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwnership, function(req, res) {
-    Artwork.findById(req.params.id, function(err, foundArtwork) {
+router.get("/:id/edit", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwnership, (req, res) => {
+    Artwork.findById(req.params.id, (err, foundArtwork) => {
         if (err) {
             req.flash("error", err.message);
             res.redirect("/home");
@@ -68,9 +66,9 @@ router.get("/:id/edit", middlewareObj.isLoggedIn, middlewareObj.validateArtworkO
     });
 });
 
-// Update Editd Artwork
-router.put("/:id", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwnership, function(req, res) {
-    Artwork.findByIdAndUpdate(req.params.id, req.body.artwork, function(err, updatedArtwork) {
+// Update Edited Artwork
+router.put("/:id", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwnership, (req, res) => {
+    Artwork.findByIdAndUpdate(req.params.id, req.body.artwork, (err, updatedArtwork) => {
         if (err) {
             req.flash("error", err.message);
             res.redirect("/profile");
@@ -81,14 +79,14 @@ router.put("/:id", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwners
 });
 
 // Delete Artwork
-router.delete("/:id", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwnership, function(req, res) {
-    Artwork.findByIdAndDelete(req.params.id, function(err) {
+router.delete("/:id", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwnership, (req, res) => {
+    Artwork.findByIdAndDelete(req.params.id, (err) => {
         if (err) {
             req.flash("error", err.message);
             res.redirect("/artwork/" + req.params.id);
         } else {
             // Remove Artwork from other Models referencing it
-            User.updateOne({ _id: req.user._id }, {$pull: {artworks: req.params.id}}, function(err, updatedUser) {
+            User.updateOne({ _id: req.user._id }, {$pull: {artworks: req.params.id}}, (err, updatedUser) => {
                 if (err) {
                     req.flash("error", err.message);
                     res.redirect("/home");
@@ -101,13 +99,13 @@ router.delete("/:id", middlewareObj.isLoggedIn, middlewareObj.validateArtworkOwn
 });
 
 // Like Artwork
-router.put("/:id/like", middlewareObj.isLoggedIn, function(req, res) {
+router.put("/:id/like", middlewareObj.isLoggedIn, (req, res) => {
     Artwork.findByIdAndUpdate(req.params.id, {
         $addToSet: { likes: req.user._id },
         $inc: { likesTotal: 1 }
     }, {
         new: true
-    }).exec(function(err, updatedArtwork) {
+    }).exec((err, updatedArtwork) => {
         if (err) {
             req.flash("error", err.message);
             res.redirect("/home");
@@ -120,8 +118,8 @@ router.put("/:id/like", middlewareObj.isLoggedIn, function(req, res) {
 });
 
 // Unlike Artwork
-router.put("/:id/unlike", middlewareObj.isLoggedIn, function(req, res) {
-    User.updateOne({ _id: req.user._id }, {$pull: {likes: req.params.id}}, function(err, updatedUser) {
+router.put("/:id/unlike", middlewareObj.isLoggedIn, (req, res) => {
+    User.updateOne({ _id: req.user._id }, {$pull: {likes: req.params.id}}, (err, updatedUser) => {
         if (err) {
             req.flash("error", err.message);
             res.redirect("/home");
@@ -129,7 +127,7 @@ router.put("/:id/unlike", middlewareObj.isLoggedIn, function(req, res) {
             Artwork.updateOne({ _id: req.params.id }, {
                 $pull: {likes: req.user._id},
                 $inc: { likesTotal: -1 }
-            }, function(err, updatedArtwork) {
+            }, (err, updatedArtwork) => {
                 if (err) {
                     req.flash("error", err.message);
                     res.redirect("/home");
@@ -142,18 +140,19 @@ router.put("/:id/unlike", middlewareObj.isLoggedIn, function(req, res) {
 });
 
 // Favorite Artwork
-router.put("/:id/favorite", middlewareObj.isLoggedIn, function(req, res) {
+router.put("/:id/favorite", middlewareObj.isLoggedIn, (req, res) => {
     Artwork.findByIdAndUpdate(req.params.id, {
         $addToSet: { favorites: req.user._id },
         $inc: { favoritesTotal: 1 }
     }, {
         new: true
-    }).exec(function(err, updatedArtwork) {
+    }).exec((err, updatedArtwork) => {
         if (err) {
             req.flash("error", err.message);
             res.redirect("/home");
         } else {
-            req.user.favorites.push(updatedArtwork);
+            // Push Artwork to User that favorites
+            req.user.favorites.push(updatedArtwork._id);
             req.user.save();
 
             res.redirect("/artwork/" + updatedArtwork._id);
@@ -162,16 +161,18 @@ router.put("/:id/favorite", middlewareObj.isLoggedIn, function(req, res) {
 });
 
 // Unfavorite Artwork
-router.put("/:id/unfavorite", middlewareObj.isLoggedIn, function(req, res) {
-    User.updateOne({ _id: req.user._id }, {$pull: {favorites: req.params.id}}, function(err, updatedUser) {
+router.put("/:id/unfavorite", middlewareObj.isLoggedIn, (req, res) => {
+    // Remove artwork id from User favorites
+    User.updateOne({ _id: req.user._id }, {$pull: {favorites: req.params.id}}, (err, updatedUser) => {
         if (err) {
             req.flash("error", err.message);
             res.redirect("/home");
         } else {
+            // Remove user id from Artwork favorites and decrement favoriteTotal
             Artwork.updateOne({ _id: req.params.id }, {
                 $pull: {favorites: req.user._id}, 
                 $inc: { favoritesTotal: -1 }
-            }, function(err, updatedArtwork) {
+            }, (err, updatedArtwork) => {
                 if (err) {
                     req.flash("error", err.message);
                     res.redirect("/home");
@@ -184,15 +185,15 @@ router.put("/:id/unfavorite", middlewareObj.isLoggedIn, function(req, res) {
 });
 
 // Post a comment on an Artwork
-router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
+router.post("/:id/comment", middlewareObj.isLoggedIn, (req, res) => {
     // Lookup Artwork by ID
-    Artwork.findById(req.params.id, function(err, artwork) {
+    Artwork.findById(req.params.id, (err, artwork) => {
         if (err) {
             req.flash("error", err.message);
             res.redirect("home");
         } else {
             // Create New Comment
-            Comment.create(req.body.comment, function(err, comment) {
+            Comment.create(req.body.comment, (err, comment) => {
                 if (err) {
                     req.flash("error", err.message);
                     res.redirect("/home");
@@ -214,8 +215,8 @@ router.post("/:id/comment", middlewareObj.isLoggedIn, function(req, res) {
 });
 
 // Delete a comment made on an Artwork
-router.delete("/:id/comment/:comment_id", middlewareObj.isLoggedIn, middlewareObj.validateCommentOwnership, function(req, res) {
-    Comment.findByIdAndDelete(req.params.comment_id, function(err) {
+router.delete("/:id/comment/:comment_id", middlewareObj.isLoggedIn, middlewareObj.validateCommentOwnership, (req, res) => {
+    Comment.findByIdAndDelete(req.params.comment_id, (err) => {
         if (err) {
             req.flash("error", err.message);
             res.redirect("/artwork/" + req.params.id);
