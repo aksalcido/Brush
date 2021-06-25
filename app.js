@@ -1,18 +1,18 @@
 // Imported Libraries
 const express = require("express"),
-    app = express(),
-    flash = require("connect-flash"),
-    bodyParser = require("body-parser"),
-    mongoose = require("mongoose"),
-    passport = require("passport"),
-    LocalStrategy = require("passport-local"),
-    methodOverride = require('method-override');
+      app = express(),
+      flash = require("connect-flash"),
+      bodyParser = require("body-parser"),
+      mongoose = require("mongoose"),
+      passport = require("passport"),
+      LocalStrategy = require("passport-local"),
+      methodOverride = require('method-override');
 
 // Routes
 const authRoutes = require("./routes/auth"),
-    userRoutes = require("./routes/user"),
-    createRoutes = require("./routes/create");
-    artworkRoutes = require("./routes/artwork");
+      userRoutes = require("./routes/user"),
+      createRoutes = require("./routes/create");
+      artworkRoutes = require("./routes/artwork");
 
 // Imported Models
 const User = require("./models/user.js");
@@ -25,22 +25,22 @@ const BRUSH_DATABASE_URL2     = process.env.BrushDatabaseURL2;
 // Global Host Variables
 const PORT = process.env.PORT || 3000;
 
-// Global Database Variables
-const usingLocalDatabase = true;
-
 const connectionParams = {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true 
 }
 
-// for now local database
+// Global Database Variables
+const usingLocalDatabase = false;
+
+// Default URL Set to Local DB -- Updated if usingLocalDatabase is false
 let DATABASE_URL = "mongodb://localhost:27017/brush_database";
 
-// ===== END VIDEO ===== // 
+// Using Local Database 
 if (usingLocalDatabase) {
     let DROP_DATABASE = false;
-
+    
     if (!DROP_DATABASE) {
         // Setup (if not created already) and Connect the Mongoose Database
         mongoose.connect(DATABASE_URL, connectionParams)
@@ -58,6 +58,7 @@ if (usingLocalDatabase) {
 }
 // Using Mongod Atlas Database
 else {
+    // Cloud DB updates URL
     DATABASE_URL = BRUSH_DATABASE_URL1 + BRUSH_DATABASE_PASSWORD + BRUSH_DATABASE_URL2;
     
     mongoose.connect(DATABASE_URL,connectionParams)
