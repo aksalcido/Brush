@@ -25,49 +25,49 @@ const BRUSH_DATABASE_URL2     = process.env.BrushDatabaseURL2;
 // Global Host Variables
 const PORT = process.env.PORT || 3000;
 
+// Global Database Variables
 const connectionParams = {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true 
 }
 
-// Global Database Variables
-const usingLocalDatabase = false;
+const USING_LOCAL_DATABASE = false;
 
-// Default URL Set to Local DB -- Updated if usingLocalDatabase is false
+// Default URL Set to Local DB -- Updated if USING_LOCAL_DATABASE is false
 let DATABASE_URL = "mongodb://localhost:27017/brush_database";
 
 // Using Local Database 
-if (usingLocalDatabase) {
+if (USING_LOCAL_DATABASE === true) {
     let DROP_DATABASE = false;
     
-    if (!DROP_DATABASE) {
+    if (DROP_DATABASE === false) {
         // Setup (if not created already) and Connect the Mongoose Database
         mongoose.connect(DATABASE_URL, connectionParams)
-        .then( () => console.log("Connected to Local database") )
+        .then(() => console.log("Connected to Local database"))
         .catch(error => console.log(error.message));      
     } else {
         mongoose.connect(DATABASE_URL, connectionParams)
-        .then(() => { db.dropDatabase(function(err, result) {
-            if (err) throw err;
-            console.log("Operation Success ? " + result);
-            db.close();
-        })})
+        .then(() => { 
+            db.dropDatabase(function(err, result) {
+                if (err) 
+                    throw err;
+
+                console.log("Operation Success ? " + result);
+                db.close();
+            })
+        })
         .catch(error => console.log(error.message));
     }
 }
 // Using Mongod Atlas Database
 else {
-    // Cloud DB updates URL
+    // Cloud DB updates DATABASE_URL that we need to connect to
     DATABASE_URL = BRUSH_DATABASE_URL1 + BRUSH_DATABASE_PASSWORD + BRUSH_DATABASE_URL2;
     
-    mongoose.connect(DATABASE_URL,connectionParams)
-        .then( () => {
-            console.log('Connected to Atlas database ')
-        })
-        .catch( (err) => {
-            console.error(`Error connecting to the database. \n${err}`);
-    })
+    mongoose.connect(DATABASE_URL, connectionParams)
+    .then(() => console.log('Connected to Atlas database '))
+    .catch(err => console.error(`Error connecting to the database. \n${err}`));
 }
 
 // Set up BodyParser to handle HTTP POST reqs
@@ -89,7 +89,7 @@ app.use(methodOverride("_method"));
 app.use(flash());
 
 // Set up Session and Passport Authentication with Users
-var session = require("express-session");
+let session = require("express-session");
 
 app.use(session({
     secret: "Once again another passowrd",
@@ -104,11 +104,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Middleware
-var middlewareObj = require("./middleware/index.js");
-const { config } = require("process");
-
-// MIDDLEWARE that will run for every single route
+// Middleware that will run for every single route
 app.use((req, res, next) => {
     res.locals.currentUser = req.user;
     res.locals.error = req.flash("error");
@@ -117,17 +113,18 @@ app.use((req, res, next) => {
     next();
 });
 
+// Use Routes for entirity of our application
 app.use("/", authRoutes);
 app.use("/create", createRoutes);
 app.use("/artwork", artworkRoutes);
 app.use("/profile", userRoutes);
 
+// Default Route if invalid route
+app.get('*', (req, res) => {
+    res.redirect('/home');
+});
+
+
 app.listen(PORT, function() {
     console.log("Brush Server started");
 });
-
-/*
-app.listen(PORT, '127.0.0.1', function() {
-    console.log("Brush Server started");
-});
-*/

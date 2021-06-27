@@ -46,7 +46,7 @@ router.get("/:id", (req, res) => {
             sort: { createdAt: -1, _id: 1 },
         }}).populate("likes").exec((err, foundArtwork) => {
             if (err) {
-                req.flash("error", err.message);
+                req.flash("error", `No Artwork found for ID: '${req.params.id}'`);
                 res.redirect("/home");
             } else {
                 res.render("artwork/show", {artwork: foundArtwork, page: page, limit: limit});
