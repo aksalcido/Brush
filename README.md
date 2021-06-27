@@ -1,5 +1,5 @@
 # Brush Description
-  - Developed a Full-stack Web application using REST API that allows users to draw their own art on a Javascript canvas, similar to that of a Paint application
+  - A RESTful Web Application that allows users to draw their own art on a Javascript canvas, similar to that of a Paint application
   - Users Can:
     - login/register their account
     - create/publish their art(Max 21) to the server
@@ -12,12 +12,11 @@
   
 # Technologies Used
 - <h4> Programming Languages </h4> 
-    <h6> HTML/CSS, Javascript </h6>
+    <h6> HTML, CSS, Javascript </h6>
 - <h4> Tools and Frameworks </h4> 
     <h6> Git, NPM, Node.JS </h6>
-  
 - <h4> Databases/Other </h4> 
-    <h6> MongoDB, MongoDB Atlas, REST API, Heroku </h6> 
+    <h6> MongoDB (Local), MongoDB Atlas (Cloud), Heroku (Deployment)</h6> 
 
 # Deployment
   - Deployed using [Heroku](www.heroku.com), a Cloud Application Platform at the following: https://brush-paint-app.herokuapp.com/
