@@ -32,7 +32,7 @@ const connectionParams = {
     useUnifiedTopology: true 
 }
 
-const USING_LOCAL_DATABASE = true;
+const USING_LOCAL_DATABASE = false;
 
 // Default URL Set to Local DB -- Updated if USING_LOCAL_DATABASE is false
 let DATABASE_URL = "mongodb://localhost:27017/brush_database";
