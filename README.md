@@ -1,3 +1,8 @@
+![GitHub deployments](https://img.shields.io/github/deployments/aksalcido/Brush/brush-paint-app)
+![GitHub repo size](https://img.shields.io/github/repo-size/aksalcido/brush)
+![GitHub issues](https://img.shields.io/github/issues/aksalcido/brush)
+![GitHub last commit](https://img.shields.io/github/last-commit/aksalcido/brush)
+
 # Brush Description
   - A RESTful Web Application that allows users to draw their own art on a Javascript canvas, similar to that of a Paint application
   - Users Can:
