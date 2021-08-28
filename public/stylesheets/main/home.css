@@ -23,6 +23,7 @@
     height: 750px;
     width: 100%;
     z-index: 1;
+    overflow: auto;
 }
 
 #home-message {
@@ -135,6 +136,12 @@ figcaption {
     color: white; 
     margin-bottom: 15px; 
     border-bottom: 2px solid lightgray;
+}
+
+@media (max-width: 539px) {
+    .row .third-display-row:last-child {
+        padding-bottom: 100px;
+    }    
 }
 
 /* ===== Jumbotron Color Animation =====  */
