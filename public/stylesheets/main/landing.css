@@ -28,6 +28,12 @@ body {
     z-index: 1;
 }
 
+@media (max-width: 940px) {
+    #display {
+        font-size: 36px;
+    }
+}
+
 a {
     padding: 1vh;
     border: 1px solid white;
